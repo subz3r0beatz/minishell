@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 19:20:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/20 14:47:08 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/23 17:47:12 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static void	build_pwd(t_robin *env, char **pwd, size_t *size)
 	*pwd = get_pwd(env, buffer);
 	if (!*pwd)
 		return ;
-	*size = *size - 7 + ft_strlen(*pwd);
+	*size = *size + ft_strlen(*pwd);
 }
 
 static char	*cpy_prompt(char *username, char *hostname, char *pwd, size_t size)
@@ -54,7 +54,7 @@ static char	*cpy_prompt(char *username, char *hostname, char *pwd, size_t size)
 	if (!hostname)
 		hostname = "unknown";
 	if (!pwd)
-		pwd = "unknown";
+		pwd = "";
 	ft_strlcpy(prompt, username, size);
 	ft_strlcat(prompt, "@", size);
 	ft_strlcat(prompt, hostname, size);
@@ -73,7 +73,7 @@ int	build_prompt(t_robin *env, char **prompt)
 	char	*pwd;
 
 	status = 0;
-	size = 28;
+	size = 21;
 	build_username(env, &username, &size);
 	build_hostname(env, &hostname, &size);
 	build_pwd(env, &pwd, &size);

@@ -1,41 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer.h                                            :+:      :+:    :+:   */
+/*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/22 09:16:07 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/23 16:16:43 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/06/23 17:47:49 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/06/23 18:38:57 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LEXER_H
-# define LEXER_H
+#ifndef PARSER_H
+# define PARSER_H
 
-typedef enum e_token_type
+typedef enum e_node_type
 {
-	TOKEN_WORD,
-	TOKEN_OR,
-	TOKEN_AND,
-	TOKEN_DLESS,
-	TOKEN_DGREAT,
-	TOKEN_PIPE,
-	TOKEN_BACKGR,
-	TOKEN_LESS,
-	TOKEN_GREAT,
-	TOKEN_LPAREN,
-	TOKEN_RPAREN,
-	TOKEN_SEMI
-}				t_token_type;
+	NODE_CMD,
+	NODE_PIPE,
+	NODE_AND,
+	NODE_OR,
+	NODE_SUBSHELL
+}			t_node_type;
 
-typedef struct s_token
+typedef struct s_redir
 {
-	char			*value;
 	t_token_type	type;
-	struct s_token	*next;
-}				t_token;
+	char			*file;
+	struct s_redir	*next;
+}				t_redir;
 
-t_token	*lexer(char *input);
+typedef struct s_ast_node
+{
+	t_node_type			type;
+	struct s_ast_node	*left;
+	struct s_ast_node	*right;
+	char				**args;
+	t_redir				*redir;
+}				t_ast_node;
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 15:17:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/18 17:51:47 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/23 17:20:45 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void	bubble_sort_env(t_env **sorted_env)
 		while (sorted_env[j])
 		{
 			if (ft_strcmp(sorted_env[i]->key, sorted_env[j]->key) > 0)
-				swap((void **)&sorted_env[i], (void **)&sorted_env[j]);
+				ft_swap((void **)&sorted_env[i], (void **)&sorted_env[j]);
 			j++;
 		}
 		i++;

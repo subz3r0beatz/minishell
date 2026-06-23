@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/06 07:09:11 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/18 19:19:00 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/23 17:46:19 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,19 @@
 
 static int	check_flag(char *str)
 {
-	if (str[1] == '-')
-		return (1);
-	else
-	{
-		write(2, "minishell: unset: ", 18);
-		write(2, str, ft_strlen(str));
-		write(2, ": invalid option\n"
-			"unset: usage: unset [name ...]\n", 48);
-		return (0);
-	}
+	write(2, "minishell: unset: -", 18);
+	write(2, str[1], ft_strlen(str));
+	write(2, ": invalid option\n unset: usage: unset [name ...]\n", 48);
+	return (0);
 }
 
 static int	is_valid_key(char *str)
 {
 	size_t	i;
 
-	i = 0;
-	if (str[0] == '-' && str[1] == '-')
-		i = 2;
-	if (ft_isalpha(str[i]) || str[i] == '_')
+	if (ft_isalpha(str[0]) || str[0] == '_')
 	{
-		i++;
+		i = 1;
 		while (str[i])
 		{
 			if (!ft_isalnum(str[i]) && str[i] != '_')
@@ -54,15 +45,11 @@ static int	is_valid_key(char *str)
 static int	check_var(t_robin *env, char *str)
 {
 	size_t	i;
-	int		offset;
 
-	offset = 0;
-	if (str[0] == '-' && str[1] == '-')
-		offset = 2;
 	if (!is_valid_key(str))
 		return (1);
 	else
-		robin_remove(env, str + offset);
+		robin_remove(env, str);
 	return (0);
 }
 
@@ -79,9 +66,9 @@ int	ft_unset(t_robin *env, char **args)
 	status = 0;
 	while (args[++i])
 	{
-		if (!stop && args[i][0] == '-')
+		if (!stop && args[i][0] && args[i][0] == '-')
 		{
-			if (args[i][1] == '-' && !args[i][2])
+			if (args[i][1] && args[i][1] == '-' && !args[i][2])
 			{
 				stop = 1;
 				continue ;

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:31:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/20 19:49:44 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/23 16:35:42 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static char	get_hex(char *str, size_t *i)
 	return ((char)val);
 }
 
-static char	get_char(char *str, size_t *i)
+static char	get_char(char *str, size_t *i, char table[256])
 {
 	int		val;
 	char	c;
@@ -89,10 +89,10 @@ static char	get_char(char *str, size_t *i)
 	if (!ptr)
 		return (str[(*i)++]);
 	*i += 2;
-	return ("\a\b\e\f\n\r\t\v\\"[ptr - "abefnrtv\\"]);
+	return (table[ft_tolower(str[*i - 1])]);
 }
 
-static int	print_escape(char *str, int fd_out)
+static int	print_escape(char *str, int fd_out, char table[256])
 {
 	size_t	i;
 	size_t	j;
@@ -111,7 +111,7 @@ static int	print_escape(char *str, int fd_out)
 			free(buffer);
 			return (1);
 		}
-		buffer[j++] = get_char(str, &i);
+		buffer[j++] = get_char(str, &i, table);
 	}
 	write(fd_out, buffer, j);
 	free(buffer);
@@ -123,16 +123,18 @@ int	ft_echo(char **args, int fd_out)
 	size_t	i;
 	int		newline;
 	int		escape;
+	char	table[256];
 
 	if (!args[1])
 	{
 		ft_putchar_fd('\n', fd_out);
 		return (0);
 	}
+	init_escape_table(table);
 	i = parse_flags(args, &newline, &escape) - 1;
 	while (args[++i])
 	{
-		if (escape && print_escape(args[i], fd_out))
+		if (escape && print_escape(args[i], fd_out, table))
 			return (0);
 		if (!escape)
 			ft_putstr_fd(args[i], fd_out);

@@ -1,41 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer.h                                            :+:      :+:    :+:   */
+/*   init_escape_table.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/22 09:16:07 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/23 16:16:43 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/06/23 16:25:20 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/06/23 16:30:04 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LEXER_H
-# define LEXER_H
+#include "minishell.h"
 
-typedef enum e_token_type
+void	init_escape_table(char table[256])
 {
-	TOKEN_WORD,
-	TOKEN_OR,
-	TOKEN_AND,
-	TOKEN_DLESS,
-	TOKEN_DGREAT,
-	TOKEN_PIPE,
-	TOKEN_BACKGR,
-	TOKEN_LESS,
-	TOKEN_GREAT,
-	TOKEN_LPAREN,
-	TOKEN_RPAREN,
-	TOKEN_SEMI
-}				t_token_type;
+	unsigned char	i;
 
-typedef struct s_token
-{
-	char			*value;
-	t_token_type	type;
-	struct s_token	*next;
-}				t_token;
-
-t_token	*lexer(char *input);
-
-#endif
+	i = 0;
+	while (i < 256)
+	{
+		table[i] = 0;
+		i++;
+	}
+	table['\\'] = '\\';
+	table['a'] = '\a';
+	table['b'] = '\b';
+	table['e'] = 27;
+	table['f'] = '\f';
+	table['n'] = '\n';
+	table['r'] = '\r';
+	table['t'] = '\t';
+	table['v'] = '\v';
+}

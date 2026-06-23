@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 15:31:03 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/20 15:28:58 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/23 17:46:53 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,26 +16,22 @@ static size_t	is_valid_key(char *str)
 {
 	size_t	i;
 
-	if (!ft_isalpha(str[0]) && str[0] != '_')
+	if (ft_isalpha(str[0]) || str[0] == '_')
 	{
-		ft_putstr_fd("minishell: export: ", STDERR_FILENO);
-		ft_putstr_fd(str, STDERR_FILENO);
-		ft_putstr_fd(": not a valid identifier\n", STDERR_FILENO);
-		return (0);
-	}
-	i = 1;
-	while (str[i] && str[i] != '=')
-	{
-		if (!ft_isalnum(str[i]) && str[i] != '_')
+		i = 1;
+		while (str[i] && str[i] != '=')
 		{
-			ft_putstr_fd("minishell: export: ", STDERR_FILENO);
-			ft_putstr_fd(str, STDERR_FILENO);
-			ft_putstr_fd(": not a valid identifier\n", STDERR_FILENO);
-			return (0);
+			if (!ft_isalnum(str[i]) && str[i] != '_')
+				break ;
+			i++;
 		}
-		i++;
+		if (str[i] == '=' || !str[i])
+			return (i);
 	}
-	return (i);
+	ft_putstr_fd("minishell: export: ", STDERR_FILENO);
+	ft_putstr_fd(str, STDERR_FILENO);
+	ft_putstr_fd(": not a valid identifier\n", STDERR_FILENO);
+	return (0);
 }
 
 static int	lookup_var(t_robin *env, char *key, char *value)
