@@ -1,19 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lookup_table.h                                     :+:      :+:    :+:   */
+/*   new_op_node.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/23 16:35:58 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 14:08:46 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/06/25 15:29:26 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/06/25 15:30:39 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LOOKUP_TABLE_H
-# define LOOKUP_TABLE_H
+#include "minishell.h"
 
-void	init_escape_table(char table[256]);
-void	init_token_type_table(uint8_t table[256][256]);
+t_ast_node	*new_op_node(t_node_type type, t_ast_node *left, t_ast_node *right)
+{
+	t_ast_node	*node;
 
-#endif
+	node = malloc(sizeof(t_ast_node));
+	if (!node)
+		return (NULL);
+	node->type = type;
+	node->left = left;
+	node->right = right;
+	node->args = NULL;
+	node->redir = NULL;
+	return (node);
+}

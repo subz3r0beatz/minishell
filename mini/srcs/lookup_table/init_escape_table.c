@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/23 16:25:20 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/23 16:30:04 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 14:16:40 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	init_escape_table(char table[256])
 {
-	unsigned char	i;
+	int	i;
 
 	i = 0;
 	while (i < 256)

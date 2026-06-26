@@ -20,7 +20,6 @@ SRCS        = robin_init.c \
               robin_remove.c \
               robin_free.c \
 			  robin_iter.c \
-			  robin_node_create.c \
 			  hash_functions/djb2.c \
 			  hash_functions/fnv1a.c
 

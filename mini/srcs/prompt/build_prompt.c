@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 19:20:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/23 17:47:12 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 13:59:24 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	build_prompt(t_robin *env, char **prompt)
 	free(pwd);
 	if (!*prompt)
 	{
-		*prompt = "minishell$\n$ ";
+		*prompt = "unknown@unknown:$\n$ ";
 		status = 2;
 	}
 	return (status);

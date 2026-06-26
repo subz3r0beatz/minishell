@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lookup_table.h                                     :+:      :+:    :+:   */
+/*   env.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/23 16:35:58 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 14:08:46 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/06/26 16:57:02 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/06/26 16:57:51 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LOOKUP_TABLE_H
-# define LOOKUP_TABLE_H
+#ifndef ENV_H
+# define ENV_H
 
-void	init_escape_table(char table[256]);
-void	init_token_type_table(uint8_t table[256][256]);
+int		ft_env(t_robin *env, char **argv, int fd_out);
 
 #endif

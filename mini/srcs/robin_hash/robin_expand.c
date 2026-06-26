@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/25 18:35:19 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/11 17:23:56 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 13:33:36 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ static int	empty_node(t_robin *robin, size_t hash,
 		robin->data[hash] = node;
 		robin->ctrl[hash] = psl + 1;
 		robin->count++;
-		return (1);
+		return (0);
 	}
-	return (0);
+	return (1);
 }
 
 static void	swap_node(t_robin *robin, size_t hash,
@@ -39,24 +39,26 @@ static void	swap_node(t_robin *robin, size_t hash,
 	*psl = tmp_psl;
 }
 
-static void	fast_robin_insert(t_robin *robin, t_robin_node node)
+static int	fast_robin_insert(t_robin *robin, t_robin_node node)
 {
 	size_t			hash;
 	uint8_t			psl;
 
 	hash = node.hash & (robin->capacity - 1);
 	psl = 0;
-	while (psl < 254)
+	while (psl < 255)
 	{
-		if (empty_node(robin, hash, node, psl))
-			return ;
+		if (!empty_node(robin, hash, node, psl))
+			return (0);
 		if (psl > robin->ctrl[hash] - 1)
 			swap_node(robin, hash, &node, &psl);
 		hash = (hash + 1) & (robin->capacity - 1);
 		psl++;
 	}
 	if (robin_expand(robin) == 0)
-		fast_robin_insert(robin, node);
+		return (fast_robin_insert(robin, node));
+	else
+		return (1);
 }
 
 int	robin_expand(t_robin *robin)
@@ -74,7 +76,8 @@ int	robin_expand(t_robin *robin)
 	while (i < robin->capacity)
 	{
 		if (robin->ctrl[i])
-			fast_robin_insert(new_robin, robin->data[i]);
+			if (fast_robin_insert(new_robin, robin->data[i]))
+				return (1);
 		i++;
 	}
 	free(robin->ctrl);

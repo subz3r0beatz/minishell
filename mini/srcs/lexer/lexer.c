@@ -6,13 +6,13 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/22 09:22:01 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/23 17:14:52 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 14:14:31 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static size_t	get_word_len(char *input, t_token_type table[256][256])
+static size_t	get_word_len(char *input, uint8_t table[256][256])
 {
 	size_t	len;
 	int		s_quote;
@@ -28,7 +28,7 @@ static size_t	get_word_len(char *input, t_token_type table[256][256])
 		else if (input[len] == '\'' && d_quote == 0)
 			s_quote = !s_quote;
 		if (!s_quote && !d_quote && (ft_iswhite(input[len])
-				|| table[(unsigned char)input[len]]
+				|| (t_token_type)table[(unsigned char)input[len]]
 				[(unsigned char)input[len + 1]] != TOKEN_WORD))
 			break ;
 		len++;
@@ -37,7 +37,7 @@ static size_t	get_word_len(char *input, t_token_type table[256][256])
 }
 
 static t_token	*handle_token(char *input, size_t *i,
-		t_token_type table[256][256])
+		uint8_t table[256][256])
 {
 	size_t	len;
 	t_token	*token;
@@ -45,7 +45,8 @@ static t_token	*handle_token(char *input, size_t *i,
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	token->type = table[(unsigned char)input[0]][(unsigned char)input[1]];
+	token->type
+		= (t_token_type)table[(unsigned char)input[0]][(unsigned char)input[1]];
 	len = 0;
 	if (token->type == TOKEN_WORD)
 		len = get_word_len(input, table);
@@ -91,16 +92,16 @@ static t_token	*add_token(t_token *head, t_token *token)
 	return (head);
 }
 
-t_token	*lexer(char *input)
+t_token	*lexer(char *input, uint8_t table[256][256])
 {
 	t_token			*head;
 	t_token			*token;
-	t_token_type	table[256][256];
 	size_t			i;
 
+	if (!input)
+		return (NULL);
 	head = NULL;
 	i = 0;
-	init_token_type_table(table);
 	while (input[i])
 	{
 		while (input[i] && ft_iswhite(input[i]))

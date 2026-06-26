@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_vars.c                                       :+:      :+:    :+:   */
+/*   unexport_vars.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/18 15:31:03 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 18:40:13 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/06/26 15:54:38 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/06/26 18:40:21 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static int	lookup_var(t_robin *env, char *key, char *value)
 		free(((t_env *)robin_node->value)->value);
 		((t_env *)robin_node->value)->value = value;
 	}
-	((t_env *)robin_node->value)->is_exported = 1;
+	((t_env *)robin_node->value)->is_exported = 0;
 	return (0);
 }
 
@@ -71,7 +71,6 @@ static int	insert_var(t_robin *env, char *str)
 	size_t			i;
 	char			*key;
 	char			*value;
-	t_robin_node	robin_node;
 
 	i = is_valid_key(str);
 	if (!i)
@@ -88,10 +87,15 @@ static int	insert_var(t_robin *env, char *str)
 	}
 	if (!lookup_var(env, key, value))
 		return (0);
+	if (!str[i])
+	{
+		free(key);
+		return (0);
+	}
 	return (insert_new_var(env, key, value));
 }
 
-int	parse_vars(t_robin *env, char **args)
+int	unexport_vars(t_robin *env, char **args)
 {
 	int		status;
 	int		ret;

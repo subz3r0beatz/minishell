@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 17:46:29 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/20 15:19:40 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 19:37:41 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,36 @@ void	main_loop(t_robin *env)
 	}
 }
 
+static t_minishell	init_minishell(char **envp)
+{
+	t_minishell	*minishell;
+	t_robin		*env;
+
+	minishell = malloc(sizeof(t_minishell));
+	if (!minishell)
+		return (NULL);
+	env = build_env(envp);
+	if (!env)
+	{
+		free(minishell);
+		return (NULL);
+	}
+	minishell->env = env;
+	minishell->exported = NULL;
+	init_lookup_table(minishell->lookup_table);
+	return (minishell);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
-	t_robin	*env;
+	t_minishell	*minishell;
 
 	if (argc != 1)
 		return (1);
 	(void) argv;
-	env = build_env(envp);
-	if (!env)
+	minishell = init_minishell(envp);
+	if (!minishell)
 		return (1);
-	main_loop(env);
+	main_loop(minishell);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 15:17:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/23 17:20:45 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 11:52:51 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	print_export(t_robin *env, int fd_out)
 	i = 0;
 	while (sorted_env[i])
 	{
-		if (sorted_env[i]->is_exported)
+		if (sorted_env[i]->is_exported && ft_strcmp(sorted_env[i]->key, "_"))
 		{
 			ft_putstr_fd("declare -x ", fd_out);
 			ft_putstr_fd(sorted_env[i]->key, fd_out);

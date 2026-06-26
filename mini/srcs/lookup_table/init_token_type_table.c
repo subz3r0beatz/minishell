@@ -6,13 +6,13 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/23 16:22:38 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/23 17:31:00 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 14:08:23 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	init_token_type_table(t_token_type table[256][256])
+void	init_token_type_table(uint8_t table[256][256])
 {
 	int	i;
 	int	j;

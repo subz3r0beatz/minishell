@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/22 09:16:07 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/23 16:16:43 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 14:11:03 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,6 @@ typedef struct s_token
 	struct s_token	*next;
 }				t_token;
 
-t_token	*lexer(char *input);
+t_token	*lexer(char *input, uint8_t table[256][256]);
 
 #endif

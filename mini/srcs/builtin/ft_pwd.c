@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 22:52:56 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/20 21:46:53 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 18:33:37 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,15 @@ static int	check_flags(char **args)
 	return (flag);
 }
 
+static int	getcwd_error(void)
+{
+	ft_putstr_fd("minishell: pwd: "
+		"error retrieving current directory: ", STDERR_FILENO);
+	ft_putstr_fd("getcwd: cannot access parent directories: ", STDERR_FILENO);
+	ft_putendl_fd(strerror(errno), STDERR_FILENO);
+	return (1);
+}
+
 int	ft_pwd(t_robin *env, char **args, int fd_out)
 {
 	int				flag;
@@ -85,12 +94,7 @@ int	ft_pwd(t_robin *env, char **args, int fd_out)
 		}
 	}
 	if (!getcwd(pwd, 8192))
-	{
-		ft_putstr_fd("minishell: pwd: error retrieving current directory: ", 2);
-		ft_putstr_fd("getcwd: cannot access parent directories: ", 2);
-		ft_putendl_fd(strerror(errno), 2);
-		return (1);
-	}
+		return (getcwd_error());
 	ft_putendl_fd(pwd, fd_out);
 	return (0);
 }

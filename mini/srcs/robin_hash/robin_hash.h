@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/25 15:20:59 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/18 16:43:13 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 13:34:02 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ t_robin			*robin_init(const size_t capacity,
 
 void			robin_free(t_robin *robin);
 
-void			robin_insert(t_robin *robin, t_robin_node node);
+int				robin_insert(t_robin *robin, t_robin_node node);
 
 int				robin_expand(t_robin *robin);
 
@@ -51,7 +51,7 @@ int				robin_remove(t_robin *robin, const void *key);
 
 t_robin_node	*robin_search(const t_robin *robin, const void *key);
 
-void			robin_iter(t_robin *robin,
-					void (*f)(const void *key, void *value, void *args),
+int				robin_iter(t_robin *robin,
+					int (*f)(const void *key, void *value, void *args),
 					void *args);
 #endif

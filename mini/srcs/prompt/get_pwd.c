@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 01:34:45 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/12 06:52:21 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 11:04:44 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,13 @@ static char	*get_raw_cwd(t_robin *env, char *buffer)
 		pwd = ft_strdup(((t_env *)node->value)->value);
 	else if (getcwd(buffer, 8192))
 		pwd = ft_strdup(buffer);
+	else
+	{
+		ft_putstr_fd("minishell: pwd: error retrieving current directory: ", 2);
+		ft_putstr_fd("getcwd: cannot access parent directories: ", 2);
+		ft_putendl_fd(strerror(errno), 2);
+		return (NULL);
+	}
 	if (!pwd)
 		return (NULL);
 	return (pwd);

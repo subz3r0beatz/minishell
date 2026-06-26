@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/25 12:44:27 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/11 17:27:37 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 13:33:13 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ static int	empty_node(t_robin *robin, size_t hash,
 		robin->data[hash] = node;
 		robin->ctrl[hash] = psl + 1;
 		robin->count++;
-		return (1);
+		return (0);
 	}
-	return (0);
+	return (1);
 }
 
 static int	key_match(t_robin *robin, t_robin_node node, size_t hash)
@@ -32,9 +32,9 @@ static int	key_match(t_robin *robin, t_robin_node node, size_t hash)
 	{
 		robin->del_function(robin->data[hash].key, robin->data[hash].value);
 		robin->data[hash] = node;
-		return (1);
+		return (0);
 	}
-	return (0);
+	return (1);
 }
 
 static void	swap_node(t_robin *robin, size_t hash,
@@ -51,28 +51,30 @@ static void	swap_node(t_robin *robin, size_t hash,
 	*psl = tmp_psl;
 }
 
-void	robin_insert(t_robin *robin, t_robin_node node)
+int	robin_insert(t_robin *robin, t_robin_node node)
 {
 	size_t			hash;
 	uint8_t			psl;
 
 	if (robin->count >= (robin->capacity * 85) / 100)
 		if (robin_expand(robin))
-			return ;
+			return (1);
 	node.hash = robin->hash_function(node.key);
 	hash = node.hash & (robin->capacity - 1);
 	psl = 0;
-	while (psl < 254)
+	while (psl < 255)
 	{
-		if (empty_node(robin, hash, node, psl))
-			return ;
-		if (key_match(robin, node, hash))
-			return ;
+		if (!empty_node(robin, hash, node, psl))
+			return (0);
+		if (!key_match(robin, node, hash))
+			return (0);
 		if (psl > robin->ctrl[hash] - 1)
 			swap_node(robin, hash, &node, &psl);
 		hash = (hash + 1) & (robin->capacity - 1);
 		psl++;
 	}
 	if (robin_expand(robin) == 0)
-		robin_insert(robin, node);
+		return (robin_insert(robin, node));
+	else
+		return (1);
 }

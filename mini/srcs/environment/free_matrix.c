@@ -1,19 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lookup_table.h                                     :+:      :+:    :+:   */
+/*   free_matrix.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/23 16:35:58 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 14:08:46 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/06/26 20:44:31 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/06/26 20:45:25 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LOOKUP_TABLE_H
-# define LOOKUP_TABLE_H
+#include "minishell.h"
 
-void	init_escape_table(char table[256]);
-void	init_token_type_table(uint8_t table[256][256]);
+void	free_matrix(char **matrix, size_t size)
+{
+	size_t	i;
 
-#endif
+	i = 0;
+	while (i < size)
+	{
+		free(matrix[i]);
+		i++;
+	}
+	free(matrix);
+}

@@ -6,11 +6,48 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 18:17:23 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/20 21:23:10 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 18:57:10 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static size_t	get_capacity(char **envp)
+{
+	size_t	i;
+	size_t	cap;
+
+	i = 0;
+	cap = 4096;
+	while (envp && envp[i] && cap < SIZE_MAX / 2)
+	{
+		if (cap < i)
+			cap *= 2;
+		i++;
+	}
+	if (cap < i)
+		return (0);
+	return (cap);
+}
+
+static int	insert_new_var(t_robin *env, char *key, char *value)
+{
+	t_robin_node	robin_node;
+
+	robin_node = create_node(env, key, value, 1);
+	if (!robin_node.key || !robin_node.value)
+	{
+		robin_free(env);
+		return (1);
+	}
+	if (robin_insert(env, robin_node))
+	{
+		env->del_function(robin_node.key, robin_node.value);
+		robin_free(env);
+		return (1);
+	}
+	return (0);
+}
 
 static t_robin_node	parse_var(t_robin *env, char *str)
 {
@@ -30,12 +67,10 @@ static t_robin_node	parse_var(t_robin *env, char *str)
 	{
 		free(key);
 		free(value);
-		return (NULL);
+		robin_node.key = NULL;
+		return (1);
 	}
-	robin_node = create_node(env, key, value, 1);
-	if (!robin_node.value)
-		return (NULL);
-	return (robin_node);
+	return (insert_new_var(env, key, value));
 }
 
 static t_robin	*cpy_env(char **envp)
@@ -45,12 +80,8 @@ static t_robin	*cpy_env(char **envp)
 	t_robin			*env;
 	t_robin_node	robin_node;
 
-	i = 0;
-	cap = 4096;
-	while (envp && envp[i++] && cap < SIZE_MAX / 2)
-		if (cap < i)
-			cap *= 2;
-	if (cap < i)
+	cap = get_capacity(envp);
+	if (!cap)
 		return (NULL);
 	env = robin_init(cap, fnv1a, ft_strcmp, delete_node);
 	if (!env)
@@ -58,10 +89,8 @@ static t_robin	*cpy_env(char **envp)
 	i = 0;
 	while (envp && envp[i])
 	{
-		robin_node = parse_var(env, envp[i]);
-		if (!robin_node)
+		if (parse_var(env, envp[i]))
 			return (NULL);
-		robin_insert(env, robin_node);
 		i++;
 	}
 	return (env);
@@ -71,9 +100,14 @@ t_robin	*build_env(char **envp)
 {
 	t_robin			*env;
 
-	env = cpy_env(envp, cap);
+	env = cpy_env(envp);
 	if (!env)
 		return (NULL);
-	add_basics(env);
+	if (handle_pwd(env) || handle_oldpwd(env)
+		|| handle_shlvl(env) || handle_underscore(env))
+	{
+		robin_free(env);
+		return (NULL);
+	}
 	return (env);
 }
