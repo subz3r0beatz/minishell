@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
+/*   Makefile                                           :+:      :+:    :+:   */
 #                                                     +:+ +:+         +:+      #
 #    By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/15 16:32:29 by fldumas-          #+#    #+#              #
-#    Updated: 2025/10/25 22:27:55 by fldumas-         ###   ########.fr        #
+/*   Updated: 2026/06/26 21:49:59 by fldumas-         ###   ########.fr       */
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,7 +46,12 @@ ft_striteri.c \
 ft_putnbr_fd.c \
 ft_putchar_fd.c \
 ft_putstr_fd.c \
-ft_putendl_fd.c
+ft_putendl_fd.c \
+ft_swap.c \
+ft_memlen.c \
+ft_split_quotes.c \
+ft_iswhite.c \
+ft_strcmp.c
 
 BONUS = \
 ft_lstnew_bonus.c \

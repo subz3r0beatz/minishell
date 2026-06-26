@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 14:15:11 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/22 09:51:55 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/26 20:26:00 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char	**ft_split(char const *s, char c);
 char	**ft_split_quotes(char const *s, char c);
 
+size_t	ft_memlen(const void *s, size_t n);
 size_t	ft_strlen(const char *s);
 size_t	ft_strlcat(char *dst, const char *src, size_t size);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
