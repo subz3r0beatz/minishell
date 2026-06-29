@@ -12,10 +12,10 @@
 
 #include "minishell.h"
 
-static int	usage_error(char *str)
+static int	usage_error(char c)
 {
 	ft_putstr_fd("minishell: unset: -", STDERR_FILENO);
-	ft_putchar_fd(str[1], STDERR_FILENO);
+	ft_putchar_fd(c, STDERR_FILENO);
 	ft_putstr_fd(": invalid option\n"
 		"unset: usage: unset [-v] [name ...]\n", STDERR_FILENO);
 	return (0);
@@ -36,12 +36,12 @@ static int	check_flags(char **args, int *vars)
 		}
 		j = 0;
 		while (args[i][++j])
+		{
 			if (!ft_strchr("v", args[i][j]))
-				return (usage_error(args[i]));
-		j = 0;
-		while (args[i][++j])
+				return (usage_error(args[i][j]));
 			if (args[i][j] == 'v')
 				*vars = 1;
+		}
 	}
 	return (i);
 }
@@ -68,9 +68,9 @@ static int	is_valid_key(char *str)
 	return (0);
 }
 
-static int	parse_vars(t_robin *env, char **args)
+static int	parse_vars(t_minishell *shell, char **args)
 {
-	int		status;
+	int			status;
 	size_t	i;
 
 	status = 0;
@@ -78,7 +78,10 @@ static int	parse_vars(t_robin *env, char **args)
 	while (args[i])
 	{
 		if (is_valid_key(args[i]))
-			robin_remove(env, args[i]);
+		{
+			if (!robin_remove(shell->env, args[i]))
+				shell->exported_count--;
+		}
 		else
 			status = 1;
 		i++;
@@ -86,21 +89,20 @@ static int	parse_vars(t_robin *env, char **args)
 	return (status);
 }
 
-int	ft_unset(t_minishell *minishell, char **args)
+int	ft_unset(t_minishell *shell, char **args, int fd_out)
 {
 	size_t	i;
 	int		status;
-	t_robin	*env;
 
-	env = minishell->env;
+	(void) fd_out;
 	if (!args[1])
 		return (0);
 	i = check_flags(args, &status);
 	if (i == 0)
 		return (2);
-	status = parse_vars(env, &args[i]);
-	free_matrix(minishell->exported,
-		ft_memlen(minishell->exported, sizeof(char *)));
-	minishell->exported = NULL;
+	status = parse_vars(shell, &args[i]);
+	free_matrix(shell->exported,
+		ft_memlen(shell->exported, sizeof(char *)));
+	shell->exported = NULL;
 	return (status);
 }

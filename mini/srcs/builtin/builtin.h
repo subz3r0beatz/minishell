@@ -16,8 +16,8 @@
 # include "export.h"
 # include "env.h"
 
-int		ft_echo(char **args, int fd_out);
-int		ft_pwd(t_robin *env, char **args, int fd_out);
-int		ft_unset(t_robin *env, char **args);
+int		ft_echo(t_minishell *shell, char **args, int fd_out);
+int		ft_pwd(t_minishell *shell, char **args, int fd_out);
+int		ft_unset(t_minishell *shell, char **args, int fd_out);
 
 #endif

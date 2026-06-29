@@ -13,10 +13,10 @@
 #ifndef BUILD_ENV_H
 # define BUILD_ENV_H
 
-t_robin	*build_env(char **envp);
-int		handle_oldpwd(t_robin *env);
-int		handle_pwd(t_robin *env);
-int		handle_shlvl(t_robin *env);
-int		handle_underscore(t_robin *env);
+int	build_env(t_minishell *shell, char **envp);
+int	handle_oldpwd(t_minishell *shell);
+int	handle_pwd(t_minishell *shell);
+int	handle_shlvl(t_minishell *shell);
+int	handle_underscore(t_minishell *shell);
 
 #endif

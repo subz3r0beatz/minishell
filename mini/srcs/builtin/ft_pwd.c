@@ -11,90 +11,84 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stddef.h>
 
-static int	get_flag(char *str)
+static int	usage_error(char c)
 {
-	int		flag;
-	size_t	i;
-
-	i = 1;
-	flag = 0;
-	while (str[i])
-	{
-		if (str[i] == 'L')
-			flag = 0;
-		else if (str[i] == 'P')
-			flag = 1;
-		else
-		{
-			ft_putstr_fd("minishell: pwd: -", 2);
-			ft_putchar_fd(str[i], 2);
-			ft_putstr_fd(": invalid option\n"
-				"pwd: usage: pwd [-LP]\n", 2);
-			return (2);
-		}
-		i++;
-	}
-	return (flag);
+	ft_putstr_fd("minishell: pwd: -", STDERR_FILENO);
+	ft_putchar_fd(c, STDERR_FILENO);
+	ft_putstr_fd(": invalid option\npwd: usage: pwd [-LP]\n", STDERR_FILENO);
+	return (0);
 }
 
 static int	check_flags(char **args)
 {
 	size_t	i;
-	int		flag;
+	size_t	j;
+	int			flag;
 
 	i = 0;
-	flag = 0;
-	while (args[++i])
+	flag = 1;
+	while (args[++i] && args[i][0] == '-' && args[i][1] != '\0')
 	{
-		if (args[i][0] != '-' || !args[i][1])
+		if (args[i][1] == '-' && !args[i][2])
 			break ;
-		if (args[i][1] == '-')
+		j = 0;
+		while (args[i][++j])
 		{
-			if (args[i][2])
-			{
-				ft_putstr_fd("minishell: pwd: --: invalid option\n"
-					"pwd: usage: pwd [-LP]\n", 2);
-				return (2);
-			}
-			break ;
+			if (!ft_strchr("LP", args[i][j]))
+				return (usage_error(args[i][j]));
+			if (args[i][j] == 'L')
+				flag = 1;
+			else if (args[i][j] == 'P')
+				flag = 2;
 		}
-		flag = get_flag(args[i]);
-		if (flag == 2)
-			return (2);
 	}
 	return (flag);
 }
 
-static int	getcwd_error(void)
+static int	handle_logical(t_minishell *shell, int fd_out)
 {
-	ft_putstr_fd("minishell: pwd: "
-		"error retrieving current directory: ", STDERR_FILENO);
-	ft_putstr_fd("getcwd: cannot access parent directories: ", STDERR_FILENO);
-	ft_putendl_fd(strerror(errno), STDERR_FILENO);
-	return (1);
-}
-
-int	ft_pwd(t_robin *env, char **args, int fd_out)
-{
-	int				flag;
-	char			pwd[8192];
 	t_robin_node	*robin_node;
+	char					*pwd;
+	struct stat		pwd_stat;
+	struct stat		dot_stat;
 
-	flag = check_flags(args);
-	if (flag == 2)
-		return (2);
-	if (!flag)
+	robin_node = robin_search(shell->env, "PWD");
+	if (!robin_node)
+		return (1);
+	pwd = ((t_env *)robin_node->value)->value;
+	if (!pwd || pwd[0] != '/')
+		return (1);
+	if (!stat(pwd, &pwd_stat) && !stat(".", &dot_stat))
 	{
-		robin_node = robin_search(env, "PWD");
-		if (robin_node && ((t_env *)robin_node->value)->value)
+		if (pwd_stat.st_ino == dot_stat.st_ino
+			&& pwd_stat.st_dev == dot_stat.st_dev)
 		{
-			ft_putendl_fd(((t_env *)robin_node->value)->value, fd_out);
+			ft_putstr_fd(pwd, fd_out);
 			return (0);
 		}
 	}
+	return (1);
+}
+
+int	ft_pwd(t_minishell *shell, char **args, int fd_out)
+{
+	int				flag;
+	char			pwd[8192];
+
+	flag = check_flags(args);
+	if (!flag)
+		return (2);
+	if (flag == 1)
+		if (!handle_logical(shell, fd_out))
+			return (0);
 	if (!getcwd(pwd, 8192))
-		return (getcwd_error());
+	{
+		perror("minishell: pwd: error retrieving current directory: "
+				 "getcwd: cannot access parent directories: ");
+		return (1);
+	}
 	ft_putendl_fd(pwd, fd_out);
 	return (0);
 }

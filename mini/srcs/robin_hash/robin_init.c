@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "robin_hash.h"
-#include "libft.h"
+#include "minishell.h"
 
 t_robin	*robin_init(const size_t capacity,
 		size_t (*hash_function)(const void *key),

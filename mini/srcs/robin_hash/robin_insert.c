@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "robin_hash.h"
+#include "minishell.h"
 
 static int	empty_node(t_robin *robin, size_t hash,
 		t_robin_node node, uint8_t psl)

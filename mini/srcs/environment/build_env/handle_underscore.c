@@ -12,15 +12,13 @@
 
 #include "minishell.h"
 
-int	handle_underscore(t_robin *env)
+int	handle_underscore(t_minishell *shell)
 {
 	char			*underscore;
 	char			*value;
-	t_robin_node	*robin_node;
 	t_robin_node	new_node;
 
-	robin_node = robin_search(env, "_");
-	if (robin_node)
+	if (robin_search(env, "_"))
 		return (0);
 	underscore = ft_strdup("_");
 	value = ft_strdup("./minishell");
@@ -38,5 +36,6 @@ int	handle_underscore(t_robin *env)
 		env->del_function(new_node.key, new_node.value);
 		return (1);
 	}
+	shell->exported_count++;
 	return (0);
 }

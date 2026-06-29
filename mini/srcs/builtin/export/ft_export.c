@@ -12,10 +12,10 @@
 
 #include "minishell.h"
 
-static int	usage_error(char *str)
+static int	usage_error(char c)
 {
 	ft_putstr_fd("minishell: export: -", STDERR_FILENO);
-	ft_putchar_fd(str[1], STDERR_FILENO);
+	ft_putchar_fd(c, STDERR_FILENO);
 	ft_putstr_fd(": invalid option\nexport: usage: export"
 		" [-n] [name[=value] ...] or export -p\n", STDERR_FILENO);
 	return (0);
@@ -37,7 +37,7 @@ static int	check_flags(char **args, int *print, int *unexport)
 		j = 0;
 		while (args[i][++j])
 			if (!ft_strchr("pn", args[i][j]))
-				return (usage_error(args[i]));
+				return (usage_error(args[i][j]));
 		j = 0;
 		while (args[i][++j])
 			if (args[i][j] == 'n')

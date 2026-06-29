@@ -53,29 +53,30 @@ static int	increment_shlvl(t_robin_node *robin_node)
 	return (0);
 }
 
-static int	insert_shlvl(t_robin *env, char *shlvl, char *value)
+static int	insert_shlvl(t_minishell *shell, char *shlvl, char *value)
 {
 	t_robin_node	robin_node;
 
-	robin_node = create_node(env, shlvl, value, 1);
+	robin_node = create_node(shell->env, shlvl, value, 1);
 	if (!robin_node.key || !robin_node.value)
 		return (1);
-	if (robin_insert(env, robin_node))
+	if (robin_insert(shell->env, robin_node))
 	{
-		env->del_function(robin_node.key, robin_node.value);
+		shell->env->del_function(robin_node.key, robin_node.value);
 		return (1);
 	}
+	shell->exported_count++;
 	return (0);
 }
 
-int	handle_shlvl(t_robin *env)
+int	handle_shlvl(t_minishell *shell)
 {
 	char			*shlvl;
 	char			*value;
 	t_robin_node	*robin_node;
 	t_robin_node	new_node;
 
-	robin_node = robin_search(env, "SHLVL");
+	robin_node = robin_search(shell->env, "SHLVL");
 	if (!robin_node)
 	{
 		shlvl = ft_strdup("SHLVL");
@@ -86,7 +87,11 @@ int	handle_shlvl(t_robin *env)
 			free(value);
 			return (1);
 		}
-		return (insert_shlvl(env, shlvl, value));
+		if (insert_shlvl(shell, shlvl, value))
+			return (1);
+		return (0);
 	}
-	return (increment_shlvl(robin_node));
+	if (increment_shlvl(robin_node))
+		return (1);
+	return (0);
 }

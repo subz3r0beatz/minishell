@@ -17,27 +17,25 @@ static size_t	parse_flags(char **args, int *newline, int *escape)
 	size_t	i;
 	size_t	j;
 
-	i = 0;
-	*newline = 1;
-	*escape = 0;
-	while (args[++i] && args[i][0] == '-' && args[i][1] != '\0')
+	i = 1;
+	while (args[i] && args[i][0] == '-' && args[i][1] != '\0')
 	{
-		j = 0;
-		while (args[i][++j])
+		j = 1;
+		while (args[i][j])
+		{
 			if (!ft_strchr("neE", args[i][j]))
 				return (i);
-		j = 0;
-		while (args[i][++j])
-		{
 			if (args[i][j] == 'n')
 				*newline = 0;
-			if (args[i][j] == 'e')
+			else (args[i][j] == 'e')
 				*escape = 1;
 			if (args[i][j] == 'E')
 				*escape = 0;
+			j++;
 		}
+		i++;
 	}
-	return (i);
+	return (i + 1);
 }
 
 static char	get_hex(char *str, size_t *i)
@@ -96,7 +94,7 @@ static int	print_escape(char *str, int fd_out, char table[256])
 {
 	size_t	i;
 	size_t	j;
-	char	*buffer;
+	char		*buffer;
 
 	buffer = malloc(sizeof(char) * (ft_strlen(str) + 1));
 	if (!buffer)
@@ -118,18 +116,15 @@ static int	print_escape(char *str, int fd_out, char table[256])
 	return (0);
 }
 
-int	ft_echo(char **args, int fd_out)
+int	ft_echo(t_minishell *shell, char **args, int fd_out)
 {
 	size_t	i;
 	int		newline;
 	int		escape;
 	char	table[256];
 
-	if (!args[1])
-	{
-		ft_putchar_fd('\n', fd_out);
-		return (0);
-	}
+	newline = 1;
+	escape = 0;
 	init_escape_table(table);
 	i = parse_flags(args, &newline, &escape) - 1;
 	while (args[++i])

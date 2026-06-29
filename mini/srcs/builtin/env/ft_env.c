@@ -10,18 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include "environment.h"
-#include "robin_hash.h"
-
-static int	check_flags(char **args, int *unset, int *ignore, int *null)
-{
-
-}
+#include "minishell.h"
 
 static void	print_env(void *key, void *value, void *args)
 {
-	int		null;	
+	int		null;
 	int		fd_out;
 	t_env	*env;
 
@@ -40,23 +33,26 @@ static void	print_env(void *key, void *value, void *args)
 	}
 }
 
-int	ft_env(t_robin *env, char **args, int fd_out)
+static int parse_flags(char **args)
 {
-	int	ignore;
-	int	print;
-	int	unset;
-	int	iter_args[2];
+  size_t  i;
+  size_t  j;
 
-	null = 0;
-	unset = 0;
-	ignore = 0;
-	print = 1;
-	i = check_flags(args, &unset, &ignore, &null);
-	if (args[i])
-		print = 0;
-	if (ignore)
-		return (handle_ignore(env, &args[i]));
-	else if (print)
-		robin_iter(env, print_env, &iter_args[0], &iter_args[1]);
-	return (0);
+  i = 1;
+  while (args[i] && args[i][0] == '-')
+  {
+    if (args[i][1] == '-' && !args[i][2])
+      return (i + 1);
+    i++;
+  }
+}
+
+int	ft_env(t_minishell minishell, char **args, int fd_out)
+{
+  size_t  i;
+  int     print;
+  char    **exported;
+
+  exported = env_to_matrix(minishell->env);
+  i = parse_flags(args, exported);
 }

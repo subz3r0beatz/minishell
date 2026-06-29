@@ -13,9 +13,6 @@
 #ifndef ROBIN_HASH_H
 # define ROBIN_HASH_H
 
-# include <stdlib.h>
-# include <stdint.h>
-
 # include "hash_functions/hash_functions.h"
 
 typedef struct s_robin_node

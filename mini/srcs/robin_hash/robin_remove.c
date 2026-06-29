@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "robin_hash.h"
+#include "minishell.h"
 
 static int	get_index(t_robin *robin, const void *key,
 		size_t *hash, size_t target_hash)

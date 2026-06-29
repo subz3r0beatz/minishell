@@ -18,16 +18,17 @@
 # include "robin_hash.h"
 # include "environment.h"
 # include "builtin.h"
+# include "lexer.h"
 # include "parser.h"
 # include "prompt.h"
-# include "lexer.h"
 # include "lookup_table.h"
 # include "error.h"
 
 typedef struct s_minishell
 {
 	t_robin	*env;
-	char	**exported;
+	char	  **exported;
+  size_t  exported_count;
 	uint8_t	token_type_table[256][256];
 }				t_minishell;
 

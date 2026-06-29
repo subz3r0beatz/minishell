@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "robin_hash.h"
+#include "minishell.h"
 
 void	robin_free(t_robin *robin)
 {

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../robin_hash.h"
+#include "minishell.h"
 
 size_t	djb2(const void *key)
 {
