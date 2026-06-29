@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 11:57:32 by fldumas-          #+#    #+#             */
-/*   Updated: 2025/10/25 06:13:02 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/29 18:55:26 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,17 +41,6 @@ static size_t	ft_getwords_len(char const *s, char c, int len)
 	return (0);
 }
 
-static void	ft_freeall(char **strs, size_t	i)
-{
-	while (i)
-	{
-		i--;
-		free(strs[i]);
-	}
-	free(strs);
-	return ;
-}
-
 static char	**ft_getsplits(char **strs, const char *s, char c, size_t words)
 {
 	size_t	i;
@@ -68,7 +57,7 @@ static char	**ft_getsplits(char **strs, const char *s, char c, size_t words)
 		strs[i] = ft_substr(s, j, wordlen);
 		if (!strs[i])
 		{
-			ft_freeall(strs, i);
+			ft_free_matrix(strs, i);
 			return (NULL);
 		}
 		j += wordlen;

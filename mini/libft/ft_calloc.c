@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 17:21:32 by fldumas-          #+#    #+#             */
-/*   Updated: 2025/10/25 06:39:36 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/29 18:24:54 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void	*ft_calloc(size_t nmemb, size_t size)
 		arr = (unsigned char *)malloc(0);
 		return (arr);
 	}
-	if ((nmemb * size) > (size_t)-1)
-		return (0);
+	if (nmemb > (size_t)-1 / size)
+		return (NULL);
 	arr = (unsigned char *)malloc(nmemb * size);
 	if (!arr)
 		return (NULL);

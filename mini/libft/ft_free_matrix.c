@@ -1,25 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*   ft_free_matrix.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fldumas- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/14 12:46:27 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/29 23:06:58 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/06/29 18:54:27 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/06/29 18:54:35 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+void	ft_free_matrix(char **matrix)
 {
-	size_t	i;
+	int	i;
 
-	if (n == 0)
-		return (0);
 	i = 0;
-	while (i < n - 1 && s1[i] && s1[i] == s2[i])
+	while (matrix[i])
+	{
+		free(matrix[i]);
 		i++;
-	return (((unsigned char *)s1)[i] - ((unsigned char *)s2)[i]);
+	}
+	free(matrix);
 }

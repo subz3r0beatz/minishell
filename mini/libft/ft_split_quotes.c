@@ -1,29 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   split_quotes.c                                     :+:      :+:    :+:   */
+/*   ft_split_quotes.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 15:29:25 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/04/07 00:12:26 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/29 18:56:45 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
-
-static void	free_split(char **split, size_t size)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < size)
-	{
-		free(split[i]);
-		i++;
-	}
-	free(split);
-}
+#include "libft.h"
 
 static size_t	word_count(const char *s, char c)
 {
@@ -86,7 +73,7 @@ static void	trim_quotes(char **split)
 		if (!trimed)
 		{
 			write(2, "Error: memory allocation failed\n", 32);
-			free_matrix(split);
+			ft_free_matrix(split, i);
 			exit(1);
 		}
 		free(split[i]);
@@ -113,7 +100,7 @@ char	**split_quotes(const char *s, char c)
 			split[i[1]] = ft_substr(s, i[0], word_len(s + i[0], c));
 			if (!split[i[1]])
 			{
-				free_split(split, i[1]);
+				ft_free_matrix(split, i[1]);
 				return (NULL);
 			}
 			i[1]++;

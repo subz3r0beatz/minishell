@@ -6,7 +6,7 @@
 #    By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/15 16:32:29 by fldumas-          #+#    #+#              #
-/*   Updated: 2026/06/26 21:49:59 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/29 18:54:16 by fldumas-         ###   ########.fr       */
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,7 +51,9 @@ ft_swap.c \
 ft_memlen.c \
 ft_split_quotes.c \
 ft_iswhite.c \
-ft_strcmp.c
+ft_strcmp.c \
+ft_realloc.c \
+ft_free_matrix.c
 
 BONUS = \
 ft_lstnew_bonus.c \
