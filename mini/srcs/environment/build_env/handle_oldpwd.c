@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 11:38:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 18:58:08 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/29 16:08:49 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	handle_oldpwd(t_minishell *shell)
 {
-	char					*oldpwd;
+	char			*oldpwd;
 	t_robin_node	*robin_node;
 	t_robin_node	new_node;
 

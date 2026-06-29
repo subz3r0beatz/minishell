@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 10:09:53 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 18:58:53 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/29 16:09:19 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	handle_pwd(t_minishell *shell)
 	if (!getcwd(pwd_buf, 8192))
 	{
 		perror("minishell: pwd: error retrieving current directory: "
-				 "getcwd cannot access parent directories: ");
+			"getcwd cannot access parent directories: ");
 		return (1);
 	}
 	pwd = ft_strdup("PWD");

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:31:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 15:14:42 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/29 15:43:50 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@ static size_t	parse_flags(char **args, int *newline, int *escape)
 		j = 1;
 		while (args[i][j])
 		{
-			if (!ft_strchr("neE", args[i][j]))
-				return (i);
 			if (args[i][j] == 'n')
 				*newline = 0;
-			else (args[i][j] == 'e')
+			else if (args[i][j] == 'e')
 				*escape = 1;
-			if (args[i][j] == 'E')
+			else if (args[i][j] == 'E')
 				*escape = 0;
+			else
+				return (i);
 			j++;
 		}
 		i++;
@@ -94,7 +94,7 @@ static int	print_escape(char *str, int fd_out, char table[256])
 {
 	size_t	i;
 	size_t	j;
-	char		*buffer;
+	char	*buffer;
 
 	buffer = malloc(sizeof(char) * (ft_strlen(str) + 1));
 	if (!buffer)
@@ -123,11 +123,14 @@ int	ft_echo(t_minishell *shell, char **args, int fd_out)
 	int		escape;
 	char	table[256];
 
-	newline = 1;
-	escape = 0;
+	(void)shell;
+	if (!args[1])
+		ft_putchar_fd('\n', fd_out);
+	if (!args[1])
+		return (0);
 	init_escape_table(table);
-	i = parse_flags(args, &newline, &escape) - 1;
-	while (args[++i])
+	i = parse_flags(args, &newline, &escape);
+	while (args[i])
 	{
 		if (escape && print_escape(args[i], fd_out, table))
 			return (0);
@@ -135,6 +138,7 @@ int	ft_echo(t_minishell *shell, char **args, int fd_out)
 			ft_putstr_fd(args[i], fd_out);
 		if (args[i + 1])
 			ft_putchar_fd(' ', fd_out);
+		i++;
 	}
 	if (newline)
 		ft_putchar_fd('\n', fd_out);

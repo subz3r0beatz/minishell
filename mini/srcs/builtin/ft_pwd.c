@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 22:52:56 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 18:33:37 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/29 15:44:02 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,24 +25,26 @@ static int	check_flags(char **args)
 {
 	size_t	i;
 	size_t	j;
-	int			flag;
+	int		flag;
 
-	i = 0;
+	i = 1;
 	flag = 1;
-	while (args[++i] && args[i][0] == '-' && args[i][1] != '\0')
+	while (args[i] && args[i][0] == '-' && args[i][1] != '\0')
 	{
 		if (args[i][1] == '-' && !args[i][2])
 			break ;
-		j = 0;
-		while (args[i][++j])
+		j = 1;
+		while (args[i][j])
 		{
-			if (!ft_strchr("LP", args[i][j]))
-				return (usage_error(args[i][j]));
 			if (args[i][j] == 'L')
 				flag = 1;
 			else if (args[i][j] == 'P')
 				flag = 2;
+			else
+				return (usage_error(args[i][j]));
+			j++;
 		}
+		i++;
 	}
 	return (flag);
 }
@@ -50,7 +52,7 @@ static int	check_flags(char **args)
 static int	handle_logical(t_minishell *shell, int fd_out)
 {
 	t_robin_node	*robin_node;
-	char					*pwd;
+	char			*pwd;
 	struct stat		pwd_stat;
 	struct stat		dot_stat;
 
@@ -86,7 +88,7 @@ int	ft_pwd(t_minishell *shell, char **args, int fd_out)
 	if (!getcwd(pwd, 8192))
 	{
 		perror("minishell: pwd: error retrieving current directory: "
-				 "getcwd: cannot access parent directories: ");
+			"getcwd: cannot access parent directories: ");
 		return (1);
 	}
 	ft_putendl_fd(pwd, fd_out);

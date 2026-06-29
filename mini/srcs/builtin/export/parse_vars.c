@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 15:31:03 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 18:40:13 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/29 15:56:16 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@ static size_t	is_valid_key(char *str)
 	return (0);
 }
 
-static int	lookup_var(t_robin *env, char *key, char *value)
+static int	lookup_var(t_minishell *shell, char *key, char *value)
 {
 	t_robin_node	*robin_node;
 
-	robin_node = robin_search(env, key);
+	robin_node = robin_search(shell->env, key);
 	if (!robin_node)
 		return (1);
 	free(key);
@@ -47,26 +47,29 @@ static int	lookup_var(t_robin *env, char *key, char *value)
 		free(((t_env *)robin_node->value)->value);
 		((t_env *)robin_node->value)->value = value;
 	}
+	if (!((t_env *)robin_node->value)->is_exported)
+		shell->exported_count++;
 	((t_env *)robin_node->value)->is_exported = 1;
 	return (0);
 }
 
-static int	insert_new_var(t_robin *env, char *key, char *value)
+static int	insert_new_var(t_minishell *shell, char *key, char *value)
 {
 	t_robin_node	robin_node;
 
-	robin_node = create_node(env, key, value, 0);
+	robin_node = create_node(shell->env, key, value, 0);
 	if (!robin_node.key || !robin_node.value)
 		return (2);
-	if (robin_insert(env, robin_node))
+	if (robin_insert(shell->env, robin_node))
 	{
-		env->del_function(robin_node.key, robin_node.value);
+		shell->env->del_function(robin_node.key, robin_node.value);
 		return (2);
 	}
+	shell->exported_count++;
 	return (0);
 }
 
-static int	insert_var(t_robin *env, char *str)
+static int	insert_var(t_minishell *shell, char *str)
 {
 	size_t			i;
 	char			*key;
@@ -86,12 +89,12 @@ static int	insert_var(t_robin *env, char *str)
 		free(value);
 		return (2);
 	}
-	if (!lookup_var(env, key, value))
+	if (!lookup_var(shell, key, value))
 		return (0);
-	return (insert_new_var(env, key, value));
+	return (insert_new_var(shell, key, value));
 }
 
-int	parse_vars(t_robin *env, char **args)
+int	parse_vars(t_minishell *shell, char **args)
 {
 	int		status;
 	int		ret;
@@ -101,7 +104,7 @@ int	parse_vars(t_robin *env, char **args)
 	i = 0;
 	while (args[i])
 	{
-		status = insert_var(env, args[i]);
+		status = insert_var(shell, args[i]);
 		if (status == 1)
 			ret = 1;
 		if (status == 2)

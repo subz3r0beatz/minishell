@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 23:53:20 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 20:22:13 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/29 16:31:39 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,6 @@ t_robin_node	create_node(t_robin *env,
 					char *key, char *value, int is_exported);
 int				delete_node(void *key, void *value);
 void			free_matrix(char **matrix, size_t size);
+char			**env_to_matrix(t_minishell *shell, char **modif);
 
 #endif

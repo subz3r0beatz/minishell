@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/06 07:09:11 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 21:20:58 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/06/29 18:57:50 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,20 @@ static int	check_flags(char **args, int *vars)
 	size_t	i;
 	size_t	j;
 
-	i = 0;
-	while (args[++i] && args[i][0] == '-' && args[i][1] != '\0')
+	i = 1;
+	while (args[i] && args[i][0] == '-' && args[i][1] != '\0')
 	{
 		if (args[i][1] == '-' && args[i][2] == '\0')
-		{
-			i++;
-			break ;
-		}
+			return (i + 1);
 		j = 0;
 		while (args[i][++j])
 		{
-			if (!ft_strchr("v", args[i][j]))
-				return (usage_error(args[i][j]));
 			if (args[i][j] == 'v')
 				*vars = 1;
+			else
+				return (usage_error(args[i][j]));
 		}
+		i++;
 	}
 	return (i);
 }
@@ -70,7 +68,7 @@ static int	is_valid_key(char *str)
 
 static int	parse_vars(t_minishell *shell, char **args)
 {
-	int			status;
+	int		status;
 	size_t	i;
 
 	status = 0;
@@ -101,7 +99,7 @@ int	ft_unset(t_minishell *shell, char **args, int fd_out)
 	if (i == 0)
 		return (2);
 	status = parse_vars(shell, &args[i]);
-	free_matrix(shell->exported,
+	ft_free_matrix(shell->exported,
 		ft_memlen(shell->exported, sizeof(char *)));
 	shell->exported = NULL;
 	return (status);
