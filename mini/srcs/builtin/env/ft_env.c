@@ -124,8 +124,8 @@ static int	parse_flags(char **args, char **exported, int *null)
 				return (0);
 			else if (args[i][j] == '0')
 				*null = 1;
-			else if (args[i][j] == 'S')
-				handle_string(exported, &args[i]);
+			else if (args[i][j] == 'S' && handle_string(exported, &args[i]))
+
 			else
 				return (usage_error(args[i][j]));
 			j++;

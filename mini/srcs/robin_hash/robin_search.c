@@ -11,28 +11,31 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stddef.h>
 
 t_robin_node	*robin_search(const t_robin *robin, const void *key)
 {
+	size_t	mask;
 	size_t	target_hash;
 	size_t	hash;
-	uint8_t	psl;
 	size_t	i;
+	uint8_t	psl;
 
 	if (robin->count == 0)
 		return (NULL);
 	target_hash = robin->hash_function(key);
-	hash = target_hash & (robin->capacity - 1);
+	mask = robin->capacity - 1;
+	hash = target_hash & mask;
 	psl = 0;
 	i = 0;
-	while (i < robin->capacity)
+	while (i < mask + 1)
 	{
 		if (robin->ctrl[hash] == 0 || psl > robin->ctrl[hash] - 1)
 			return (NULL);
 		if (robin->data[hash].hash == target_hash
 			&& robin->cmp_function(robin->data[hash].key, key) == 0)
 			return (&robin->data[hash]);
-		hash = (hash + 1) & (robin->capacity - 1);
+		hash = (hash + 1) & mask;
 		psl++;
 		i++;
 	}

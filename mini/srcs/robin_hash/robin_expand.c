@@ -41,10 +41,12 @@ static void	swap_node(t_robin *robin, size_t hash,
 
 static int	fast_robin_insert(t_robin *robin, t_robin_node node)
 {
-	size_t			hash;
-	uint8_t			psl;
+	size_t	mask;
+	size_t	hash;
+	uint8_t	psl;
 
-	hash = node.hash & (robin->capacity - 1);
+	mask = robin->capacity - 1;
+	hash = node.hash & mask;
 	psl = 0;
 	while (psl < 255)
 	{
@@ -52,13 +54,18 @@ static int	fast_robin_insert(t_robin *robin, t_robin_node node)
 			return (0);
 		if (psl > robin->ctrl[hash] - 1)
 			swap_node(robin, hash, &node, &psl);
-		hash = (hash + 1) & (robin->capacity - 1);
+		hash = (hash + 1) & mask;
 		psl++;
 	}
 	if (robin_expand(robin) == 0)
 		return (fast_robin_insert(robin, node));
 	else
+	{
+		free(robin->ctrl);
+		free(robin->data);
+		free(robin);
 		return (1);
+	}
 }
 
 int	robin_expand(t_robin *robin)

@@ -86,7 +86,7 @@ int	build_prompt(t_robin *env, char **prompt)
 	if (!*prompt)
 	{
 		*prompt = "unknown@unknown:$\n$ ";
-		status = 2;
+		return (2);
 	}
 	return (status);
 }

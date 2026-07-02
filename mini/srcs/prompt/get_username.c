@@ -42,7 +42,7 @@ static char	*search_passwd(uid_t uid, char *buffer)
 		id = 0;
 		while (*ptr && *ptr != '\n')
 		{
-			if (*ptr == ':' && ++colons == 1)
+			if (*ptr == ':' && colons++ <= 1)
 				*ptr = '\0';
 			else if (colons == 2)
 				id = id * 10 + *ptr - '0';
