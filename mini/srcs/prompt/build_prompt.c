@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 19:20:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 13:59:24 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/02 14:24:51 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void	build_username(t_robin *env, char **username, size_t *size)
 
 static void	build_hostname(t_robin *env, char **hostname, size_t *size)
 {
-	char	buffer[8192];
+	char	buffer[HOST_NAME_MAX];
 
 	*hostname = get_hostname(env, buffer);
 	if (!*hostname)
@@ -34,7 +34,7 @@ static void	build_hostname(t_robin *env, char **hostname, size_t *size)
 
 static void	build_pwd(t_robin *env, char **pwd, size_t *size)
 {
-	char	buffer[8192];
+	char	buffer[MAX_PATH];
 
 	*pwd = get_pwd(env, buffer);
 	if (!*pwd)

@@ -1,24 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin.h                                          :+:      :+:    :+:   */
+/*   cd.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/12 06:53:16 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/02 14:25:54 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/07/02 13:37:42 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/02 13:38:21 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTIN_H
-# define BUILTIN_H
+#ifndef CD_H
+# define CD_H
 
-# include "export.h"
-# include "env.h"
-# include "cd.h"
-
-int		ft_echo(t_minishell *shell, char **args, int fd_out);
-int		ft_pwd(t_minishell *shell, char **args, int fd_out);
-int		ft_unset(t_minishell *shell, char **args, int fd_out);
+int	ft_cd(t_minishell *shell, char **args, int fd_out);
 
 #endif

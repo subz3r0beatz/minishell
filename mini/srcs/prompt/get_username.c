@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 01:01:10 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/13 21:21:37 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/02 14:21:43 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static char	*search_passwd(uid_t uid, char *buffer)
 static char	*extract_username(char *pid, uid_t uid, char *buffer)
 {
 	struct stat	st;
-	char		path[4096];
+	char		path[MAX_PATH];
 	int			bytes_read;
 	int			i;
 
@@ -68,7 +68,7 @@ static char	*extract_username(char *pid, uid_t uid, char *buffer)
 	ft_strlcat(path, "/environ", sizeof(path));
 	if (stat(path, &st) < 0 || st.st_uid != uid)
 		return (NULL);
-	bytes_read = read_file(path, buffer, 8192);
+	bytes_read = read_file(path, buffer, sizeof(buffer));
 	i = 0;
 	while (i < bytes_read)
 	{

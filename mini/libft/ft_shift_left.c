@@ -1,24 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin.h                                          :+:      :+:    :+:   */
+/*   ft_shift_left.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/12 06:53:16 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/02 14:25:54 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/07/02 18:30:07 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/02 18:30:32 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTIN_H
-# define BUILTIN_H
+#include "libft.h"
 
-# include "export.h"
-# include "env.h"
-# include "cd.h"
-
-int		ft_echo(t_minishell *shell, char **args, int fd_out);
-int		ft_pwd(t_minishell *shell, char **args, int fd_out);
-int		ft_unset(t_minishell *shell, char **args, int fd_out);
-
-#endif
+void	ft_shift_left(char *str, size_t len)
+{
+	while (len)
+	{
+		str[len] = str[len - 1];
+		len--;
+	}
+	str[0] = '\0';
+}

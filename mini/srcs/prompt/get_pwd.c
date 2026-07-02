@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 01:34:45 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 11:04:44 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/02 14:18:15 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,12 @@ static char	*get_raw_cwd(t_robin *env, char *buffer)
 	node = robin_search(env, "PWD");
 	if (node && node->value && ((t_env *)node->value)->value)
 		pwd = ft_strdup(((t_env *)node->value)->value);
-	else if (getcwd(buffer, 8192))
+	else if (getcwd(buffer, PATH_MAX))
 		pwd = ft_strdup(buffer);
 	else
 	{
-		ft_putstr_fd("minishell: pwd: error retrieving current directory: ", 2);
-		ft_putstr_fd("getcwd: cannot access parent directories: ", 2);
-		ft_putendl_fd(strerror(errno), 2);
+		perror("minishell: pwd: error retrieving current directory: "
+			"getcwd: cannot access parent directories");
 		return (NULL);
 	}
 	if (!pwd)
