@@ -28,6 +28,7 @@ t_list	*ft_lstlast(t_list *lst);
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
 void	ft_shift_left(char *str, size_t len);
+void	ft_mem_shift(void *ptr, size_t count, size_t size, int dir);
 void	ft_putnbr_fd(int n, int fd);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putchar_fd(char c, int fd);
@@ -50,7 +51,8 @@ void	*ft_calloc(size_t nmemb, size_t size);
 void	*ft_realloc(void *ptr, size_t size);
 
 char	*ft_substr(char const *s, unsigned int start, size_t len);
-char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strjoin_prefix(char const *s1, char const *s2);
+char	*ft_join_split(char const **s, char *del);
 char	*ft_strtrim(char const *s1, char const *set);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strrchr(const char *s, int c);

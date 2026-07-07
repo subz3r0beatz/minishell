@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <linux/limits.h>
 static int	insert_variable(t_robin *env, char *key, char *value)
 {
 
@@ -19,14 +20,13 @@ static int	handle_pwd(t_robin *env)
 {
 	char			*pwd_value;
 	char			*pwd;
-	char			pwd_buf[8192];
+	char			pwd_buf[PATH_MAX];
 	t_robin_node	robin_node;
 
-	if (!getcwd(pwd_buf, 8192))
+	if (!getcwd(pwd_buf, PATH_MAX))
 	{
-		ft_putstr_fd("minishell: pwd: error retrieving current directory: ", 2);
-		ft_putstr_fd("getcwd: cannot access parent directories: ", 2);
-		ft_putendl_fd(strerror(errno), 2);
+		perror("minishell: pwd: error retrieving current directory: "
+			"getcwd: cannot access parent directories");
 		return (1);
 	}
 	pwd = ft_strdup("PWD");

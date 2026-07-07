@@ -88,7 +88,7 @@ int	ft_pwd(t_minishell *shell, char **args, int fd_out)
 	if (!getcwd(pwd, 8192))
 	{
 		perror("minishell: pwd: error retrieving current directory: "
-			"getcwd: cannot access parent directories: ");
+			"getcwd: cannot access parent directories");
 		return (1);
 	}
 	ft_putendl_fd(pwd, fd_out);

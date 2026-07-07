@@ -54,7 +54,9 @@ ft_iswhite.c \
 ft_strcmp.c \
 ft_realloc.c \
 ft_free_matrix.c \
-ft_shift_left.c
+ft_shift_left.c \
+ft_join_split_prefix.c \
+ft_mem_shift.c
 
 BONUS = \
 ft_lstnew_bonus.c \

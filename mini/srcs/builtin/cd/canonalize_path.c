@@ -12,32 +12,60 @@
 
 #include "minishell.h"
 
-static char	*canonalize_path(t_minishell *shell, char *pwd, char *path)
+static void	clean_split(char **split)
 {
-	char	*ret;
-	size_t	len;
 	size_t	i;
-	size_t	prev;
 
-	len = ft_strlen(pwd) + ft_strlen(path) + 1;
-	ret = malloc(len);
+	i = 0;
+	while (split[i])
+	{
+		if (split[i][0] == '.' && !split[i][1])
+		{
+			free(split[i]);
+			ft_mem_shift(&split[i], 1, sizeof(char *), -1);
+		}
+		else if (split[i][0] == '.' && split[i][1] == '.' && !split[i][2])
+		{
+			free(split[i]);
+			if (i > 0)
+			{
+				i--;
+				free(split[i]);
+				ft_mem_shift(&split[i], 2, sizeof(char *), -1);
+			}
+			else
+				ft_mem_shift(&split[i], 1, sizeof(char *), -1);
+		}
+		else
+			i++;
+	}
+}
+
+char	*canonalize_path(char *pwd, char *path)
+{
+	char		*ret;
+	char		*tmp;
+	char		**split;
+	size_t	len;
+
+	if (path[0] == '/')
+		ret = ft_strdup(path);
+	else
+	{
+		tmp = ft_strjoin(pwd, "/");
+		if (!tmp)
+			return (NULL);
+		ret = ft_strjoin(tmp, path);
+		free(tmp);
+	}
 	if (!ret)
 		return (NULL);
-	i = 0;
-	prev = 0;
-	while (pwd[i])
-	{
-		ret[i] = pwd[i];
-		i++;
-	}
-	while (path[prev])
-		ret[i++] = path[prev++];
-	ret[i] = '\0';
-	i = 0;
-	while (pwd[i] || path[i])
-	{
-		if (path[i] == '/' && path[i + 1] == '/')
-		i++;
-	}
+	split = ft_split(ret, '/');
+	free(ret);
+	if (!split)
+		return (NULL);
+	len = ft_memlen(split, sizeof(char *));
+	clean_split(split);
+	ret = ft_join_split_prefix(split, "/");
+	ft_free_matrix(split, len);
 	return (ret);
-}
