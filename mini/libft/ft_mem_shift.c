@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_mem_shift.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/07 20:36:02 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/07 20:40:39 by fldumas-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
 void	ft_mem_shift(void *ptr, size_t count, size_t size, int dir)
 {
-	unsigned char *mem;
-	size_t				len;
+	unsigned char	*mem;
+	size_t			len;
 
 	if (!ptr || !count || !size
 		|| (count > (size_t)-1 / size) || (dir != -1 && dir != 1))
