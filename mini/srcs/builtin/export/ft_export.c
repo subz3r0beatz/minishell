@@ -21,7 +21,7 @@ static int	usage_error(char c)
 	return (0);
 }
 
-static int	check_flags(char **args, int *print, int *unexport)
+static size_t	check_flags(char **args, int *print, int *unexport)
 {
 	size_t	i;
 	size_t	j;

@@ -13,6 +13,15 @@
 #ifndef ENV_H
 # define ENV_H
 
-int		ft_env(t_robin *env, char **argv, int fd_out);
+typedef struct s_flags
+{
+	int		ignore_env;
+	int		null_term;
+	char	*chdir_path;
+	char	*custom_argv0;
+}								t_flags;
+
+int			ft_env(t_minishell *shell, char **argv, int fd_out);
+size_t	parse_env_flags(char **args, t_flags *flags);
 
 #endif
