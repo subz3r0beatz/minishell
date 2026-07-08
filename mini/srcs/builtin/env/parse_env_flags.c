@@ -12,33 +12,10 @@
 
 #include "minishell.h"
 
-static t_flags	init_flags(void)
-{
-	t_flags	*flags;
-
-	flags = malloc(sizeof(flags));
-	if (!flags)
-	{
-		ft_putstr_fd("minishell: env: malloc: "
-			"cannot allocate memory\n", STDERR_FILENO);
-		return (NULL);
-	}
-	flags->print_env = 1;
-	flags->print_help = 0;
-	flags->ignore_env = 0;
-	flags->null_term = 0;
-	flags->chdir_path = NULL;
-	flags->custom_argv0 = NULL;
-	return (flags);
-}
-
-size_t	parse_env_flags(char **args, t_flags *flags, char **exported)
+size_t	parse_env_flags(char **args, t_flags *flags, char ***exported)
 {
 	size_t	i;
 
-	flags = init_flags();
-	if (!flags)
-		return (0);
 	i = 1;
 	while (args[i] && args[i][0] == '-' && args[i][1])
 	{
@@ -46,10 +23,15 @@ size_t	parse_env_flags(char **args, t_flags *flags, char **exported)
 		{
 			if (!args[i][2])
 				return (i + 1);
-			else if (check_long_flags(&args[i], flags, exported, &i))
+			else if (check_long_flags(args, flags, exported, &i))
 				return (0);
+			if (flags->print_help)
+			{
+				ft_free_matrix(exported, ft_memlen(exported, sizeof(char *)));
+				return (i + 1);
+			}
 		}
-		if (check_flags(&args[i], flags, exported, &i))
+		if (check_flags(args, flags, exported, &i))
 			return (0);
 		i++;
 	}

@@ -37,29 +37,24 @@ static void	print_env(char **exported, int null, int fd_out)
 	}
 }
 
-static size_t	add_variables(char **args, char **exported, size_t i)
+static t_flags	*init_flags(void)
 {
-	char	*ptr;
-	char	*key;
+	t_flags	*flags;
 
-	while (args[i])
+	flags = malloc(sizeof(t_flags));
+	if (!flags)
 	{
-		ptr = ft_strchr(args[i], '=');
-		if (ptr)
-		{
-			key = ft_substr(args[i], 0, ptr - args[i]);
-			if (!key)
-			{
-				ft_putstr_fd("minishell: env: malloc: "
-					"cannot allocate memory\n", STDERR_FILENO);
-				return (0);
-			}
-		}
-		else
-			break ;
-		i++;
+		ft_putstr_fd("minishell: env: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
+		return (NULL);
 	}
-	return (i);
+	flags->print_env = 1;
+	flags->print_help = 0;
+	flags->ignore_env = 0;
+	flags->null_term = 0;
+	flags->chdir_path = NULL;
+	flags->custom_argv0 = NULL;
+	return (flags);
 }
 
 int	ft_env(t_minishell *shell, char **args, int fd_out)
@@ -71,14 +66,14 @@ int	ft_env(t_minishell *shell, char **args, int fd_out)
 	exported = env_to_matrix(shell);
 	if (!exported)
 		return (125);
+	flags = init_flags();
+	if (!flags)
+		return (125);
 	i = parse_env_flags(args, flags, exported);
 	if (flags->print_help)
 		return (print_env_help());
 	if (i == 0)
-	{
-		ft_free_matrix(exported, ft_memlen(exported, sizeof(char *)));
 		return (125);
-	}
 	i = add_variables(&args[i], exported, shell);
 	if (i == 0)
 		return (125);
