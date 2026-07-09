@@ -16,14 +16,14 @@ void	*ft_realloc(void *ptr, size_t elem_count, size_t elem_size)
 {
 	void	*new_ptr;
 	size_t	old_elem_count;
+	size_t	copy_count;
 
 	if (!elem_count || !elem_size)
 	{
 		free(ptr);
-		new_ptr = malloc(0);
-		return (new_ptr);
+		return (NULL);
 	}
-	if (elem_count < (size_t)-1 / elem_size)
+	if (elem_count <= (size_t)-1 / elem_size)
 	{
 		new_ptr = malloc(elem_count * elem_size);
 		if (!new_ptr)
@@ -31,10 +31,11 @@ void	*ft_realloc(void *ptr, size_t elem_count, size_t elem_size)
 		if (!ptr)
 			return (new_ptr);
 		old_elem_count = ft_memlen(ptr, elem_size);
-		if (old_elem_count < elem_count)
-			ft_memcpy(new_ptr, ptr, old_elem_count * elem_size);
+		if (old_elem_count + 1 < elem_count)
+			copy_count = old_elem_count + 1;
 		else
-			ft_memcpy(new_ptr, ptr, elem_count * elem_size);
+			copy_count = elem_count;
+		ft_memcpy(new_ptr, ptr, copy_count * elem_size);
 		free(ptr);
 		return (new_ptr);
 	}

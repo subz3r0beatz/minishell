@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stddef.h>
 
 static void	print_env(char **exported, int null, int fd_out)
 {
@@ -27,7 +28,7 @@ static void	print_env(char **exported, int null, int fd_out)
 		if (exported[i][j])
 		{
 			write(fd_out, "=", 1);
-			write(fd_out, exported[i] + j + 1, ft_strlen(exported[i] + j + 1));
+			write(fd_out, &exported[i][j + 1], ft_strlen(&exported[i][j + 1]));
 		}
 		if (null)
 			write(fd_out, "\0", 1);
@@ -37,50 +38,68 @@ static void	print_env(char **exported, int null, int fd_out)
 	}
 }
 
-static t_flags	*init_flags(void)
+static int	exit_env(char **args, char **exported,
+	size_t lens[2], int exit_code)
 {
-	t_flags	*flags;
-
-	flags = malloc(sizeof(t_flags));
-	if (!flags)
-	{
-		ft_putstr_fd("minishell: env: malloc: "
-			"cannot allocate memory\n", STDERR_FILENO);
-		return (NULL);
-	}
-	flags->print_env = 1;
-	flags->print_help = 0;
-	flags->ignore_env = 0;
-	flags->null_term = 0;
-	flags->chdir_path = NULL;
-	flags->custom_argv0 = NULL;
-	return (flags);
+	if (args)
+		ft_free_matrix(args, lens[1]);
+	if (exported)
+		ft_free_matrix(exported, lens[0]));
+	return (exit_code);
 }
 
 int	ft_env(t_minishell *shell, char **args, int fd_out)
 {
 	char	**exported;
-	t_flags	*flags;
+	char	**args_cpy;
+	t_flags	flags;
 	size_t	i;
+	size_t	lens[2];
 
 	exported = env_to_matrix(shell);
 	if (!exported)
-		return (125);
-	flags = init_flags();
-	if (!flags)
-		return (125);
-	i = parse_env_flags(args, flags, exported);
-	if (flags->print_help)
-		return (print_env_help());
+		return (exit_env(NULL, NULL, 0, 125));
+	ft_bzero(flags, sizeof(t_flags));
+	lens[0] = ft_memlen(exported, sizeof(char *));
+	lens[1] = ft_memlen(args, sizeof(char *));
+	args_cpy = ft_dup_matrix(args, lens[1]);
+	if (!args_cpy)
+	{
+		ft_putstr_fd("minishell: env: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
+		return (exit_env(NULL, exported, lens, 125));
+	}
+	i = parse_env_flags(&args_cpy, &exported, &flags, &lens);
+	if (flags.print_help)
+		return (exit_env(args_cpy, exported, lens,  print_env_help(fd_out));
 	if (i == 0)
-		return (125);
-	i = add_variables(&args[i], exported, shell);
+		return (exit_env(args_cpy, exported, lens, 125));
+	i = add_variables(args_cpy, &exported, i, &lens[0]);
 	if (i == 0)
-		return (125);
+		return (exit_env(args_cpy, exported, lens, 125));
+	if (flags.ignore_env)
+	{
+		ft_free_matrix(exported, lens[0]);
+		exported = malloc(1 * sizeof(char *));
+		if (!exported)
+		{
+			ft_putstr_fd("minishell: env: malloc: "
+				"cannot allocate memory\n", STDERR_FILENO);
+			exit_env(args_cpy, NULL, lens, 125);
+		}
+		exported[0] = NULL;
+		lens[0] = 0;
+	}
 	if (args[i])
-		flags->print_env = 0;
-	if (flags->print_env)
-		print_env(exported, flags->null_term, fd_out);
-	ft_free_matrix(exported, ft_memlen(exported, sizeof(char *)));
-	return (0);
+	{
+		if (flags.null_term)
+		{
+			ft_putstr_fd("minishell: env: cannot specify --null (-0) with command\n"
+				"Try 'env --help' for more information.\n", STDERR_FILENO);
+			return (exit_env(args_cpy, exported, lens, 125));
+		}
+	}
+	else
+		print_env(exported, flags.null_term, fd_out);
+	return (exit_env(args_cpy, exported, lens, 0));
 }

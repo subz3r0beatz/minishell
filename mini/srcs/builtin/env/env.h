@@ -15,7 +15,6 @@
 
 typedef struct s_flags
 {
-	int		print_env;
 	int		print_help;
 	int		ignore_env;
 	int		null_term;

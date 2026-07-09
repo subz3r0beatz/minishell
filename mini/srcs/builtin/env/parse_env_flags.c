@@ -11,31 +11,33 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stddef.h>
 
-size_t	parse_env_flags(char **args, t_flags *flags, char ***exported)
+size_t	parse_env_flags(char ***args, char ***exported,
+	t_flags *flags, size_t *lens[2])
 {
+	size_t	*max_uints[4];
 	size_t	i;
 
-	i = 1;
-	while (args[i] && args[i][0] == '-' && args[i][1])
+	max_uints[0] = &i;
+	max_uints[2] = &lens[0];
+	max_uints[3] = &lens[1];
+	i = 0;
+	while ((*args)[++i] && (*args)[i][0] == '-' && (*args)[i][1])
 	{
-		if (args[i][1] == '-')
+		if ((*args)[i][1] == '-')
 		{
-			if (!args[i][2])
+			if (!(*args)[i][2])
 				return (i + 1);
-			else if (check_long_flags(args, flags, exported, &i))
+			else if (check_long_flags(args, exported, flags, max_uints))
 				return (0);
 			if (flags->print_help)
-			{
-				ft_free_matrix(exported, ft_memlen(exported, sizeof(char *)));
 				return (i + 1);
-			}
 		}
-		if (check_flags(args, flags, exported, &i))
+		else if (check_flags(args, exported, flags, max_uints))
 			return (0);
-		i++;
 	}
-	if (args[i] && args[i][0] == '-' && !args[i][1])
+	if ((*args)[i] && (*args)[i][0] == '-' && !(*args)[i++][1])
 		flags->ignore_env = 1;
 	return (i);
 }
