@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:31:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 15:14:42 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/13 14:58:06 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static size_t	parse_flags(char **args, int *newline, int *escape)
 				*newline = 0;
 			else if (args[i][j] == 'e')
 				*escape = 1;
-			else (args[i][j] == 'E')
+			else if (args[i][j] == 'E')
 				*escape = 0;
 			j++;
 		}
@@ -94,7 +94,7 @@ static int	print_escape(char *str, int fd_out, char table[256])
 {
 	size_t	i;
 	size_t	j;
-	char		*buffer;
+	char	*buffer;
 
 	buffer = malloc(sizeof(char) * (ft_strlen(str) + 1));
 	if (!buffer)

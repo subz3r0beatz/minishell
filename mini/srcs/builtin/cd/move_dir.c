@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   move_dir.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/13 14:59:57 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/13 15:00:09 by fldumas-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static char	*get_pwd(t_minishell *shell)
@@ -94,7 +106,7 @@ static int	check_getcwd(char	**target, int logical, int e_flag)
 	return (0);
 }
 
-int	move_dir(t_minishell *shell, char **dir, int	logical, int e_flag)
+int	move_dir(t_minishell *shell, char **dir, int logical, int e_flag)
 {
 	char	*pwd;
 	char	*target;

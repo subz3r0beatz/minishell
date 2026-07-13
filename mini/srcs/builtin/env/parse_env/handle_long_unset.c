@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_unset.c                                     :+:      :+:    :+:   */
+/*   handle_long_unset.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/09 17:12:20 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 20:14:07 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/07/13 19:19:06 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/13 20:14:16 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static char	*parse_key(char **args, size_t *i, size_t *j)
 	(*j)++;
 	if (!args[*i][*j] && !args[*i + 1])
 	{
-		ft_putstr_fd("minishell: env: option requires an argument -- 'u'\n"
+		ft_putstr_fd("minishell: env: option '--unset' requires an argument\n"
 			"Try 'env --help' for more information.\n", STDERR_FILENO);
 		return (NULL);
 	}
@@ -58,7 +58,7 @@ static char	*parse_key(char **args, size_t *i, size_t *j)
 	return (unset);
 }
 
-int	handle_unset(char **args, char ***exported, size_t max_uints[4])
+int	handle__long_unset(char **args, char ***exported, size_t max_uints[4])
 {
 	size_t	*i;
 	size_t	*j;

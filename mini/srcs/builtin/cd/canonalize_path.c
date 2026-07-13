@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 19:31:13 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/02 19:42:55 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/13 14:59:26 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ static void	clean_split(char **split)
 
 char	*canonalize_path(char *pwd, char *path)
 {
-	char		*ret;
-	char		*tmp;
-	char		**split;
+	char	*ret;
+	char	*tmp;
+	char	**split;
 	size_t	len;
 
 	if (path[0] == '/')

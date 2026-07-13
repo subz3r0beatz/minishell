@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 18:33:00 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/02 19:42:53 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/13 14:59:47 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static void	update_vars(t_minishell *shell, char *dir)
 {
 	t_robin_node	*pwd_node;
 	t_robin_node	*oldpwd_node;
-	char					*oldpwd_value;
+	char			*oldpwd_value;
 
 	pwd_node = robin_search(shell->env, "PWD");
 	oldpwd_node = robin_search(shell->env, "OLDPWD");
@@ -75,11 +75,11 @@ static void	update_vars(t_minishell *shell, char *dir)
 
 int	ft_cd(t_minishell *shell, char **args, int fd_out)
 {
-	int			logical;
-	int			e_flag;
-	int			print_path;
+	int		logical;
+	int		e_flag;
+	int		print_path;
 	size_t	i;
-	char		*dir;
+	char	*dir;
 
 	i = check_flags(args, &logical, &e_flag);
 	if (i == 0)

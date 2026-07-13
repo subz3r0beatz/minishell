@@ -6,13 +6,14 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 10:11:47 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 10:11:47 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/13 15:00:35 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	handle_env_paths(t_minishell *shell, char *arg, char **dir, int *print_path)
+static int	handle_env_paths(t_minishell *shell, char *arg, char **dir,
+	int *print_path)
 {
 	char	*env_value;
 
@@ -53,7 +54,7 @@ static char	*build_full_path(char *base, char *target)
 
 static int	compare_paths(char **paths, char *arg, char **dir, int *print_path)
 {
-	char		*path;
+	char	*path;
 	size_t	i;
 
 	i = 0;
@@ -78,7 +79,8 @@ static int	compare_paths(char **paths, char *arg, char **dir, int *print_path)
 	return (0);
 }
 
-static int	parse_cdpath(t_minishell *shell, char *arg, char **dir, int *print_path)
+static int	parse_cdpath(t_minishell *shell, char *arg,
+	char **dir, int *print_path)
 {
 	char	*cdpath;
 	char	**paths;

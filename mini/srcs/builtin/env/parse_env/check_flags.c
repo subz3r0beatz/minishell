@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/07 18:21:24 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/09 17:46:44 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/13 20:11:49 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int	flag_error(char c)
 }
 
 static int	handle_helpers(char	***matrices[2], t_flags *flags,
-	size_t *max_uints[4])
+	size_t max_uints[4])
 {
 	int		ret;
 	size_t	*i;
@@ -31,8 +31,8 @@ static int	handle_helpers(char	***matrices[2], t_flags *flags,
 	char	***args;
 	char	***exported;
 
-	i = &max_uints[0];
-	j = &max_uints[1];
+	i = max_uints[0];
+	j = max_uints[1];
 	ret = 0;
 	args = matrices[0];
 	exported = matrices[1];
@@ -41,7 +41,7 @@ static int	handle_helpers(char	***matrices[2], t_flags *flags,
 	else if ((*args)[*i][*j] == 'a')
 		ret = parse_argv0(*args, flags, i, j);
 	else if ((*args)[*i][*j] == 'S')
-		ret = handle_split(args, i, j, &max_uints[3]);
+		ret = handle_split(args, i, j, max_uints[3]);
 	else if ((*args)[*i][*j] == 'u')
 		ret = handle_unset(*args, exported, max_uints);
 	else
@@ -49,8 +49,8 @@ static int	handle_helpers(char	***matrices[2], t_flags *flags,
 	return (ret);
 }
 
-static int	check_flags(char ***args, t_flags *flags,
-	char ***exported, size_t *max_uints[4])
+int	check_flags(char ***args, char ***exported,
+	t_flags *flags, size_t max_uints[4])
 {
 	int		ret;
 	size_t	*i;
@@ -71,7 +71,7 @@ static int	check_flags(char ***args, t_flags *flags,
 		{
 			matrices[0] = args;
 			matrices[1] = exported;
-			ret = handle_helpers(matrices, flags, i, max_uints);
+			ret = handle_helpers(matrices, flags, max_uints);
 		}
 		if (ret)
 			return (1);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_split.c                                     :+:      :+:    :+:   */
+/*   handle_long_split.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/09 17:12:11 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 20:06:11 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/07/13 19:20:09 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/13 20:12:08 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static char	**add_new_args(char	**args, char *string,
 	return (new_args);
 }
 
-int	handle_split(char ***args, size_t *i, size_t *j, size_t *args_size)
+int	handle_long_split(char ***args, size_t *i, size_t *j, size_t *args_size)
 {
 	char	*string;
 	char	**new_args;
@@ -52,8 +52,8 @@ int	handle_split(char ***args, size_t *i, size_t *j, size_t *args_size)
 	(*j)++;
 	if (!(*args)[*i][*j] && !(*args)[*i + 1])
 	{
-		ft_putstr_fd("minishell: env: option requires an argument -- 'S'\n"
-			"Try 'env --help' for more information.\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: env: option '--split-string' requires an argu"
+			"ment\nTry 'env --help' for more information.\n", STDERR_FILENO);
 		return (1);
 	}
 	if ((*args)[*i][*j])

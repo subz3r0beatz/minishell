@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 17:12:56 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/09 17:13:02 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/13 14:23:20 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ int	parse_chdir_path(char **args, t_flags *flags, size_t *i, size_t *j)
 			"Try 'env --help' for more information.\n", STDERR_FILENO);
 		return (1);
 	}
+	if (flags->chdir_path)
+		free(flags->chdir_path);
 	if (args[*i][*j])
 		flags->chdir_path = ft_strdup(&args[*i][*j]);
 	else

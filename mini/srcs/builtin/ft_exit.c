@@ -6,8 +6,12 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 01:50:30 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/14 02:14:53 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/13 15:01:07 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
 
+void	ft_exit(void)
+{
+}
