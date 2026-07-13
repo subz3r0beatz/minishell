@@ -1,0 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_argv0.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/09 17:12:49 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/09 17:13:04 by fldumas-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+int	parse_argv0(char **args, t_flags *flags, size_t *i, size_t *j)
+{
+	(*j)++;
+	if (!args[*i][*j] && !args[*i + 1])
+	{
+		ft_putstr_fd("minishell: env: option requires an argument -- 'a'\n"
+			"Try 'env --help' for more information.\n", STDERR_FILENO);
+		return (1);
+	}
+	if (args[*i][*j])
+		flags->custom_argv0 = ft_strdup(&args[*i][*j]);
+	else
+		flags->custom_argv0 = ft_strdup(args[++*i]);
+	if (!flags->custom_argv0)
+	{
+		ft_putstr_fd("minishell: env: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
+		return (1);
+	}
+	*j = ft_strlen(args[*i]) - 1;
+	return (0);
+}

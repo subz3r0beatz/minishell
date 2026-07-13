@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_dir.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/13 10:11:47 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/13 10:11:47 by fldumas-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	handle_env_paths(t_minishell *shell, char *arg, char **dir, int *print_path)
@@ -6,7 +18,7 @@ static int	handle_env_paths(t_minishell *shell, char *arg, char **dir, int *prin
 
 	if (!arg)
 	{
-		if (get_var_value(shell->env, "HOME", &env_value) || !*dir)
+		if (get_var_value(shell->env, "HOME", &env_value) || !env_value)
 		{
 			ft_putstr_fd("minishell: cd: HOME not set\n", STDERR_FILENO);
 			return (1);
@@ -15,7 +27,7 @@ static int	handle_env_paths(t_minishell *shell, char *arg, char **dir, int *prin
 	}
 	else if (arg[0] == '-' && !arg[1])
 	{
-		if (get_var_value(shell->env, "OLDPWD", &env_value) || !*dir)
+		if (get_var_value(shell->env, "OLDPWD", &env_value) || !env_value)
 		{
 			ft_putstr_fd("minishell: cd: OLDPWD not set\n", STDERR_FILENO);
 			return (1);

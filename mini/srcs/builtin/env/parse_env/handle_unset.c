@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handle_unset.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/09 17:12:20 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/09 17:58:26 by fldumas-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static void	unset_env_var(char ***exported, char *unset, size_t *exported_len)
@@ -23,7 +35,9 @@ static void	unset_env_var(char ***exported, char *unset, size_t *exported_len)
 
 static char	*parse_key(char **args, size_t *i, size_t *j)
 {
-	*j++;
+	char	*unset;
+
+	(*j)++;
 	if (!args[*i][*j] && !args[*i + 1])
 	{
 		ft_putstr_fd("minishell: env: option requires an argument -- 'u'\n"
@@ -31,7 +45,7 @@ static char	*parse_key(char **args, size_t *i, size_t *j)
 		return (NULL);
 	}
 	if (args[*i][*j])
-		unset = args[*i][*j];
+		unset = &args[*i][*j];
 	else
 		unset = args[++*i];
 	if (!*unset || ft_strchr(unset, '='))
@@ -46,9 +60,9 @@ static char	*parse_key(char **args, size_t *i, size_t *j)
 
 int	handle_unset(char **args, char ***exported, size_t *max_uints[4])
 {
-	size_t *i;
-	size_t *j;
-	size_t *exported_len;
+	size_t	*i;
+	size_t	*j;
+	size_t	*exported_len;
 	char	*unset;
 
 	i = &max_uints[0];

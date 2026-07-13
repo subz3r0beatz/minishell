@@ -6,12 +6,11 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/06 03:45:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/07 21:49:56 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/09 17:58:25 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stddef.h>
 
 static void	print_env(char **exported, int null, int fd_out)
 {
@@ -44,7 +43,7 @@ static int	exit_env(char **args, char **exported,
 	if (args)
 		ft_free_matrix(args, lens[1]);
 	if (exported)
-		ft_free_matrix(exported, lens[0]));
+		ft_free_matrix(exported, lens[0]);
 	return (exit_code);
 }
 
@@ -55,11 +54,16 @@ int	ft_env(t_minishell *shell, char **args, int fd_out)
 	t_flags	flags;
 	size_t	i;
 	size_t	lens[2];
+	size_t	max_uints[2];
 
 	exported = env_to_matrix(shell);
 	if (!exported)
+	{
+		ft_putstr_fd("minishell: env: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 		return (exit_env(NULL, NULL, 0, 125));
-	ft_bzero(flags, sizeof(t_flags));
+	}
+	ft_bzero(&flags, sizeof(t_flags));
 	lens[0] = ft_memlen(exported, sizeof(char *));
 	lens[1] = ft_memlen(args, sizeof(char *));
 	args_cpy = ft_dup_matrix(args, lens[1]);
@@ -69,12 +73,14 @@ int	ft_env(t_minishell *shell, char **args, int fd_out)
 			"cannot allocate memory\n", STDERR_FILENO);
 		return (exit_env(NULL, exported, lens, 125));
 	}
-	i = parse_env_flags(&args_cpy, &exported, &flags, &lens);
+	i = parse_env_flags(&args_cpy, &exported, &flags, lens);
 	if (flags.print_help)
-		return (exit_env(args_cpy, exported, lens,  print_env_help(fd_out));
+		return (exit_env(args_cpy, exported, lens, print_env_help(fd_out)));
 	if (i == 0)
 		return (exit_env(args_cpy, exported, lens, 125));
-	i = add_variables(args_cpy, &exported, i, &lens[0]);
+	max_uints[0] = i;
+	max_uints[1] = lens[0];
+	i = add_variables(shell, args_cpy, &exported, &max_uints);
 	if (i == 0)
 		return (exit_env(args_cpy, exported, lens, 125));
 	if (flags.ignore_env)
@@ -85,7 +91,7 @@ int	ft_env(t_minishell *shell, char **args, int fd_out)
 		{
 			ft_putstr_fd("minishell: env: malloc: "
 				"cannot allocate memory\n", STDERR_FILENO);
-			exit_env(args_cpy, NULL, lens, 125);
+			return (exit_env(args_cpy, NULL, lens, 125));
 		}
 		exported[0] = NULL;
 		lens[0] = 0;
@@ -94,8 +100,9 @@ int	ft_env(t_minishell *shell, char **args, int fd_out)
 	{
 		if (flags.null_term)
 		{
-			ft_putstr_fd("minishell: env: cannot specify --null (-0) with command\n"
-				"Try 'env --help' for more information.\n", STDERR_FILENO);
+			ft_putstr_fd("minishell: env: cannot specify "
+				"--null (-0) with command\nTry 'env --help' "
+				"for more information.\n", STDERR_FILENO);
 			return (exit_env(args_cpy, exported, lens, 125));
 		}
 	}

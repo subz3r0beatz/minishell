@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/07 18:15:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/07 18:21:14 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/09 17:55:39 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ static int	handle_bool_flags(char *arg, t_flags *flags, size_t *j)
 	else
 		return (0);
 	return (1);
-
 }
 
 static int	handle_helpers(char ***matrices[2], t_flags *flags,
@@ -89,6 +88,7 @@ static int	check_long_flags(char ***args, t_flags *flags,
 	char ***exported, size_t *max_uints[4])
 {
 	int		ret;
+	size_t	*i;
 	size_t	j;
 	char	***matrices[2];
 

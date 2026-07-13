@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/07 18:21:24 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/07 21:50:00 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/09 17:46:44 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ static int	check_flags(char ***args, t_flags *flags,
 	char ***exported, size_t *max_uints[4])
 {
 	int		ret;
+	size_t	*i;
 	size_t	j;
 	char	***matrices[2];
 

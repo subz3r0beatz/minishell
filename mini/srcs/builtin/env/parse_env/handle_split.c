@@ -1,7 +1,18 @@
-#include "minishell.h"
-#include <stddef.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handle_split.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/09 17:12:11 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/09 17:13:30 by fldumas-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static char **malloc_error(void)
+#include "minishell.h"
+
+static char	**malloc_error(void)
 {
 	ft_putstr_fd("minishell: env: malloc: "
 		"cannot allocate memory\n", STDERR_FILENO);
@@ -38,7 +49,7 @@ int	handle_split(char ***args, size_t *i, size_t *j, size_t *args_size)
 	char	*string;
 	char	**new_args;
 
-	*j++;
+	(*j)++;
 	if (!(*args)[*i][*j] && !(*args)[*i + 1])
 	{
 		ft_putstr_fd("minishell: env: option requires an argument -- 'S'\n"
