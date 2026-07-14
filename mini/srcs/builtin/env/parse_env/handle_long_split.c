@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 19:20:09 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 20:12:08 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/14 16:44:17 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	handle_long_split(char ***args, size_t *i, size_t *j, size_t *args_size)
 			"ment\nTry 'env --help' for more information.\n", STDERR_FILENO);
 		return (1);
 	}
-	if ((*args)[*i][*j])
+	if ((*args)[*i][*j - 1] == '=' || (*args)[*i][*j])
 		string = &(*args)[*i][*j];
 	else
 		string = (*args)[++*i];

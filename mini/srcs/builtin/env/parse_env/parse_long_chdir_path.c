@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 19:15:56 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 19:18:35 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/14 16:44:50 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	parse_long_chdir_path(char **args, t_flags *flags, size_t *i, size_t *j)
 	}
 	if (flags->chdir_path)
 		free(flags->chdir_path);
-	if (args[*i][*j])
+	if (args[*i][*j - 1] == '=' || args[*i][*j])
 		flags->chdir_path = ft_strdup(&args[*i][*j]);
 	else
 		flags->chdir_path = ft_strdup(args[++*i]);

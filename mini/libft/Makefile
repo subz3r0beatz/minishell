@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-/*   Makefile                                           :+:      :+:    :+:   */
-#                                                     +:+ +:+         +:+      #
-#    By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/10/15 16:32:29 by fldumas-          #+#    #+#              #
-/*   Updated: 2026/07/02 18:29:59 by fldumas-         ###   ########.fr       */
-#                                                                              #
-# **************************************************************************** #
-
 SRC = \
 ft_calloc.c \
 ft_strlen.c \
@@ -54,9 +42,9 @@ ft_iswhite.c \
 ft_strcmp.c \
 ft_realloc.c \
 ft_free_matrix.c \
-ft_shift_left.c \
 ft_join_split_prefix.c \
-ft_mem_shift.c
+ft_mem_shift.c \
+ft_dup_matrix.c
 
 BONUS = \
 ft_lstnew_bonus.c \

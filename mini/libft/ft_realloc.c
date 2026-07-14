@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/29 18:08:27 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/07 21:03:53 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/14 18:43:29 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,9 @@ void	*ft_realloc(void *ptr, size_t elem_count, size_t elem_size)
 		if (!ptr)
 			return (new_ptr);
 		old_elem_count = ft_memlen(ptr, elem_size);
+		copy_count = elem_count;
 		if (old_elem_count + 1 < elem_count)
 			copy_count = old_elem_count + 1;
-		else
-			copy_count = elem_count;
 		ft_memcpy(new_ptr, ptr, copy_count * elem_size);
 		free(ptr);
 		return (new_ptr);

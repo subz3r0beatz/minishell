@@ -1,23 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_shift_left.c                                    :+:      :+:    :+:   */
+/*   ft_dup_matrix.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/02 18:30:07 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/02 18:30:32 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/07/14 14:57:37 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/14 14:59:24 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_shift_left(char *str, size_t len)
+char	**ft_dup_matrix(char **matrix, size_t size)
 {
-	while (len)
+	char	**dup;
+	size_t	i;
+
+	i = 0;
+	dup = malloc((size + 1) * sizeof(char *));
+	if (!dup)
+		return (NULL);
+	while (i < size)
 	{
-		str[len] = str[len - 1];
-		len--;
+		dup[i] = ft_strdup(matrix[i]);
+		if (!dup[i])
+		{
+			ft_free_matrix(dup, i);
+			return (NULL);
+		}
+		i++;
 	}
-	str[0] = '\0';
+	dup[i] = NULL;
+	return (dup);
 }

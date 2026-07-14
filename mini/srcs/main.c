@@ -6,13 +6,13 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 17:46:29 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 19:37:41 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/14 12:27:27 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	main_loop(t_robin *env)
+static void	main_loop(t_robin *env)
 {
 	int		status;
 	char	*input;

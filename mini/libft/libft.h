@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 14:15:11 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/02 18:29:40 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/14 18:50:55 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ t_list	*ft_lstnew(void *content);
 t_list	*ft_lstlast(t_list *lst);
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
-void	ft_shift_left(char *str, size_t len);
 void	ft_mem_shift(void *ptr, size_t count, size_t size, int dir);
 void	ft_putnbr_fd(int n, int fd);
 void	ft_putstr_fd(char *s, int fd);
@@ -41,14 +40,14 @@ void	ft_lstdelone(t_list *lst, void (*del)(void *));
 void	ft_lstclear(t_list **lst, void (*del)(void *));
 void	ft_lstiter(t_list *lst, void (*f)(void *));
 void	ft_swap(void **a, void **b);
-void	ft_free_matrix(char **matrix);
+void	ft_free_matrix(char **matrix, size_t size);
 
 void	*ft_memcpy(void *dest, const void *src, size_t n);
 void	*ft_memchr(const void *s, int c, size_t n);
 void	*ft_memmove(void *dest, const void *src, size_t n);
 void	*ft_memset(void *s, int c, size_t n);
 void	*ft_calloc(size_t nmemb, size_t size);
-void	*ft_realloc(void *ptr, size_t size);
+void	*ft_realloc(void *ptr, size_t elem_count, size_t elem_size);
 
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strjoin_prefix(char const *s1, char const *s2);
@@ -61,6 +60,7 @@ char	*ft_strdup(const char *s);
 char	*ft_itoa(int n);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 
+char	**ft_dup_matrix(char **matrix, size_t size);
 char	**ft_split(char const *s, char c);
 char	**ft_split_quotes(char const *s, char c);
 

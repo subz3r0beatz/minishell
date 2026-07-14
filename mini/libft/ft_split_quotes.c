@@ -6,107 +6,60 @@
 /*   By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/01 15:29:25 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/29 18:56:45 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/14 20:48:14 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static size_t	word_count(const char *s, char c)
+static size_t	count_words(char *str, char *delim, size_t delim_len)
 {
 	size_t	i;
 	size_t	count;
-	int		single_quote;
-	int		double_quote;
+	char	quote_state;
 
 	i = 0;
 	count = 0;
-	single_quote = 0;
-	double_quote = 0;
-	while (s[i])
+	quote_state = 0;
+	while (str[i])
 	{
-		while (s[i] && s[i] == c && !single_quote && !double_quote)
-			i++;
-		if (s[i] && s[i] != c)
-			count++;
-		while (s[i] && (s[i] != c || single_quote || double_quote))
+		while (str[i] && !ft_strncmp(&str[i], delim, delim_len))
+			i += delim_len;
+		if (!str[i])
+			break ;
+		count++;
+		while (str[i] && (quote_state || ft_strncmp(&str[i], delim, delim_len)))
 		{
-			if (s[i] == '\'')
-				single_quote = !single_quote;
-			else if (s[i] == '"')
-				double_quote = !double_quote;
+			if (quote_state == 0 && (str[i] == '\'' || str[i] == '"'))
+				quote_state = str[i];
+			else if (quote_state && str[i] == quote_state)
+				quote_state = 0;
 			i++;
 		}
 	}
 	return (count);
 }
 
-static size_t	word_len(const char *s, char c)
+static char	**get_splits(char **split, char *str, char *delim, size_t delim_len)
 {
 	size_t	i;
-	int		single_quote;
-	int		double_quote;
+	char	quote_state;
 
-	i = 0;
-	single_quote = 0;
-	double_quote = 0;
-	while (s[i] && (s[i] != c || single_quote || double_quote))
-	{
-		if (s[i] == '\'')
-			single_quote = !single_quote;
-		else if (s[i] == '"')
-			double_quote = !double_quote;
-		i++;
-	}
-	return (i);
+
 }
 
-static void	trim_quotes(char **split)
-{
-	size_t	i;
-	char	*trimed;
-
-	i = 0;
-	while (split[i])
-	{
-		trimed = ft_strtrim(split[i], "\"'");
-		if (!trimed)
-		{
-			write(2, "Error: memory allocation failed\n", 32);
-			ft_free_matrix(split, i);
-			exit(1);
-		}
-		free(split[i]);
-		split[i] = trimed;
-		i++;
-	}
-}
-
-char	**split_quotes(const char *s, char c)
+char	**ft_split_quote(char *str, char *delim)
 {
 	char	**split;
-	size_t	i[2];
+	size_t	delim_len;
 
-	split = ft_calloc(sizeof(char *), word_count(s, c) + 1);
+	if (!str || !delim || !delim[0]
+		|| ft_strchr(delim, '"') || ft_strchr(delim, '\''))
+		return (NULL);
+	delim_len = ft_strlen(delim);
+	split = malloc((count_words(str, delim, delim_len) + 1) * sizeof(char *));
 	if (!split)
 		return (NULL);
-	ft_bzero(i, sizeof(size_t) * 2);
-	while (s[i[0]])
-	{
-		while (s[i[0]] && s[i[0]] == c)
-			i[0]++;
-		if (s[i[0]])
-		{
-			split[i[1]] = ft_substr(s, i[0], word_len(s + i[0], c));
-			if (!split[i[1]])
-			{
-				ft_free_matrix(split, i[1]);
-				return (NULL);
-			}
-			i[1]++;
-			i[0] += word_len(s + i[0], c);
-		}
-	}
-	trim_quotes(split);
+	split = get_splits(split, str, delim, delim_len);
 	return (split);
 }

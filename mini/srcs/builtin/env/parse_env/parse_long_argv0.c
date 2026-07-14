@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 19:13:33 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 19:17:22 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/14 16:44:47 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	parse_long_argv0(char **args, t_flags *flags, size_t *i, size_t *j)
 	}
 	if (flags->custom_argv0)
 		free(flags->custom_argv0);
-	if (args[*i][*j])
+	if (args[*i][*j - 1] == '=' || args[*i][*j])
 		flags->custom_argv0 = ft_strdup(&args[*i][*j]);
 	else
 		flags->custom_argv0 = ft_strdup(args[++*i]);

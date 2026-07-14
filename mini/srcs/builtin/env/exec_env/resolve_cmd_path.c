@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 12:05:00 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 21:02:29 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/14 17:06:21 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ static char	*check_path(char **split, char *cmd,
 	return (NULL);
 }
 
-static void	command_error(char *cmd, int has_file)
+static void	command_error(char *cmd, int has_file, int *exit_code)
 {
 	ft_putstr_fd("minishell: env: '", STDERR_FILENO);
 	ft_putstr_fd(cmd, STDERR_FILENO);
@@ -104,22 +104,23 @@ static void	command_error(char *cmd, int has_file)
 	else
 		ft_putstr_fd("': No such file or directory\n", STDERR_FILENO);
 	if (has_file)
-		exit(126);
-	exit(127);
+		*exit_code = 126;
+	*exit_code = 127;
 }
 
-char	*resolve_cmd_path(char **args, char **exported)
+char	*resolve_cmd_path(char **args, char **exported,
+		int *exit_code, int *no_malloc_error)
 {
 	char	*path;
 	char	**split;
 	int		has_file;
-	int		no_malloc_error;
 
 	if (ft_strchr(args[0], '/'))
 		return (ft_strdup(args[0]));
-	path = get_path(exported, &no_malloc_error, &has_file);
+	path = get_path(exported, no_malloc_error, &has_file);
 	if (path)
 	{
+		*no_malloc_error = 0;
 		if (!path[0])
 		{
 			free(path);
@@ -129,10 +130,10 @@ char	*resolve_cmd_path(char **args, char **exported)
 		free(path);
 		if (!split)
 			return (NULL);
-		path = check_path(split, args[0], &has_file, &no_malloc_error);
+		path = check_path(split, args[0], &has_file, no_malloc_error);
 		ft_free_matrix(split, ft_memlen(split, sizeof(char *)));
 	}
-	if (!path && no_malloc_error)
-		command_error(args[0], has_file);
+	if (!path && *no_malloc_error)
+		command_error(args[0], has_file, exit_code);
 	return (path);
 }

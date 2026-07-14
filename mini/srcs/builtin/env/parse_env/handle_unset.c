@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 17:12:20 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 20:14:07 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/14 17:09:31 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,20 +58,18 @@ static char	*parse_key(char **args, size_t *i, size_t *j)
 	return (unset);
 }
 
-int	handle_unset(char **args, char ***exported, size_t max_uints[4])
+int	handle_unset(char **matrices[2], t_max_uints *max_uints)
 {
 	size_t	*i;
 	size_t	*j;
-	size_t	*exported_len;
 	char	*unset;
 
-	i = max_uints[0];
-	j = max_uints[1];
-	exported_len = max_uints[2];
-	unset = parse_key(args, i, j);
+	i = &max_uints->i;
+	j = &max_uints->j;
+	unset = parse_key(matrices[1], i, j);
 	if (!unset)
 		return (1);
-	unset_env_var(exported, unset, exported_len);
-	*j = ft_strlen(args[*i]) - 1;
+	unset_env_var(&matrices[0], unset, &max_uints->exported_len);
+	*j = ft_strlen(matrices[1][*i]) - 1;
 	return (0);
 }

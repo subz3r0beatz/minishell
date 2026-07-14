@@ -6,12 +6,11 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 16:00:16 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 20:00:34 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/14 17:23:08 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stddef.h>
 
 static int	malloc_error(void)
 {
@@ -20,23 +19,21 @@ static int	malloc_error(void)
 	return (1);
 }
 
-static int	lookup_var(char **exported, char *arg, char *ptr)
+static int	lookup_var(char **matrices[2], t_max_uints *max_uints, char *ptr)
 {
 	size_t	i;
 
 	i = 0;
-	while (exported[i])
+	while (matrices[0][i])
 	{
-		if (!ft_strncmp(exported[i], arg, ptr - arg)
-			&& exported[i][ptr - arg] == '=')
+		if (!ft_strncmp(matrices[0][i],
+			matrices[1][max_uints->i], ptr - matrices[1][max_uints->i])
+			&& matrices[0][i][ptr - matrices[1][max_uints->i]] == '=')
 		{
-			free(exported[i]);
-			exported[i] = ft_strdup(arg);
-			if (!exported[i])
-			{
-				exported[i] = NULL;
+			free(matrices[0][i]);
+			matrices[0][i] = ft_strdup(matrices[1][max_uints->i]);
+			if (!matrices[0][i])
 				return (malloc_error());
-			}
 			return (0);
 		}
 		i++;
@@ -44,53 +41,50 @@ static int	lookup_var(char **exported, char *arg, char *ptr)
 	return (2);
 }
 
-static int	add_var(char ***exported, char **args,
-	size_t *len, size_t *capacity)
+static int	add_var(char **matrices[2], t_max_uints *max_uints)
 {
 	char	**new_exported;
 	size_t	i;
 
-	if (*len == *capacity)
+	if (max_uints->exported_len == max_uints->capacity)
 	{
-		i = 0;
-		while (args[i] && ft_strchr(args[i], '='))
+		i = max_uints->i;
+		while (matrices[1][i] && ft_strchr(matrices[1][i], '='))
 			i++;
-		new_exported = ft_realloc(*exported, *capacity + i + 1, sizeof(char *));
+		new_exported = ft_realloc(matrices[0],
+				max_uints->capacity + i + 1 - max_uints->i, sizeof(char *));
 		if (!new_exported)
 			return (malloc_error());
-		*exported = new_exported;
-		*capacity += i;
+		matrices[0] = new_exported;
+		max_uints->capacity += i - max_uints->i;
 	}
-	(*exported)[*len] = ft_strdup(args[0]);
-	if (!(*exported)[*len])
+	matrices[0][max_uints->exported_len] = ft_strdup(matrices[1][max_uints->i]);
+	if (!matrices[0][max_uints->exported_len])
 		return (malloc_error());
-	(*len)++;
-	(*exported)[*len] = NULL;
+	max_uints->exported_len++;
+	matrices[0][max_uints->exported_len] = NULL;
 	return (0);
 }
 
-size_t	add_variables(char **args, char ***exported,
-	size_t *max_uints[2], size_t *capacity)
+size_t	add_variables(char **matrices[2], t_max_uints *max_uints)
 {
 	char	*ptr;
-	size_t	i;
-	size_t	*len;
+	size_t	*i;
 	int		status;
 
-	i = *(max_uints[0]);
-	len = max_uints[1];
-	while (args[i])
+	i = &max_uints->i;
+	while (matrices[1][*i])
 	{
-		ptr = ft_strchr(args[i], '=');
+		ptr = ft_strchr(matrices[1][*i], '=');
 		if (!ptr)
-			return (i);
-		status = lookup_var(*exported, args[i], ptr);
+			return (*i);
+		status = lookup_var(matrices, max_uints, ptr);
 		if (status == 1)
 			return (0);
 		if (status == 2)
-			if (add_var(exported, &args[i], len, capacity))
+			if (add_var(matrices, max_uints))
 				return (0);
-		i++;
+		(*i)++;
 	}
-	return (i);
+	return (*i);
 }
