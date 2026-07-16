@@ -62,7 +62,8 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 
 char	**ft_dup_matrix(char **matrix, size_t size);
 char	**ft_split(char const *s, char c);
-char	**ft_split_quotes(char const *s, char c);
+char	**ft_split_quotes_inc(char *str, char *delim);
+char	**ft_split_quotes_exl(char *str, char *delim);
 
 size_t	ft_memlen(const void *s, size_t n);
 size_t	ft_strlen(const char *s);
