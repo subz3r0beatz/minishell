@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 18:17:23 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/07 20:39:06 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 03:17:46 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static int	insert_new_var(t_minishell *shell, char *key, char *value)
 	robin_node = create_node(shell->env, key, value, 1);
 	if (!robin_node.key || !robin_node.value)
 	{
-		robin_free(minishell->env);
+		robin_free(shell->env);
 		return (1);
 	}
 	if (robin_insert(shell->env, robin_node))

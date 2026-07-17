@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:31:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 14:58:06 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 02:53:06 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,19 @@ static size_t	parse_flags(char **args, int *newline, int *escape)
 		j = 1;
 		while (args[i][j])
 		{
-			if (!ft_strchr("neE", args[i][j]))
-				return (i);
-			else if (args[i][j] == 'n')
+			if (args[i][j] == 'n')
 				*newline = 0;
 			else if (args[i][j] == 'e')
 				*escape = 1;
 			else if (args[i][j] == 'E')
 				*escape = 0;
+			else
+				return (i);
 			j++;
 		}
 		i++;
 	}
-	return (i + 1);
+	return (i);
 }
 
 static char	get_hex(char *str, size_t *i)
@@ -123,6 +123,7 @@ int	ft_echo(t_minishell *shell, char **args, int fd_out)
 	int		escape;
 	char	table[256];
 
+	(void) shell;
 	newline = 1;
 	escape = 0;
 	init_escape_table(table);

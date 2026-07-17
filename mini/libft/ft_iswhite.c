@@ -6,11 +6,11 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/22 09:50:21 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/22 09:50:55 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/16 15:54:22 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_iswhite(char c)
+int	ft_iswhite(int c)
 {
 	if (c == ' ' || (c >= 9 && c <= 13))
 		return (1);

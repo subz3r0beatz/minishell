@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 12:05:00 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/14 17:06:21 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/16 15:49:20 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,12 @@ static void	command_error(char *cmd, int has_file, int *exit_code)
 		ft_putstr_fd("': No such file or directory\n", STDERR_FILENO);
 	if (has_file)
 		*exit_code = 126;
-	*exit_code = 127;
+	else
+		*exit_code = 127;
 }
 
 char	*resolve_cmd_path(char **args, char **exported,
-		int *exit_code, int *no_malloc_error)
+	int *exit_code, int *no_malloc_error)
 {
 	char	*path;
 	char	**split;

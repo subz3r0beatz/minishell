@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 19:20:09 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/14 16:44:17 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 02:58:19 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static char	**add_new_args(char	**args, char *string,
 	char	**new_args;
 	size_t	split_size;
 
-	split = ft_split_quotes(string, " ");
+	split = ft_char_split_quotes_exl(string, ft_iswhite);
 	if (!split)
 		return (malloc_error());
 	split_size = ft_memlen(split, sizeof(char *));

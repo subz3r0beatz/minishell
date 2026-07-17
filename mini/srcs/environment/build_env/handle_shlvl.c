@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 09:44:46 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/29 16:10:01 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 03:24:32 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ int	handle_shlvl(t_minishell *shell)
 	char			*shlvl;
 	char			*value;
 	t_robin_node	*robin_node;
-	t_robin_node	new_node;
 
 	robin_node = robin_search(shell->env, "SHLVL");
 	if (!robin_node)

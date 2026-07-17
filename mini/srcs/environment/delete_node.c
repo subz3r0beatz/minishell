@@ -6,11 +6,11 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 19:26:56 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 12:38:20 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 03:20:02 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "environment.h"
+#include "minishell.h"
 
 int	delete_node(void *key, void *value)
 {

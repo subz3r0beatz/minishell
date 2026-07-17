@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/06 06:51:45 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/29 18:58:13 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 03:07:42 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	ft_export(t_minishell *shell, char **args, int fd_out)
 	else if (unexport)
 		status = unexport_vars(shell, &args[i]);
 	else
-		status = parse_vars(shell, &args[i]);
+		status = parse_export_vars(shell, &args[i]);
 	ft_free_matrix(shell->exported,
 		ft_memlen(shell->exported, sizeof(char *)));
 	shell->exported = NULL;

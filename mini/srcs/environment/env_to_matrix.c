@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/29 16:12:09 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/07 20:39:27 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 04:32:02 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,26 +32,32 @@ static char	*create_var(char *key, char *value)
 	return (str);
 }
 
-static char	**fill_matrix(t_robin *env, char **matrix)
+static char	**fill_matrix(t_robin *robin, char **matrix)
 {
 	size_t	i;
+	size_t	j;
 	t_env	*value;
 
 	i = 0;
+	j = 0;
 	while (i < robin->capacity)
 	{
-		value = (t_env *)robin->data[i]->value;
-		if (robin->ctrl[i] > 0 && value->is_exported)
+		value = NULL;
+		if (robin->ctrl[i] > 0)
+			value = (t_env *)robin->data[i].value;
+		if (value && value->value && value->is_exported)
 		{
-			matrix[i] = create_var(value->key, value->value);
-			if (!matrix[i])
+			matrix[j] = create_var(value->key, value->value);
+			if (!matrix[j])
 			{
-				ft_free_matrix(matrix, i);
+				ft_free_matrix(matrix, j);
 				return (NULL);
 			}
+			j++;
 		}
 		i++;
 	}
+	matrix[j] = NULL;
 	return (matrix);
 }
 

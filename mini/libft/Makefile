@@ -37,7 +37,8 @@ ft_putstr_fd.c \
 ft_putendl_fd.c \
 ft_swap.c \
 ft_memlen.c \
-ft_split_quotes.c \
+ft_char_split_quotes_inc.c \
+ft_char_split_quotes_exl.c \
 ft_iswhite.c \
 ft_strcmp.c \
 ft_realloc.c \

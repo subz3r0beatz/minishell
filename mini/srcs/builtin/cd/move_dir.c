@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 14:59:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 15:00:09 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 03:11:46 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static char	*get_pwd(t_minishell *shell)
 	char	buf[PATH_MAX];
 
 	pwd = NULL;
-	if (get_var_value(shell->env, "PWD", &pwd) || !pwd || pwd[0] != '/')
+	if (get_var_value(shell, "PWD", &pwd) || !pwd || pwd[0] != '/')
 	{
 		if (!getcwd(buf, PATH_MAX))
 		{
@@ -78,7 +78,7 @@ static int	do_chdir(char *target, char *dir, int *logical)
 	return (0);
 }
 
-static int	check_getcwd(char	**target, int logical, int e_flag)
+static int	check_getcwd(char **target, int logical, int e_flag)
 {
 	char	buf[PATH_MAX];
 

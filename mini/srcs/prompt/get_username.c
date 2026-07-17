@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 01:01:10 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/02 14:21:43 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/16 22:34:30 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,83 +27,31 @@ static int	read_file(char *path, char *buffer, int size)
 	return (bytes_read);
 }
 
-static char	*search_passwd(uid_t uid, char *buffer)
+static char	*search_passwd_username(uid_t uid, char *buffer)
 {
-	char	*ptr;
 	char	*start;
 	uid_t	id;
 	int		colons;
 
-	ptr = buffer;
-	while (*ptr)
+	while (*buffer)
 	{
-		start = ptr;
+		start = buffer;
 		colons = 0;
 		id = 0;
-		while (*ptr && *ptr != '\n')
+		while (*buffer && *buffer != '\n')
 		{
-			if (*ptr == ':' && colons++ <= 1)
-				*ptr = '\0';
-			else if (colons == 2)
-				id = id * 10 + *ptr - '0';
-			ptr++;
+			if (*buffer == ':' && colons++ <= 1)
+				*buffer = '\0';
+			else if (colons == 2 && ft_isdigit(*buffer))
+				id = id * 10 + (*buffer - '0');
+			buffer++;
 		}
 		if (colons >= 2 && id == uid)
 			return (ft_strdup(start));
-		if (*ptr == '\n')
-			ptr++;
+		if (*buffer == '\n')
+			buffer++;
 	}
 	return (NULL);
-}
-
-static char	*extract_username(char *pid, uid_t uid, char *buffer)
-{
-	struct stat	st;
-	char		path[MAX_PATH];
-	int			bytes_read;
-	int			i;
-
-	ft_strlcpy(path, "/proc/", sizeof(path));
-	ft_strlcat(path, pid, sizeof(path));
-	ft_strlcat(path, "/environ", sizeof(path));
-	if (stat(path, &st) < 0 || st.st_uid != uid)
-		return (NULL);
-	bytes_read = read_file(path, buffer, sizeof(buffer));
-	i = 0;
-	while (i < bytes_read)
-	{
-		if (ft_strncmp(&buffer[i], "USER=", 5) == 0)
-			return (ft_strdup(&buffer[i + 5]));
-		while (i < bytes_read && buffer[i] != '\0')
-			i++;
-		i++;
-	}
-	return (NULL);
-}
-
-static char	*search_proc(uid_t uid, char *buffer)
-{
-	struct dirent	*entry;
-	DIR				*dir;
-	char			*usr;
-
-	dir = opendir("/proc");
-	if (!dir)
-		return (NULL);
-	usr = NULL;
-	entry = readdir(dir);
-	while (entry)
-	{
-		if (ft_isdigit(entry->d_name[0]))
-		{
-			usr = extract_username(entry->d_name, uid, buffer);
-			if (usr)
-				break ;
-		}
-		entry = readdir(dir);
-	}
-	closedir(dir);
-	return (usr);
 }
 
 char	*get_username(t_robin *env, char *buffer)
@@ -126,9 +74,9 @@ char	*get_username(t_robin *env, char *buffer)
 	}
 	if (read_file("/etc/passwd", buffer, 8192) > 0)
 	{
-		usr = search_passwd(st.st_uid, buffer);
+		usr = search_passwd_username(st.st_uid, buffer);
 		if (usr)
 			return (usr);
 	}
-	return (search_proc(st.st_uid, buffer));
+	return (NULL);
 }

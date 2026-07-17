@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 10:11:47 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 15:00:35 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 03:13:46 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	handle_env_paths(t_minishell *shell, char *arg, char **dir,
 
 	if (!arg)
 	{
-		if (get_var_value(shell->env, "HOME", &env_value) || !env_value)
+		if (get_var_value(shell, "HOME", &env_value) || !env_value)
 		{
 			ft_putstr_fd("minishell: cd: HOME not set\n", STDERR_FILENO);
 			return (1);
@@ -28,7 +28,7 @@ static int	handle_env_paths(t_minishell *shell, char *arg, char **dir,
 	}
 	else if (arg[0] == '-' && !arg[1])
 	{
-		if (get_var_value(shell->env, "OLDPWD", &env_value) || !env_value)
+		if (get_var_value(shell, "OLDPWD", &env_value) || !env_value)
 		{
 			ft_putstr_fd("minishell: cd: OLDPWD not set\n", STDERR_FILENO);
 			return (1);
@@ -44,7 +44,7 @@ static char	*build_full_path(char *base, char *target)
 	char	*tmp;
 	char	*path;
 
-	tmp = ft_strjoin(base, '/');
+	tmp = ft_strjoin(base, "/");
 	if (!tmp)
 		return (NULL);
 	path = ft_strjoin(tmp, target);
@@ -88,7 +88,7 @@ static int	parse_cdpath(t_minishell *shell, char *arg,
 
 	if (arg[0] == '/' || !ft_strncmp(arg, "./", 2) || !ft_strncmp(arg, "../", 3)
 		|| !ft_strcmp(arg, ".") || !ft_strcmp(arg, "..")
-		|| get_var_value(shell->env, "CDPATH", &cdpath) || !cdpath || !*cdpath)
+		|| get_var_value(shell, "CDPATH", &cdpath) || !cdpath || !*cdpath)
 	{
 		*dir = ft_strdup(arg);
 		return (0);
@@ -103,14 +103,12 @@ static int	parse_cdpath(t_minishell *shell, char *arg,
 	ret = compare_paths(paths, arg, dir, print_path);
 	ft_free_matrix(paths, ft_memlen(paths, sizeof(char *)));
 	if (!ret && !*dir)
-		dir = ft_strdup(arg);
+		*dir = ft_strdup(arg);
 	return (ret);
 }
 
 int	parse_dir(t_minishell *shell, char *arg, char **dir, int	*print_path)
 {
-	char	*env_value;
-
 	*dir = NULL;
 	*print_path = 0;
 	if (!arg || (arg[0] == '-' && !arg[1]))

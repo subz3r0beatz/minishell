@@ -6,12 +6,11 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/07 18:15:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/14 17:17:39 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 02:15:25 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stddef.h>
 
 static int	long_flag_error(char *arg)
 {

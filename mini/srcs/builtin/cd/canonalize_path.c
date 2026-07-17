@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 19:31:13 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 14:59:26 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 03:08:44 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ char	*canonalize_path(char *pwd, char *path)
 		return (NULL);
 	len = ft_memlen(split, sizeof(char *));
 	clean_split(split);
-	ret = ft_join_split_prefix(split, "/");
+	ret = ft_join_split_prefix((const char **)split, "/");
 	ft_free_matrix(split, len);
 	return (ret);
+}

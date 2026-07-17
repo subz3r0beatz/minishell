@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/25 12:44:27 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 13:33:13 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/16 15:57:15 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static void	swap_node(t_robin *robin, size_t hash,
 		t_robin_node *node, uint8_t *psl)
 {
 	t_robin_node	tmp_node;
-	uint8_t				tmp_psl;
+	uint8_t			tmp_psl;
 
 	tmp_node = robin->data[hash];
 	robin->data[hash] = *node;

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:35:52 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 19:33:05 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 03:27:46 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,22 +40,20 @@
 # define C_REVERSED  "\001\033[7m\002" // Swaps foreground and background colors
 
 # include "includes.h"
-# include "libft.h"
-# include "robin_hash.h"
-# include "environment.h"
-# include "builtin.h"
-# include "lexer.h"
-# include "parser.h"
-# include "prompt.h"
-# include "lookup_table.h"
-# include "error.h"
+# include "../libft/libft.h"
+# include "robin_hash/robin_hash.h"
+# include "environment/environment.h"
+# include "builtin/builtin.h"
+# include "prompt/prompt.h"
+# include "lookup_table/lookup_table.h"
+//# include "error/error.h"
 
 typedef struct s_minishell
 {
-	t_robin	*env;
-	char	  **exported;
-  size_t  exported_count;
-	uint8_t	token_type_table[256][256];
+	t_robin			*env;
+	char			**exported;
+	size_t			exported_count;
+	uint8_t			token_type_table[256][256];
 }				t_minishell;
 
 #endif

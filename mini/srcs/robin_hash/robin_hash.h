@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/25 15:20:59 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/26 13:34:02 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 03:31:18 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ typedef struct s_robin
 	size_t			count;
 	size_t			(*hash_function)(const void *key);
 	int				(*cmp_function)(const void *key, const void *new_key);
-	void			(*del_function)(void *key, void *value);
+	int				(*del_function)(void *key, void *value);
 }				t_robin;
 
 t_robin			*robin_init(const size_t capacity,
 					size_t (*hash_function)(const void *key),
 					int (*cmp_function)(const void *key, const void *new_key),
-					void (*del_function)(void *key, void *value));
+					int (*del_function)(void *key, void *value));
 
 void			robin_free(t_robin *robin);
 

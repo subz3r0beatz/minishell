@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/25 12:49:13 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/11 17:54:31 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 03:31:38 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 t_robin	*robin_init(const size_t capacity,
 		size_t (*hash_function)(const void *key),
 		int (*cmp_function)(const void *key, const void *new_key),
-		void (*del_function)(void *key, void *value))
+		int (*del_function)(void *key, void *value))
 {
 	t_robin	*robin;
 

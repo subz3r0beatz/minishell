@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 14:15:11 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/14 18:50:55 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/17 03:23:34 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ void	*ft_calloc(size_t nmemb, size_t size);
 void	*ft_realloc(void *ptr, size_t elem_count, size_t elem_size);
 
 char	*ft_substr(char const *s, unsigned int start, size_t len);
-char	*ft_strjoin_prefix(char const *s1, char const *s2);
+char	*ft_join_split_prefix(char const **s, char const *del);
+char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_join_split(char const **s, char *del);
 char	*ft_strtrim(char const *s1, char const *set);
 char	*ft_strchr(const char *s, int c);
@@ -62,8 +63,8 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 
 char	**ft_dup_matrix(char **matrix, size_t size);
 char	**ft_split(char const *s, char c);
-char	**ft_split_quotes_inc(char *str, char *delim);
-char	**ft_split_quotes_exl(char *str, char *delim);
+char	**ft_char_split_quotes_inc(char *str, int (*delim)(int));
+char	**ft_char_split_quotes_exl(char *str, int (*delim)(int));
 
 size_t	ft_memlen(const void *s, size_t n);
 size_t	ft_strlen(const char *s);
@@ -79,7 +80,7 @@ int		ft_isprint(int c);
 int		ft_iswhite(int c);
 int		ft_toupper(int c);
 int		ft_tolower(int c);
-int		ft_strcmp(const char *s1, const char *s2);
+int		ft_strcmp(const void *s1, const void *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 int		ft_memcmp(const void *s1, const void *s2, size_t n);
 int		ft_lstsize(t_list *lst);
