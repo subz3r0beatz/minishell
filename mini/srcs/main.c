@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 17:46:29 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/17 03:44:08 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 06:51:02 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,10 @@ static int	init_minishell(t_minishell *shell, char **envp)
 {
 	shell->exported_count = 0;
 	if (build_env(shell, envp))
+	{
+		robin_free(shell->env);
 		return (1);
+	}
 	shell->exported = NULL;
 	//init_token_type_table(shell->token_type_table);
 	return (0);
@@ -80,7 +83,7 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	}
 	args = &argv[3];
-	fd_out = open(argv[2], O_WRONLY);
+	fd_out = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd_out <= 0)
 	{
 		ft_putendl_fd("minishell: open: cannot open file defaulting to stdout", 2);
@@ -102,9 +105,11 @@ int	main(int argc, char **argv, char **envp)
 	{
 		ft_putendl_fd("minishell: command not found", 2);
 		close(fd_out);
+		robin_free(shell.env);
 		return (1);
 	}
 	close(fd_out);
+	robin_free(shell.env);
 	//main_loop(minishell);
 	return (status);
 }

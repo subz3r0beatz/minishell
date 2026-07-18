@@ -1,0 +1,243 @@
+===================================================
+              MINISHELL BUILT-IN TESTER            
+===================================================
+[0;33mTesting: pwd [0m
+  [0;32m✓ Exit Code Match[0m (0)
+  [0;32m✓ Stdout Match[0m
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------
+[0;33mTesting: pwd ignored_arg[0m
+  [0;32m✓ Exit Code Match[0m (0)
+  [0;32m✓ Stdout Match[0m
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------
+[0;33mTesting: echo Hello World[0m
+  [0;32m✓ Exit Code Match[0m (0)
+  [0;32m✓ Stdout Match[0m
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------
+[0;33mTesting: echo -n No newline[0m
+  [0;32m✓ Exit Code Match[0m (0)
+  [0;32m✓ Stdout Match[0m
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------
+[0;33mTesting: echo -n -n Multiple flags[0m
+  [0;32m✓ Exit Code Match[0m (0)
+  [0;32m✓ Stdout Match[0m
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------
+[0;33mTesting: echo -nnn Valid flag combo[0m
+  [0;32m✓ Exit Code Match[0m (0)
+  [0;32m✓ Stdout Match[0m
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------
+[0;33mTesting: echo -n hello -n[0m
+  [0;32m✓ Exit Code Match[0m (0)
+  [0;32m✓ Stdout Match[0m
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------
+[0;33mTesting: env [0m
+  [0;32m✓ Exit Code Match[0m (0)
+  [0;31m✗ Stdout Mismatch[0m
+    --- bash_out.txt	2026-07-18 07:01:44.738787426 +0200
+    +++ ms_out.txt	2026-07-18 07:01:44.738787426 +0200
+    @@ -1,71 +1,71 @@
+    -SHELL=/bin/zsh
+    -LSCOLORS=Gxfxcxdxbxegedabagacad
+     SESSION_MANAGER=local/1E1.42angouleme.fr:@/tmp/.ICE-unix/2828705,unix/1E1.42angouleme.fr:/tmp/.ICE-unix/2828705
+    -WINDOWID=60817419
+    -QT_ACCESSIBILITY=1
+    -COLORTERM=truecolor
+    -XDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/etc/xdg
+    -LESS=-R
+    -XDG_SESSION_PATH=/org/freedesktop/DisplayManager/Session0
+    -XDG_MENU_PREFIX=gnome-
+    -GNOME_DESKTOP_SESSION_ID=this-is-deprecated
+    -GTK_IM_MODULE=ibus
+    -_P9K_TTY=/dev/pts/4
+    -SSH_AUTH_SOCK=/run/user/102247/keyring/ssh
+    -P9K_TTY=old
+    -XMODIFIERS=@im=ibus
+    -DESKTOP_SESSION=ubuntu
+    -SSH_AGENT_PID=2828665
+    -__ETC_PROFILE_NIX_SOURCED=1
+    +KRB5CCNAME=FILE:/tmp/krb5cc_102247_1IAQdc
+     KITTY_PID=3056827
+     FT_HOOK_NAME=login-user
+    -EDITOR=nvim
+    -GTK_MODULES=gail:atk-bridge
+    -FT_HOOK_PATHNAME=login-user.d
+    -KRB5CCNAME=FILE:/tmp/krb5cc_102247_1IAQdc
+    +JOURNAL_STREAM=8:44256410
+     PWD=/home/fldumas-/Documents/minishell/mini
+    +_P9K_SSH_TTY=/dev/pts/4
+    +GTK_IM_MODULE=ibus
+    +LESS=-R
+    +TERMINFO=/home/fldumas-/.local/kitty.app/lib/kitty/terminfo
+    +PATH=/home/fldumas-/.local/bin:/home/fldumas-/bin:/home/fldumas-/.local/kitty.app/bin:/home/fldumas-/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+    +XAUTHORITY=/home/fldumas-/.Xauthority
+    +GNOME_DESKTOP_SESSION_ID=this-is-deprecated
+    +COLORTERM=truecolor
+    +XDG_MENU_PREFIX=gnome-
+    +XDG_SEAT_PATH=/org/freedesktop/DisplayManager/Seat0
+    +LANG=en_US.UTF-8
+    +SSH_AGENT_PID=2828665
+    +WINDOWID=60817419
+     NIX_PROFILES=/nix/var/nix/profiles/default /home/fldumas-/.nix-profile
+    +SYSTEMD_EXEC_PID=2828922
+    +XDG_DATA_DIRS=/usr/share/ubuntu:/usr/share/gnome:/home/fldumas-/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share:/var/lib/snapd/desktop:/home/fldumas-/.nix-profile/share:/nix/var/nix/profiles/default/share
+    +SHELL=/bin/zsh
+     LOGNAME=fldumas-
+    -XDG_SESSION_DESKTOP=ubuntu
+    -XDG_SESSION_TYPE=x11
+    -MANPATH=/home/fldumas-/.local/kitty.app/share/man:
+    +MANAGERPID=2827936
+    +XDG_SESSION_PATH=/org/freedesktop/DisplayManager/Session0
+    +LSCOLORS=Gxfxcxdxbxegedabagacad
+     GPG_AGENT_INFO=/run/user/102247/gnupg/S.gpg-agent:0:1
+    -SYSTEMD_EXEC_PID=2828922
+    -_=/home/fldumas-/.local/bin/env
+    -XAUTHORITY=/home/fldumas-/.Xauthority
+    -KITTY_PUBLIC_KEY=1:b$_7kNNTF{yx%uR;g>|n)b=4ai-?#1cHZ;_pMKC<
+    -XDG_GREETER_DATA_DIR=/var/lib/lightdm-data/fldumas-
+    -HOME=/home/fldumas-
+    -LANG=en_US.UTF-8
+    -LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+    +KITTY_INSTALLATION_DIR=/home/fldumas-/.local/kitty.app/lib/kitty
+    +XMODIFIERS=@im=ibus
+    +INVOCATION_ID=55d4d0d644ca4dd89d1ec44de43981ff
+    +QT_ACCESSIBILITY=1
+    +XDG_SESSION_TYPE=x11
+    +PAGER=less
+    +XDG_RUNTIME_DIR=/run/user/102247
+    +EDITOR=nvim
+    +USER=fldumas-
+    +_=./minishell
+    +QT_IM_MODULE=ibus
+    +VISUAL=nvim
+    +DESKTOP_SESSION=ubuntu
+    +GDMSESSION=ubuntu
+    +ZSH=/home/fldumas-/.oh-my-zsh
+     XDG_CURRENT_DESKTOP=ubuntu:GNOME
+    -NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+    +P9K_TTY=old
+    +SSH_AUTH_SOCK=/run/user/102247/keyring/ssh
+     KITTY_WINDOW_ID=1
+    -XDG_SEAT_PATH=/org/freedesktop/DisplayManager/Seat0
+    -INVOCATION_ID=55d4d0d644ca4dd89d1ec44de43981ff
+    -MANAGERPID=2827936
+    +MANPATH=/home/fldumas-/.local/kitty.app/share/man:
+     XDG_SESSION_CLASS=user
+    +GTK_MODULES=gail:atk-bridge
+    +DISPLAY=:0
+    +XDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/etc/xdg
+    +_P9K_TTY=/dev/pts/4
+    +KITTY_PUBLIC_KEY=1:b$_7kNNTF{yx%uR;g>|n)b=4ai-?#1cHZ;_pMKC<
+    +DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/102247/bus
+    +FT_HOOK_PATHNAME=login-user.d
+     TERM=xterm-kitty
+    -TERMINFO=/home/fldumas-/.local/kitty.app/lib/kitty/terminfo
+    -ZSH=/home/fldumas-/.oh-my-zsh
+    +SHLVL=3
+     LIBVIRT_DEFAULT_URI=qemu:///system
+    -USER=fldumas-
+    -VISUAL=nvim
+    -DISPLAY=:0
+    -SHLVL=2
+    -PAGER=less
+    -QT_IM_MODULE=ibus
+    -_P9K_SSH_TTY=/dev/pts/4
+    -NIX_REMOTE=daemon
+    -XDG_RUNTIME_DIR=/run/user/102247
+    +GIO_LAUNCHED_DESKTOP_FILE_PID=3056827
+    +HOME=/home/fldumas-
+    +OLDPWD=/home/fldumas-
+    +XDG_GREETER_DATA_DIR=/var/lib/lightdm-data/fldumas-
+    +__ETC_PROFILE_NIX_SOURCED=1
+     DOCKER_HOST=unix:///run/user/102247/docker.sock
+     P9K_SSH=0
+    -JOURNAL_STREAM=8:44256410
+    -XDG_DATA_DIRS=/usr/share/ubuntu:/usr/share/gnome:/home/fldumas-/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share:/var/lib/snapd/desktop:/home/fldumas-/.nix-profile/share:/nix/var/nix/profiles/default/share
+    -PATH=/home/fldumas-/.local/bin:/home/fldumas-/bin:/home/fldumas-/.local/kitty.app/bin:/home/fldumas-/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+    -GDMSESSION=ubuntu
+    -DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/102247/bus
+    +XDG_SESSION_DESKTOP=ubuntu
+     MAIL=fldumas-@student.42angouleme.fr
+    -KITTY_INSTALLATION_DIR=/home/fldumas-/.local/kitty.app/lib/kitty
+    -GIO_LAUNCHED_DESKTOP_FILE_PID=3056827
+    -OLDPWD=/home/fldumas-
+    +LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+    +NIX_REMOTE=daemon
+    +NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+  [0;31m✗ Valgrind Leaks Detected[0m
+---------------------------------------------------
+[0;33mTesting: env --ignore-environment[0m
+  [0;32m✓ Exit Code Match[0m (0)
+  [0;31m✗ Stdout Mismatch[0m
+    --- bash_out.txt	2026-07-18 07:01:45.106792169 +0200
+    +++ ms_out.txt	2026-07-18 07:01:45.110792220 +0200
+    @@ -0,0 +1,19 @@
+    +Usage: env [OPTION]... [-] [NAME=VALUE]... [COMMAND [ARG]...]
+    +Set each NAME to VALUE in the environment and run COMMAND.
+    +
+    +Mandatory arguments to long options are mandatory for short options too.
+    +  -a, --argv0=ARG          pass ARG as the zeroth argument of COMMAND
+    +  -i, --ignore-environment start with an empty environment
+    +  -0, --null               end each output line with NUL, not newline
+    +  -u, --unset=NAME         remove variable from the environment
+    +  -C, --chdir=DIR          change working directory to DIR
+    +  -S, --split-string=S     process and split S into separate arguments
+    +
+    +A mere - implies -i.
+    +If no COMMAND, print the resulting environment.
+    +
+    +Exit status:
+    +  125  if the env command itself fails
+    +  126  if COMMAND is found but cannot be invoked
+    +  127  if COMMAND cannot be found
+    +  -    the exit status of COMMAND otherwise
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------
+[0;33mTesting: env -i pwd[0m
+  [0;32m✓ Exit Code Match[0m (0)
+  [0;31m✗ Stdout Mismatch[0m
+    --- bash_out.txt	2026-07-18 07:01:45.478796962 +0200
+    +++ ms_out.txt	2026-07-18 07:01:45.482797013 +0200
+    @@ -1 +1,19 @@
+    -/home/fldumas-/Documents/minishell/mini
+    +Usage: env [OPTION]... [-] [NAME=VALUE]... [COMMAND [ARG]...]
+    +Set each NAME to VALUE in the environment and run COMMAND.
+    +
+    +Mandatory arguments to long options are mandatory for short options too.
+    +  -a, --argv0=ARG          pass ARG as the zeroth argument of COMMAND
+    +  -i, --ignore-environment start with an empty environment
+    +  -0, --null               end each output line with NUL, not newline
+    +  -u, --unset=NAME         remove variable from the environment
+    +  -C, --chdir=DIR          change working directory to DIR
+    +  -S, --split-string=S     process and split S into separate arguments
+    +
+    +A mere - implies -i.
+    +If no COMMAND, print the resulting environment.
+    +
+    +Exit status:
+    +  125  if the env command itself fails
+    +  126  if COMMAND is found but cannot be invoked
+    +  127  if COMMAND cannot be found
+    +  -    the exit status of COMMAND otherwise
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------
+[0;33mTesting: env fake_command[0m
+  [0;32m✓ Exit Code Match[0m (127)
+  [0;32m✓ Stdout Match[0m
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------
+[0;33mTesting: cd does_not_exist[0m
+  [0;32m✓ Exit Code Match[0m (1)
+  [0;32m✓ Stdout Match[0m
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------
+[0;33mTesting: cd /etc/shadow[0m
+  [0;32m✓ Exit Code Match[0m (1)
+  [0;32m✓ Stdout Match[0m
+  [0;32m✓ Valgrind Clean[0m
+---------------------------------------------------

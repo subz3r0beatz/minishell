@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/29 16:12:09 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/17 04:32:02 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 04:15:22 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ char	**env_to_matrix(t_minishell *shell)
 {
 	char	**matrix;
 
-	matrix = malloc(sizeof(char *) * shell->exported_count);
+	matrix = malloc(sizeof(char *) * (shell->exported_count + 1));
 	if (!matrix)
 		return (NULL);
 	matrix = fill_matrix(shell->env, matrix);

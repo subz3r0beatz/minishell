@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 18:33:00 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/13 14:59:47 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 09:07:53 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,28 +49,35 @@ static size_t	check_flags(char **args, int *logical, int *e_flag)
 	return (i);
 }
 
-static void	update_vars(t_minishell *shell, char *dir)
+static int	update_vars(t_minishell *shell, char *dir)
 {
-	t_robin_node	*pwd_node;
+	t_robin_node	node;
 	t_robin_node	*oldpwd_node;
-	char			*oldpwd_value;
+	char			*pwd_value;
+	int				has_value;
 
-	pwd_node = robin_search(shell->env, "PWD");
+	if (get_var_value(shell, "PWD", &pwd_value))
+	{
+		node = create_node(shell->env, "PWD", dir, 0);
+		if (!node.key || !node.value)
+			return (1);
+		if (robin_insert(shell->env, node))
+			return (1);
+	}
 	oldpwd_node = robin_search(shell->env, "OLDPWD");
-	oldpwd_value = NULL;
-	if (pwd_node)
-		oldpwd_value = ((t_env *)pwd_node->value)->value;
-	if (oldpwd_node)
+	if (oldpwd_node && ((t_env *)oldpwd_node->value)->value)
 	{
 		free(((t_env *)oldpwd_node->value)->value);
-		((t_env *)oldpwd_node->value)->value = oldpwd_value;
+		((t_env *)oldpwd_node->value)->value = pwd_value;
+		if (((t_env *)oldpwd_node->value)->is_exported)
+			shell->exported_count--;
 	}
-	else
-		free(oldpwd_value);
-	if (pwd_node)
-		((t_env *)pwd_node->value)->value = dir;
-	else
-		free(dir);
+	if (pwd_value)
+	{
+		pwd_value = dir;
+		has_value = 1;
+	}
+	return (0);
 }
 
 int	ft_cd(t_minishell *shell, char **args, int fd_out)
@@ -98,6 +105,11 @@ int	ft_cd(t_minishell *shell, char **args, int fd_out)
 	}
 	if (print_path)
 		ft_putendl_fd(dir, fd_out);
-	update_vars(shell, dir);
+	if (update_vars(shell, dir))
+	{
+		free(dir);
+		return (1);
+	}
+	free(dir);
 	return (0);
 }

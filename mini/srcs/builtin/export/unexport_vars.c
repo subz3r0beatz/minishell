@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 15:54:38 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/07 20:39:46 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 01:01:02 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,18 +37,22 @@ static size_t	is_valid_key(char *str)
 static int	lookup_var(t_minishell *shell, char *key, char *value)
 {
 	t_robin_node	*robin_node;
+	int				has_value;
 
 	robin_node = robin_search(shell->env, key);
 	if (!robin_node)
 		return (1);
 	free(key);
+	has_value = 0;
+	if (((t_env *)robin_node->value)->value)
+		has_value = 1;
 	if (value)
 	{
 		free(((t_env *)robin_node->value)->value);
 		((t_env *)robin_node->value)->value = value;
+		if (((t_env *)robin_node->value)->is_exported && has_value)
+			shell->exported_count--;
 	}
-	if (((t_env *)robin_node->value)->is_exported)
-		shell->exported_count--;
 	((t_env *)robin_node->value)->is_exported = 0;
 	return (0);
 }

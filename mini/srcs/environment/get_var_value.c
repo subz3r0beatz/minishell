@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:21:19 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/16 21:29:57 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 08:50:03 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	get_var_value(t_minishell *shell, char *key, char **ptr)
 {
 	t_robin_node	*robin_node;
 
+	*ptr = NULL;
 	robin_node = robin_search(shell->env, key);
 	if (!robin_node)
 		return (1);

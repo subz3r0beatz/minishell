@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 15:17:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/29 15:57:50 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 08:39:29 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,27 @@ static t_env	**sort_env(t_robin *env)
 	return (sorted_env);
 }
 
+static void	print_value(char *value, int fd_out)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	j = 0;
+	while (value[i])
+	{
+		if (value[i] == '"' || value[i] == '\\'
+			|| value[i] == '$' || value[i] == '`')
+		{
+			write(fd_out, &value[j], i - j);
+			ft_putchar_fd('\\', fd_out);
+			j = i;
+		}
+		i++;
+	}
+	write(fd_out, &value[j], i - j);
+}
+
 int	print_export(t_robin *env, int fd_out)
 {
 	size_t	i;
@@ -67,14 +88,14 @@ int	print_export(t_robin *env, int fd_out)
 	i = 0;
 	while (sorted_env[i])
 	{
-		if (sorted_env[i]->is_exported && ft_strcmp(sorted_env[i]->key, "_"))
+		if (sorted_env[i]->is_exported)
 		{
 			ft_putstr_fd("declare -x ", fd_out);
 			ft_putstr_fd(sorted_env[i]->key, fd_out);
 			if (sorted_env[i]->value)
 			{
 				ft_putstr_fd("=\"", fd_out);
-				ft_putstr_fd(sorted_env[i]->value, fd_out);
+				print_value(sorted_env[i]->value, fd_out);
 				ft_putchar_fd('"', fd_out);
 			}
 			ft_putchar_fd('\n', fd_out);

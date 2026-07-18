@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/06 07:09:11 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/17 02:54:10 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 03:49:24 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,10 @@ static int	is_valid_key(char *str)
 
 static int	parse_vars(t_minishell *shell, char **args)
 {
-	int		status;
-	size_t	i;
+	int				status;
+	int				has_value;
+	size_t			i;
+	t_robin_node	*robin_node;
 
 	status = 0;
 	i = 0;
@@ -77,8 +79,14 @@ static int	parse_vars(t_minishell *shell, char **args)
 	{
 		if (is_valid_key(args[i]))
 		{
+			has_value = 0;
+			robin_node = robin_search(shell->env, args[i]);
+			if (robin_node && (((t_env *)robin_node->value)->is_exported
+					&& ((t_env *)robin_node->value)->value))
+				has_value = 1;
 			if (!robin_remove(shell->env, args[i]))
-				shell->exported_count--;
+				if (has_value)
+					shell->exported_count--;
 		}
 		else
 			status = 1;

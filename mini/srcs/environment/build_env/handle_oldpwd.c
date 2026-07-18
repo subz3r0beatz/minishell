@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 11:38:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/02 13:12:08 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 02:16:54 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,5 @@ int	handle_oldpwd(t_minishell *shell)
 		shell->env->del_function(new_node.key, new_node.value);
 		return (1);
 	}
-	shell->exported_count++;
 	return (0);
 }

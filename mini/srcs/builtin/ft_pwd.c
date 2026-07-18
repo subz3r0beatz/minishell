@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 22:52:56 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/07 20:38:41 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 04:55:29 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static int	handle_logical(t_minishell *shell, int fd_out)
 		if (pwd_stat.st_ino == dot_stat.st_ino
 			&& pwd_stat.st_dev == dot_stat.st_dev)
 		{
-			ft_putstr_fd(pwd, fd_out);
+			ft_putendl_fd(pwd, fd_out);
 			return (0);
 		}
 	}

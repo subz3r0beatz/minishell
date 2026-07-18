@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/06 03:45:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/17 02:59:46 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 08:19:06 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,7 @@ int	ft_env(t_minishell *shell, char **args, int fd_out)
 	status = init_env(shell, matrices, &flags, &max_uints);
 	if (status)
 		return (status);
+	flags.fd_out = fd_out;
 	max_uints.i = parse_env_flags(matrices, &flags, &max_uints);
 	if (flags.print_help)
 		return (exit_env(matrices, &flags, &max_uints, print_env_help(fd_out)));
@@ -138,5 +139,5 @@ int	ft_env(t_minishell *shell, char **args, int fd_out)
 	if (resize_env(matrices, &flags, &max_uints, &status))
 		return (status);
 	return (exit_env(matrices, &flags, &max_uints,
-			exec_env(matrices, &flags, &max_uints)));
+			exec_env(shell, matrices, &flags, &max_uints)));
 }

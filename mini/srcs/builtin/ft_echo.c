@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:31:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/17 02:53:06 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 06:54:44 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ int	ft_echo(t_minishell *shell, char **args, int fd_out)
 	int		escape;
 	char	table[256];
 
-	(void) shell;
+	(void)shell;
 	newline = 1;
 	escape = 0;
 	init_escape_table(table);

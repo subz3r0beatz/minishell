@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 10:33:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/16 15:48:52 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 07:33:16 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,8 @@ static int	parse_cmd(char **matrices[2],
 	return (exec_cmd(&matrices[1][max_uints->i], matrices[0], cmd));
 }
 
-int	exec_env(char **matrices[2], t_flags *flags, t_max_uints *max_uints)
+int	exec_env(t_minishell *shell, char **matrices[2],
+	t_flags *flags, t_max_uints *max_uints)
 {
 	pid_t	pid;
 	int		status;
@@ -89,6 +90,12 @@ int	exec_env(char **matrices[2], t_flags *flags, t_max_uints *max_uints)
 	}
 	if (pid == 0)
 	{
+		if (flags->fd_out != STDOUT_FILENO)
+		{
+			dup2(flags->fd_out, STDOUT_FILENO);
+			close(flags->fd_out);
+		}
+		robin_free(shell->env);
 		switch_dir(matrices, flags, max_uints);
 		exit(exit_env(matrices, flags, max_uints,
 				parse_cmd(matrices, flags, max_uints)));

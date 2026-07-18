@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 15:31:03 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/17 03:03:34 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/18 03:52:34 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,22 @@ static size_t	is_valid_key(char *str)
 static int	lookup_var(t_minishell *shell, char *key, char *value)
 {
 	t_robin_node	*robin_node;
+	int				has_value;
 
 	robin_node = robin_search(shell->env, key);
 	if (!robin_node)
 		return (1);
 	free(key);
+	has_value = 0;
+	if (((t_env *)robin_node->value)->value)
+		has_value = 1;
 	if (value)
 	{
 		free(((t_env *)robin_node->value)->value);
 		((t_env *)robin_node->value)->value = value;
 	}
-	if (!((t_env *)robin_node->value)->is_exported)
+	if (!((t_env *)robin_node->value)->is_exported
+		&& ((value && !has_value) || (!value && has_value)))
 		shell->exported_count++;
 	((t_env *)robin_node->value)->is_exported = 1;
 	return (0);
@@ -57,7 +62,7 @@ static int	insert_new_var(t_minishell *shell, char *key, char *value)
 {
 	t_robin_node	robin_node;
 
-	robin_node = create_node(shell->env, key, value, 0);
+	robin_node = create_node(shell->env, key, value, 1);
 	if (!robin_node.key || !robin_node.value)
 		return (2);
 	if (robin_insert(shell->env, robin_node))
@@ -65,7 +70,8 @@ static int	insert_new_var(t_minishell *shell, char *key, char *value)
 		shell->env->del_function(robin_node.key, robin_node.value);
 		return (2);
 	}
-	shell->exported_count++;
+	if (value)
+		shell->exported_count++;
 	return (0);
 }
 
