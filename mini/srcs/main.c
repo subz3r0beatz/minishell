@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 17:46:29 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/18 06:51:02 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/19 15:44:55 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,12 +83,17 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	}
 	args = &argv[3];
-	fd_out = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd_out <= 0)
+	if (argv[2])
 	{
-		ft_putendl_fd("minishell: open: cannot open file defaulting to stdout", 2);
-		fd_out = 1;
+		fd_out = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (fd_out <= 0)
+		{
+			ft_putendl_fd("minishell: open: cannot open file defaulting to stdout", 2);
+			fd_out = 1;
+		}
 	}
+	else
+		fd_out = 1;
 	if (parse_flag(argv[1], "export", &i))
 		status = ft_export(&shell, args, fd_out);
 	else if (parse_flag(argv[1], "unset", &i))

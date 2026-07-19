@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/01 22:01:40 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/18 03:47:53 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/19 16:11:57 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,27 @@
 void	robin_free(t_robin *robin)
 {
 	size_t	i;
+	size_t	j;
 
 	if (!robin)
 		return ;
-	i = 0;
-	while (i < robin->capacity)
+	if (robin->ctrl && robin->data)
 	{
-		if (robin->ctrl[i])
-			robin->del_function(robin->data[i].key, robin->data[i].value);
-		i++;
+		i = 0;
+		j = 0;
+		while (i < robin->capacity && j < robin->count)
+		{
+			if (robin->ctrl[i])
+			{
+				j++;
+				robin->del_function(robin->data[i].key, robin->data[i].value);
+			}
+			i++;
+		}
 	}
-	free(robin->ctrl);
-	free(robin->data);
+	if (robin->ctrl)
+		free(robin->ctrl);
+	if (robin->data)
+		free(robin->data);
 	free(robin);
 }

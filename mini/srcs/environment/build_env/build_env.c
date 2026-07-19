@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 18:17:23 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/18 04:34:48 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/19 16:12:20 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,14 @@ static int	insert_new_var(t_minishell *shell, char *key, char *value)
 	if (!robin_node.key || !robin_node.value)
 	{
 		robin_free(shell->env);
+		shell->env = NULL;
 		return (1);
 	}
 	if (robin_insert(shell->env, robin_node))
 	{
 		shell->env->del_function(robin_node.key, robin_node.value);
 		robin_free(shell->env);
+		shell->env = NULL;
 		return (1);
 	}
 	shell->exported_count++;
@@ -103,6 +105,7 @@ int	build_env(t_minishell *shell, char **envp)
 		|| handle_shlvl(shell) || handle_underscore(shell))
 	{
 		robin_free(shell->env);
+		shell->env = NULL;
 		return (1);
 	}
 	return (0);

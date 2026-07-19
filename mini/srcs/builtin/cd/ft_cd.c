@@ -6,12 +6,11 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 18:33:00 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/18 09:07:53 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/19 20:32:11 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdlib.h>
 
 static int	usage_error(char c)
 {
@@ -50,8 +49,10 @@ static size_t	check_flags(char **args, int *logical, int *e_flag)
 	return (i);
 }
 
-static int	malloc_error(void)
+static int	malloc_error(char *ptr1, char *ptr2)
 {
+	free(ptr1);
+	free(ptr2);
 	ft_putstr_fd("minishell: cd: malloc: "
 		"cannot allocate memory\n", STDERR_FILENO);
 	return (1);
@@ -59,24 +60,26 @@ static int	malloc_error(void)
 
 static int	update_vars(t_minishell *shell, char *dir)
 {
-	t_robin_node	node;
 	char			*pwd_value;
 	char			*oldpwd_value;
 
 	if (get_var_value(shell, "PWD", &pwd_value))
 	{
 		if (insert_new_node(shell, "PWD", dir, 0))
-			return (malloc_error());
+			return (malloc_error(dir, NULL));
 		free(dir);
 		update_var_value(shell, "OLDPWD", NULL);
 	}
 	else
 	{
-		if (update_var_value(shell, "OLDPWD", pwd_value))
+		oldpwd_value = ft_strdup(pwd_value);
+		if (!oldpwd_value)
+			return (malloc_error(dir, NULL));
+		if (update_var_value(shell, "OLDPWD", oldpwd_value))
 		{
-			if (insert_new_node(shell, "OLDPWD", pwd_value))
-				return (malloc_error());
-			free(pwd_value);
+			if (insert_new_node(shell, "OLDPWD", oldpwd_value, 0))
+				return (malloc_error(dir, oldpwd_value));
+			free(oldpwd_value);
 		}
 		update_var_value(shell, "PWD", dir);
 	}
@@ -102,17 +105,10 @@ int	ft_cd(t_minishell *shell, char **args, int fd_out)
 	if (parse_dir(shell, args[i], &dir, &print_path))
 		return (1);
 	if (move_dir(shell, &dir, logical, e_flag))
-	{
-		free(dir);
 		return (1);
-	}
 	if (print_path)
 		ft_putendl_fd(dir, fd_out);
 	if (update_vars(shell, dir))
-	{
-		free(dir);
 		return (1);
-	}
-	free(dir);
 	return (0);
 }
