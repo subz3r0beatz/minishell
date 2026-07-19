@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stdlib.h>
 
 static int	usage_error(char c)
 {
@@ -49,33 +50,35 @@ static size_t	check_flags(char **args, int *logical, int *e_flag)
 	return (i);
 }
 
+static int	malloc_error(void)
+{
+	ft_putstr_fd("minishell: cd: malloc: "
+		"cannot allocate memory\n", STDERR_FILENO);
+	return (1);
+}
+
 static int	update_vars(t_minishell *shell, char *dir)
 {
 	t_robin_node	node;
-	t_robin_node	*oldpwd_node;
 	char			*pwd_value;
-	int				has_value;
+	char			*oldpwd_value;
 
 	if (get_var_value(shell, "PWD", &pwd_value))
 	{
-		node = create_node(shell->env, "PWD", dir, 0);
-		if (!node.key || !node.value)
-			return (1);
-		if (robin_insert(shell->env, node))
-			return (1);
+		if (insert_new_node(shell, "PWD", dir, 0))
+			return (malloc_error());
+		free(dir);
+		update_var_value(shell, "OLDPWD", NULL);
 	}
-	oldpwd_node = robin_search(shell->env, "OLDPWD");
-	if (oldpwd_node && ((t_env *)oldpwd_node->value)->value)
+	else
 	{
-		free(((t_env *)oldpwd_node->value)->value);
-		((t_env *)oldpwd_node->value)->value = pwd_value;
-		if (((t_env *)oldpwd_node->value)->is_exported)
-			shell->exported_count--;
-	}
-	if (pwd_value)
-	{
-		pwd_value = dir;
-		has_value = 1;
+		if (update_var_value(shell, "OLDPWD", pwd_value))
+		{
+			if (insert_new_node(shell, "OLDPWD", pwd_value))
+				return (malloc_error());
+			free(pwd_value);
+		}
+		update_var_value(shell, "PWD", dir);
 	}
 	return (0);
 }

@@ -19,6 +19,12 @@ int	update_var_value(t_minishell *shell, char *key, char *value)
 	robin_node = robin_search(shell->env, key);
 	if (!robin_node)
 		return (1);
+	if (((t_env *)robin_node->value)->value && !value
+		&& ((t_env *)robin_node->value)->is_exported)
+		shell->exported_count--;
+	else if (!((t_env *)robin_node->value)->value && value
+		&& ((t_env *)robin_node->value)->is_exported)
+		shell->exported_count++;
 	free(((t_env *)robin_node->value)->value);
 	((t_env *)robin_node->value)->value = value;
 	return (0);
