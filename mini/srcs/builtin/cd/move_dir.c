@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 14:59:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/21 20:27:00 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/21 23:47:57 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,8 @@ static int	do_chdir(char *target, char *dir, int *logical)
 			*logical = 0;
 			return (0);
 		}
-		errno = err;
 		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
+		errno = err;
 		perror(dir);
 		return (1);
 	}

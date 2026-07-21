@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 10:33:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/21 19:42:10 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/21 23:51:45 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ static int	exec_cmd(char **args, char **exported, char *cmd)
 		errno = err;
 		perror("’");
 		free(cmd);
+		errno = err;
 		if (err == EACCES || err == ENOEXEC || err == EISDIR)
 			return (126);
 		return (127);
@@ -71,6 +72,8 @@ static int	parse_cmd(char **matrices[2],
 static void	run_child(char **matrices[2], t_flags *flags,
 	t_max_uints *max_uints)
 {
+	int	err;
+
 	if (flags->fd_out != STDOUT_FILENO)
 	{
 		dup2(flags->fd_out, STDOUT_FILENO);
@@ -78,9 +81,11 @@ static void	run_child(char **matrices[2], t_flags *flags,
 	}
 	if (flags->chdir_path && chdir(flags->chdir_path))
 	{
+		err = errno;
 		ft_putstr_fd("minishell: env: "
 			"cannot change directory to '", STDERR_FILENO);
 		ft_putstr_fd(flags->chdir_path, STDERR_FILENO);
+		errno = err;
 		perror("'");
 		exit(exit_env(matrices, flags, max_uints, 125));
 	}
