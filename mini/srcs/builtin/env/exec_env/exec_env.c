@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 10:33:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/19 15:07:15 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/21 19:42:10 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ static int	parse_cmd(char **matrices[2],
 	char	*cmd;
 
 	exit_code = 0;
+	no_malloc_error = 0;
 	cmd = resolve_cmd_path(&matrices[1][max_uints->i],
 			matrices[0], &exit_code, &no_malloc_error);
 	if (!cmd && !no_malloc_error)

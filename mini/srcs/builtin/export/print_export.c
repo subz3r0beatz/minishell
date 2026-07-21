@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 15:17:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/18 08:39:29 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/21 16:10:02 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,11 @@ static t_env	**sort_env(t_robin *env)
 
 	sorted_env = malloc(sizeof(t_env *) * (env->count + 1));
 	if (!sorted_env)
+	{
+		ft_putstr_fd("minishell: export: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 		return (NULL);
+	}
 	i = 0;
 	j = 0;
 	while (i < env->capacity)

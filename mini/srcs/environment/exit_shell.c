@@ -1,34 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_pwd.c                                       :+:      :+:    :+:   */
+/*   exit_shell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/26 10:09:53 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/21 19:46:03 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/07/21 19:49:42 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/21 19:56:41 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	handle_pwd(t_minishell *shell)
+void	exit_shell(t_minishell *shell, char **args, int fd_out, int exit_status)
 {
-	char	pwd_buf[8192];
-	int		get_cwd_fail;
-
-	get_cwd_fail = 0;
-	if (!getcwd(pwd_buf, 8192))
-	{
-		perror("minishell: shell-init: error retrieving current directory: "
-			"getcwd: cannot access parent directories");
-		get_cwd_fail = 1;
-	}
-	if (robin_search(shell->env, "PWD"))
-		return (0);
-	if (get_cwd_fail)
-		return (0);
-	if (insert_new_node(shell, "PWD", pwd_buf, 1))
-		return (1);
-	return (0);
+	if (args)
+		ft_free_matrix(args, ft_memlen(args, sizeof(char *)));
+	robin_free(shell->env);
+	close(fd_out);
+	exit(exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 14:59:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/19 20:49:26 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/21 20:27:00 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ static char	*get_pwd(t_minishell *shell)
 	{
 		if (!getcwd(buf, PATH_MAX))
 		{
-			perror("minishell: cd: error retrieving current directory: "
-				"getcwd: cannot access parent directories");
 			if (pwd && pwd[0])
 				pwd = ft_strdup(pwd);
 			else
@@ -70,8 +68,10 @@ static char	*parse_target(char *pwd, char *dir, int logical)
 static int	do_chdir(char *target, char *dir, int *logical)
 {
 	char	buf[PATH_MAX];
+	int		err;
 
-	if ((!ft_strcmp(dir, ".") || !ft_strcmp(dir, "..")) && !getcwd(buf, PATH_MAX))
+	if ((!ft_strcmp(dir, ".") || !ft_strcmp(dir, ".."))
+		&& !getcwd(buf, PATH_MAX))
 	{
 		perror("minishell: cd: chdir: error retrieving current directory: "
 			"getcwd: cannot access parent directories");
@@ -80,13 +80,15 @@ static int	do_chdir(char *target, char *dir, int *logical)
 	}
 	if (chdir(target))
 	{
+		err = errno;
 		if (*logical && !chdir(dir))
-			*logical = 0;
-		else
 		{
-			ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
-			perror(dir);
+			*logical = 0;
+			return (0);
 		}
+		errno = err;
+		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
+		perror(dir);
 		return (1);
 	}
 	return (0);
@@ -100,7 +102,7 @@ static int	check_getcwd(char **target, int logical, int e_flag)
 		return (0);
 	if (!getcwd(buf, PATH_MAX))
 	{
-		perror("minishell: cd: error retrieving current directory: "
+		perror("minishell: cd: chdir: error retrieving current directory: "
 			"getcwd: cannot access parent directories");
 		if (e_flag)
 			free(*target);

@@ -5,21 +5,30 @@
 # ==============================================================================
 
 # --- Argument Parsing ---
-# Usage: ./supra_tester.sh [MALLOC=1/0] [START_SECTION] [END_SECTION]
+# Usage: ./test_mini.sh [QUIET=1/0] [MALLOC=1/0] [START_SECTION] [END_SECTION]
 
-MALLOC_FLAG=${1:-1}
-START_SECTION=${2:-1}
-if [ -n "$2" ] && [ -z "$3" ]; then
-    END_SECTION=$2
-elif [ -n "$3" ]; then
-    END_SECTION=$3
-else
-    END_SECTION=19
+# 1. Quiet Mode (Default: 0 / Off)
+QUIET_FLAG=${1:-0}
+QUIET_MODE=false
+if [ "$QUIET_FLAG" == "1" ]; then
+    QUIET_MODE=true
 fi
 
+# 2. Malloc Injection (Default: 1 / On)
+MALLOC_FLAG=${2:-1}
 ENABLE_MALLOC_STRESS=true
 if [ "$MALLOC_FLAG" == "0" ]; then
     ENABLE_MALLOC_STRESS=false
+fi
+
+# 3 & 4. Section Limits (Default: 1 to 19)
+START_SECTION=${3:-1}
+if [ -n "$3" ] && [ -z "$4" ]; then
+    END_SECTION=$3
+elif [ -n "$4" ]; then
+    END_SECTION=$4
+else
+    END_SECTION=19
 fi
 
 # --- Colors for Output ---
@@ -138,7 +147,9 @@ run
 bt 10
 EOF
     local gdb_out=$(gdb -batch -x "$GDB_SCRIPT" --args $MINISHELL "$builtin" "$M_TRASH" "${mini_args[@]}" 2>/dev/null)
-    echo "$gdb_out" | grep -v "faulty_malloc.c" | grep -v "malloc.c" | grep -v "libc.so" | grep -m 1 -iE "\.c:" | sed -E 's/^[ \t]*#[0-9]+[ \t]+(0x[0-9a-f]+ in )?//'
+    
+    # NEW: Removed '-m 1' to keep the full stack, and added 'awk' to draw a clean trace path
+    echo "$gdb_out" | grep -vE "faulty_malloc\.c|malloc\.c|libc\.so|/nptl/|/sysdeps/|/csu/|pthread_kill\.c|raise\.c|abort\.c" | grep -iE "\.c:" | sed -E 's/^[ \t]*#[0-9]+[ \t]+(0x[0-9a-f]+ in )?//' | awk '{printf (NR==1 ? "" : "\n        -> ") $0}'
 }
 
 # --- Helper to clean and normalize environment outputs ---
@@ -159,6 +170,7 @@ normalize_stderr() {
     local is_bash=$2
     local cmd=$3
 
+    sed -i -E '/sh: [0-9]+: getcwd\(\) failed/d' "$file" # <-- Strip valgrind startup artifact
     if [ "$is_bash" = true ]; then
         sed -E 's/^bash: line [0-9]+: //g; s/^bash: //g' "$file" > "${file}.norm"
     else
@@ -203,12 +215,12 @@ run_test() {
     display_out+=$(printf "Test %-40s " "[$cmd_string]")
 
     # 2. Run standard Bash
-    bash -c "$bash_cmd" > "$B_OUT" 2> "$B_ERR"
-    local bash_status=$?
+	{ bash -c "$bash_cmd" > "$B_OUT" 2> "$B_ERR"; } 2>/dev/null
+	local bash_status=$?
 
     # 3. Run Minishell wrapped in Valgrind
     eval "mini_args=($cmd_string)"
-    valgrind --leak-check=full --show-leak-kinds=all \
+    valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes \
              --errors-for-leak-kinds=all --log-file="$V_LOG" \
              $MINISHELL "$builtin" "$M_OUT" "${mini_args[@]}" > /dev/null 2> "$M_ERR"
     local mini_status=$?
@@ -259,7 +271,7 @@ run_test() {
     fi
     if [ "$malloc_ok" = true ]; then malloc_pass_num=1; fi
 
-		# 6. Normalize and Compare
+# 6. Normalize and Compare
     local out_diff=0
     local err_diff=0
 
@@ -296,11 +308,20 @@ run_test() {
     else
         display_out+="$(echo -e "${RED}FAIL${RESET} | Val: $val_str | Malloc: $malloc_status")\n"
         if [ $bash_status -ne $mini_status ]; then display_out+="$(echo -e "  ${YELLOW}Exit Differs:${RESET} Bash=$bash_status, Mini=$mini_status")\n"; fi
-        if [ $out_diff -ne 0 ]; then display_out+="$(echo -e "  ${YELLOW}Stdout Differs:${RESET}")\n$(cat "$test_dir/diff.log" | sed 's/^/    /')\n"; fi
+        if [ $out_diff -ne 0 ]; then display_out+="$(echo -e "  ${YELLOW}Stdout Differs:${RESET}")\n$(tr -d '\0' < "$test_dir/diff.log" | sed 's/^/    /')\n"; fi
         if [ $err_diff -ne 0 ]; then display_out+="$(echo -e "  ${YELLOW}Stderr Differs:${RESET}")\n$(cat "$test_dir/err_diff.log" | sed 's/^/    /')\n"; fi
     fi
 
-    # 8. Save Data for Parent Process
+	if [ "$valgrind_ok" = false ]; then
+        display_out+="$(echo -e "  ${MAGENTA}Valgrind Report:${RESET}")\n"
+        display_out+="$(grep -E -A50000 "ERROR SUMMARY|Invalid|definitely lost|indirectly lost|possibly lost|uninitialised" "$V_LOG" | sed 's/^/    /')\n"
+    fi
+
+ # 8. Save Data for Parent Process
+    if [ "$QUIET_MODE" = true ] && [ "$logic_pass_num" -eq 1 ] && [ "$valgrind_ok" = true ] && [ "$malloc_ok" = true ]; then
+        display_out="" # Completely suppress output for perfect passes
+    fi
+
     echo -e "$display_out" > "$test_dir/display.log"
     echo "$logic_pass_num $val_pass_num $malloc_pass_num" > "$test_dir/status.dat"
     rm -f "$TMP_DIR/running_$test_id" # Remove active CPU lock
@@ -344,29 +365,25 @@ queue_flag_test() {
     run_test "$display_count" "$1" "$2" "flag_error" &
 }
 
-# --- Asynchronous Queue Flusher (Non-Blocking) ---
 flush_queue() {
     local start=$((last_queued_print + 1))
     local end=$display_count
-    
+
     if [ "$start" -le "$end" ]; then
-        # Spawn an independent Watcher for this section
-        (
-            # Poll until every test in this section creates its done.flag
-            for (( i=start; i<=end; i++ )); do
-                while [ ! -f "$TMP_DIR/$i/done.flag" ]; do
-                    sleep 0.1
-                done
+        # Poll and wait for every test in this section to finish BEFORE continuing
+        for (( i=start; i<=end; i++ )); do
+            while [ ! -f "$TMP_DIR/$i/done.flag" ]; do
+                sleep 0.05
             done
-            
-            # Assemble output and print it atomically so terminal lines don't mix
-            local buffer=""
-            for (( i=start; i<=end; i++ )); do
-                buffer+=$(cat "$TMP_DIR/$i/display.log")
-                buffer+=$'\n'
-            done
-            printf "%s" "$buffer"
-        ) &
+        done
+
+        # Print section output atomically
+        for (( i=start; i<=end; i++ )); do
+            local log_content=$(tr -d '\0' < "$TMP_DIR/$i/display.log" 2>/dev/null)
+            if [ -n "$log_content" ]; then
+                printf "%s\n" "$log_content"
+            fi
+        done
     fi
     last_queued_print=$display_count
 }
@@ -492,27 +509,27 @@ queue_header "--- 11. HARDCORE: System, Starvation, and POSIX Extremes..."
 mkdir -p /tmp/mini_cdpath_test
 export CDPATH=/tmp
 queue_test "cd" "cd mini_cdpath_test"
-unset CDPATH
 
 export OLDPWD=/tmp
-queue_test "cd" "cd -"
-unset OLDPWD
 queue_test "cd" "cd -"
 
 OLD_HOME=$HOME
 unset HOME
 queue_test "cd" "cd"
-export HOME=$OLD_HOME
 
 queue_test "env" "env -i ls"
 queue_test "env" "env sh -c 'exit 42'"
-queue_test "env" "env sh -c 'kill -9 \$$'"
+queue_test "env" 'env sh -c "kill -9 \$$"'
 
 queue_test "export" "export MULTILINE=$'Line1\nLine2\tTabbed'"
 queue_test "cd" "cd /tmp /var /usr"
 
-rm -rf /tmp/mini_cdpath_test
     flush_queue
+# ALL CLEANUP MUST HAPPEN AFTER THE FLUSH
+unset CDPATH
+unset OLDPWD
+export HOME=$OLD_HOME
+rm -rf /tmp/mini_cdpath_test
 fi
 
 if check_sec 12; then
@@ -535,9 +552,9 @@ queue_test "env" "env /tmp"
 touch /tmp/mini_no_exec
 chmod 000 /tmp/mini_no_exec
 queue_test "env" "env /tmp/mini_no_exec"
-rm -f /tmp/mini_no_exec
 queue_test "env" "env /does_not_exist_mini"
     flush_queue
+rm -f /tmp/mini_no_exec # MOVED HERE
 fi
 
 if check_sec 14; then
@@ -579,9 +596,9 @@ queue_test "cd" "cd /tmp/mini_hostile/no_exec"
 LONG_PATH="/"$(head -c 4100 < /dev/zero | tr '\0' 'a')
 queue_test "cd" "cd $LONG_PATH"
 
-chmod 777 /tmp/mini_hostile/no_exec 2>/dev/null
-rm -rf /tmp/mini_hostile
     flush_queue
+chmod 777 /tmp/mini_hostile/no_exec 2>/dev/null # MOVED HERE
+rm -rf /tmp/mini_hostile                       # MOVED HERE
 fi
 
 if check_sec 17; then

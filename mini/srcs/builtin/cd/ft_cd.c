@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 18:33:00 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/19 20:32:11 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/21 20:10:29 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,10 @@ int	ft_cd(t_minishell *shell, char **args, int fd_out)
 	if (args[i] && args[i + 1])
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
-		return (2);
+		return (1);
 	}
+	if (args[i] && !args[i][0])
+		return (0);
 	if (parse_dir(shell, args[i], &dir, &print_path))
 		return (1);
 	if (move_dir(shell, &dir, logical, e_flag))

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 10:11:47 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/19 20:39:22 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/21 15:50:47 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,11 +111,6 @@ int	parse_dir(t_minishell *shell, char *arg, char **dir, int	*print_path)
 {
 	*dir = NULL;
 	*print_path = 0;
-	if (arg && !arg[0])
-	{
-		ft_putstr_fd("cd: null directory\n", STDERR_FILENO); 
-		return (1);
-	}
 	if (!arg || (arg[0] == '-' && !arg[1]))
 	{
 		if (handle_env_paths(shell, arg, dir, print_path))

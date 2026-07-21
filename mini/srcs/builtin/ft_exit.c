@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 01:50:30 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/19 20:45:23 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/21 19:59:24 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,14 @@ static void	numeric_error(char *arg)
 	ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
 	ft_putstr_fd(arg, STDERR_FILENO);
 	ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
+}
+
+static int	argument_error(void)
+{
+	if (isatty(STDERR_FILENO))
+		ft_putstr_fd("exit\n", STDERR_FILENO);
+	ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
+	return (1);
 }
 
 static int	check_numeric(char *arg)
@@ -47,7 +55,7 @@ static int	check_numeric(char *arg)
 static long long	overflow_atoll(const char *str, int *error)
 {
 	size_t		i;
-	int				sign;
+	int			sign;
 	long long	nb;
 
 	i = 0;
@@ -61,8 +69,8 @@ static long long	overflow_atoll(const char *str, int *error)
 	while (str[i] && ft_isdigit(str[i]))
 	{
 		if (nb > 922337203685477580LL || (nb == 922337203685477580LL
-			&& ((sign == 1 && str[i] - '0' > 7)
-			|| (sign == -1 && str[i] - '0' > 8))))
+				&& ((sign == 1 && str[i] - '0' > 7)
+					|| (sign == -1 && str[i] - '0' > 8))))
 		{
 			*error = 1;
 			return (2);
@@ -86,25 +94,15 @@ int	ft_exit(t_minishell *shell, char **args, int fd_out)
 	if (!args[i])
 		status = 0;
 	else if (check_numeric(args[i]))
-	{
-		close(fd_out);
-		robin_free(shell->env);
-		exit(2);
-	}
+		exit_shell(shell, NULL, fd_out, 2);
 	else if (args[i + 1])
-	{
-		if (isatty(STDERR_FILENO))
-			ft_putstr_fd("exit\n", STDERR_FILENO);
-		ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
-		return (1);
-	}
+		return (argument_error());
 	else
 		status = overflow_atoll(args[i], &error) & 255;
 	if (error)
 		numeric_error(args[i]);
 	else if (isatty(STDERR_FILENO))
 		ft_putstr_fd("exit\n", STDERR_FILENO);
-	close(fd_out);
-	robin_free(shell->env);
-	exit(status);
+	exit_shell(shell, NULL, fd_out, status);
+	return (status);
 }
