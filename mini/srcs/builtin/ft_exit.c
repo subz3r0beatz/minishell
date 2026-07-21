@@ -12,45 +12,98 @@
 
 #include "minishell.h"
 
-static int	check_numeric(char *arg, int fd_out)
+static void	numeric_error(char *arg)
+{
+	if (isatty(STDERR_FILENO))
+		ft_putstr_fd("exit\n", STDERR_FILENO);
+	ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+	ft_putstr_fd(arg, STDERR_FILENO);
+	ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
+}
+
+static int	check_numeric(char *arg)
 {
 	size_t	i;
 
 	i = 0;
+	while (arg[i] && ft_iswhite(arg[i]))
+		i++;
+	if (arg[i] == '+' || arg[i] == '-')
+		i++;
+	if (!arg[i])
+		return (1);
 	while (arg[i])
 	{
-		if (ft_isdigit(arg[i]) == 0)
+		if (!ft_isdigit(arg[i]))
 		{
-			ft_putstr_fd("exit", fd_out);
-			ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
-			ft_putstr_fd(arg, STDERR_FILENO);
-			ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
-			return (0);
+			numeric_error(arg);
+			return (1);
 		}
 		i++;
 	}
-	return (1);
+	return (0);
 }
 
-void	ft_exit(t_minishell *shell, char **args, int fd_out)
+static long long	overflow_atoll(const char *str, int *error)
 {
-	size_t	argc;
-	int		status;
+	size_t		i;
+	int				sign;
+	long long	nb;
 
-	argc = ft_memlen(args, sizeof(char *));
-	if (argc > 2)
+	i = 0;
+	sign = 1;
+	while (str[i] && ft_iswhite(str[i]))
+		i++;
+	if (str[i] == '+' || str[i] == '-')
+		if (str[i++] == '-')
+			sign = -1;
+	nb = 0;
+	while (str[i] && ft_isdigit(str[i]))
 	{
-		ft_putstr_fd("exit", fd_out);
-		ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
-		status = 1;
-		return ;
+		if (nb > 922337203685477580LL || (nb == 922337203685477580LL
+			&& ((sign == 1 && str[i] - '0' > 7)
+			|| (sign == -1 && str[i] - '0' > 8))))
+		{
+			*error = 1;
+			return (2);
+		}
+		nb = (nb * 10) + (str[i] - '0');
+		i++;
 	}
-	else if (argc <= 2)
+	return (nb * sign);
+}
+
+int	ft_exit(t_minishell *shell, char **args, int fd_out)
+{
+	int		status;
+	int		error;
+	size_t	i;
+
+	i = 1;
+	if (args[1] && args[1][0] == '-' && args[1][1] == '-' && !args[1][2])
+		i++;
+	error = 0;
+	if (!args[i])
 		status = 0;
+	else if (check_numeric(args[i]))
+	{
+		close(fd_out);
+		robin_free(shell->env);
+		exit(2);
+	}
+	else if (args[i + 1])
+	{
+		if (isatty(STDERR_FILENO))
+			ft_putstr_fd("exit\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
+		return (1);
+	}
 	else
-		status = ft_atoi(args[1]);
-	if (!check_numeric(args[1], fd_out))
-		status = 2;
+		status = overflow_atoll(args[i], &error) & 255;
+	if (error)
+		numeric_error(args[i]);
+	else if (isatty(STDERR_FILENO))
+		ft_putstr_fd("exit\n", STDERR_FILENO);
 	close(fd_out);
 	robin_free(shell->env);
 	exit(status);

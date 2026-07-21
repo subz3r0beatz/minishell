@@ -17,10 +17,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	unsigned char	*arr;
 
 	if (!nmemb || !size)
-	{
-		arr = (unsigned char *)malloc(0);
-		return (arr);
-	}
+		return (NULL);
 	if (nmemb > (size_t)-1 / size)
 		return (NULL);
 	arr = (unsigned char *)malloc(nmemb * size);

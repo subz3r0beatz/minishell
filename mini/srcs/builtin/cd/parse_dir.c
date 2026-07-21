@@ -111,6 +111,11 @@ int	parse_dir(t_minishell *shell, char *arg, char **dir, int	*print_path)
 {
 	*dir = NULL;
 	*print_path = 0;
+	if (arg && !arg[0])
+	{
+		ft_putstr_fd("cd: null directory\n", STDERR_FILENO); 
+		return (1);
+	}
 	if (!arg || (arg[0] == '-' && !arg[1]))
 	{
 		if (handle_env_paths(shell, arg, dir, print_path))

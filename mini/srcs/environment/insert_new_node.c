@@ -14,7 +14,10 @@ int	insert_new_node(t_minishell *shell, char *key,
 	if (value)
 		value_dup = ft_strdup(value);
 	if (value && !value_dup)
+	{
+		free(key_dup);
 		return (1);
+	}
 	node = create_node(shell->env, key_dup, value_dup, is_exported);
 	if (!node.key || !node.value)
 		return (1);

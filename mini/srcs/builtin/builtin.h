@@ -19,8 +19,9 @@
 
 typedef struct s_minishell	t_minishell;
 
-int		ft_echo(t_minishell *shell, char **args, int fd_out);
-int		ft_pwd(t_minishell *shell, char **args, int fd_out);
-int		ft_unset(t_minishell *shell, char **args, int fd_out);
+int	ft_echo(t_minishell *shell, char **args, int fd_out);
+int	ft_pwd(t_minishell *shell, char **args, int fd_out);
+int	ft_unset(t_minishell *shell, char **args, int fd_out);
+int	ft_exit(t_minishell *shell, char **args, int fd_out);
 
 #endif

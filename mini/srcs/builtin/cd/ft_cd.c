@@ -100,7 +100,7 @@ int	ft_cd(t_minishell *shell, char **args, int fd_out)
 	if (args[i] && args[i + 1])
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
-		return (1);
+		return (2);
 	}
 	if (parse_dir(shell, args[i], &dir, &print_path))
 		return (1);

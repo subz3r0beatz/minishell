@@ -60,7 +60,7 @@ static int	is_valid_key(char *str)
 		if (str[i] == '\0')
 			return (1);
 	}
-	ft_putstr_fd("minishell: unset: '", STDERR_FILENO);
+	ft_putstr_fd("minishell: unset: `", STDERR_FILENO);
 	ft_putstr_fd(str, STDERR_FILENO);
 	ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
 	return (0);

@@ -69,6 +69,15 @@ static char	*parse_target(char *pwd, char *dir, int logical)
 
 static int	do_chdir(char *target, char *dir, int *logical)
 {
+	char	buf[PATH_MAX];
+
+	if ((!ft_strcmp(dir, ".") || !ft_strcmp(dir, "..")) && !getcwd(buf, PATH_MAX))
+	{
+		perror("minishell: cd: chdir: error retrieving current directory: "
+			"getcwd: cannot access parent directories");
+		if (!ft_strcmp(dir, "."))
+			return (0);
+	}
 	if (chdir(target))
 	{
 		if (*logical && !chdir(dir))
@@ -77,8 +86,8 @@ static int	do_chdir(char *target, char *dir, int *logical)
 		{
 			ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
 			perror(dir);
-			return (1);
 		}
+		return (1);
 	}
 	return (0);
 }

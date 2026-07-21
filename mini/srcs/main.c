@@ -10,7 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "environment/build_env/build_env.h"
 #include "minishell.h"
+#include "robin_hash/robin_hash.h"
+#include <linux/limits.h>
+#include <unistd.h>
 
 //static void	main_loop(t_robin *env)
 //{
@@ -36,12 +40,15 @@
 static int	init_minishell(t_minishell *shell, char **envp)
 {
 	shell->exported_count = 0;
+	shell->env = NULL;
+	shell->exported = NULL;
 	if (build_env(shell, envp))
 	{
 		robin_free(shell->env);
+		ft_putstr_fd("minishell: shell-init: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 		return (1);
 	}
-	shell->exported = NULL;
 	//init_token_type_table(shell->token_type_table);
 	return (0);
 }
@@ -78,10 +85,7 @@ int	main(int argc, char **argv, char **envp)
 
 	(void) argc;
 	if (init_minishell(&shell, envp))
-	{
-		ft_putendl_fd("minishell: malloc: allocation failed", 2);
 		return (1);
-	}
 	args = &argv[3];
 	if (argv[2])
 	{
@@ -106,6 +110,8 @@ int	main(int argc, char **argv, char **envp)
 		status = ft_pwd(&shell, args, fd_out);
 	else if (parse_flag(argv[1], "env", &i))
 		status = ft_env(&shell, args, fd_out);
+	else if (parse_flag(argv[1], "exit", &i))
+		status = ft_exit(&shell, args, fd_out);
 	else
 	{
 		ft_putendl_fd("minishell: command not found", 2);

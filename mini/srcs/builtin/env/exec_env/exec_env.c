@@ -27,10 +27,10 @@ static int	exec_cmd(char **args, char **exported, char *cmd)
 	if (execve(cmd, args, exported))
 	{
 		err = errno;
-		ft_putstr_fd("minishell: env: '", STDERR_FILENO);
+		ft_putstr_fd("minishell: env: ‘", STDERR_FILENO);
 		ft_putstr_fd(cmd, STDERR_FILENO);
 		errno = err;
-		perror("'");
+		perror("’");
 		free(cmd);
 		if (err == EACCES || err == ENOEXEC || err == EISDIR)
 			return (126);

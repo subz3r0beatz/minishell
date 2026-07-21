@@ -1,6 +1,6 @@
 TARGET = minishell
 CC     = gcc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -fsanitize=undefined -g
 OBJDIR = build
 
 # 1. Identify independent sub-projects (like libft/)

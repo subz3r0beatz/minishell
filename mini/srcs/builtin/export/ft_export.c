@@ -61,7 +61,7 @@ int	ft_export(t_minishell *shell, char **args, int fd_out)
 	unexport = 0;
 	i = check_flags(args, &print, &unexport);
 	if (i == 0)
-		return (1);
+		return (2);
 	if (print)
 		return (print_export(shell->env, fd_out));
 	else if (unexport)

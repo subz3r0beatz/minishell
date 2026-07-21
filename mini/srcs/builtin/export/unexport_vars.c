@@ -28,9 +28,9 @@ static size_t	is_valid_key(char *str)
 		if (str[i] == '=' || !str[i])
 			return (i);
 	}
-	ft_putstr_fd("minishell: export: ", STDERR_FILENO);
+	ft_putstr_fd("minishell: export: `", STDERR_FILENO);
 	ft_putstr_fd(str, STDERR_FILENO);
-	ft_putstr_fd(": not a valid identifier\n", STDERR_FILENO);
+	ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
 	return (0);
 }
 
@@ -115,7 +115,11 @@ int	unexport_vars(t_minishell *shell, char **args)
 		if (status == 1)
 			ret = 1;
 		if (status == 2)
+		{
+			ft_putstr_fd("minishell: export: malloc: "
+				"cannot allocate memory\n", STDERR_FILENO);
 			return (status);
+		}
 		i++;
 	}
 	return (ret);
