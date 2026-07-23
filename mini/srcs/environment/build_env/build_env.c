@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 18:17:23 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/22 00:56:30 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/23 18:35:27 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,12 +97,12 @@ static int	cpy_env(t_minishell *shell, char **envp)
 	return (0);
 }
 
-int	build_env(t_minishell *shell, char **envp)
+int	build_env(t_minishell *shell, char **envp, char *argv0)
 {
 	if (cpy_env(shell, envp))
 		return (1);
 	if (handle_pwd(shell) || handle_oldpwd(shell)
-		|| handle_shlvl(shell) || handle_underscore(shell))
+		|| handle_shlvl(shell) || handle_underscore(shell, argv0))
 	{
 		robin_free(shell->env);
 		shell->env = NULL;

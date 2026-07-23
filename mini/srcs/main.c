@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 17:46:29 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/19 15:44:55 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/23 18:29:24 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,12 @@
 //	}
 //}
 
-static int	init_minishell(t_minishell *shell, char **envp)
+static int	init_minishell(t_minishell *shell, char **envp, char *argv0)
 {
 	shell->exported_count = 0;
 	shell->env = NULL;
 	shell->exported = NULL;
-	if (build_env(shell, envp))
+	if (build_env(shell, envp, argv0))
 	{
 		robin_free(shell->env);
 		ft_putstr_fd("minishell: shell-init: malloc: "
@@ -84,7 +84,7 @@ int	main(int argc, char **argv, char **envp)
 	size_t		i;
 
 	(void) argc;
-	if (init_minishell(&shell, envp))
+	if (init_minishell(&shell, envp, argv[0]))
 		return (1);
 	args = &argv[3];
 	if (argv[2])

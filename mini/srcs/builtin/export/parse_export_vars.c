@@ -6,16 +6,17 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 15:31:03 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/19 14:20:35 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/23 20:00:01 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static size_t	is_valid_key(char *str)
+static size_t	is_valid_key(char *str, int *append)
 {
 	size_t	i;
 
+	*append = 0;
 	if (ft_isalpha(str[0]) || str[0] == '_')
 	{
 		i = 1;
@@ -28,7 +29,10 @@ static size_t	is_valid_key(char *str)
 		if (str[i] == '=' || !str[i])
 			return (i);
 		if (str[i] == '+' && str[i + 1] == '=')
+		{
+			*append = 1;
 			return (i + 1);
+		}
 	}
 	ft_putstr_fd("minishell: export: `", STDERR_FILENO);
 	ft_putstr_fd(str, STDERR_FILENO);
@@ -82,20 +86,25 @@ static int	insert_var(t_minishell *shell, char *str)
 	size_t			i;
 	char			*key;
 	char			*value;
+	char			*oldvalue;
+	int				append;
 
-	i = is_valid_key(str);
+	i = is_valid_key(str, &append);
 	if (!i)
 		return (1);
 	key = ft_substr(str, 0, i);
-	value = NULL;
-	if (str[i])
-		value = ft_strdup(str + i + 1);
-	if (!key || (str[i] && !value))
-	{
-		free(key);
-		free(value);
+	if (!key)
 		return (2);
-	}
+	get_var_value(shell, key, &oldvalue);
+	value = NULL;
+	if (str[i] && !append)
+		value = ft_strdup(str + i + 1);
+	else if (append && (oldvalue || str[i]))
+		value = ft_strjoin(oldvalue, str + i + 1);
+	if ((str[i] || append) && !value)
+		free(key);
+	if ((str[i] || append) && !value)
+		return (2);
 	if (!lookup_var(shell, key, value))
 		return (0);
 	return (insert_new_var(shell, key, value));
