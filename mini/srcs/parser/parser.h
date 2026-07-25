@@ -13,6 +13,10 @@
 #ifndef PARSER_H
 # define PARSER_H
 
+# include "ast/ast.h"
+
+typedef enum e_token_type	t_token_type;
+
 typedef enum e_node_type
 {
 	NODE_CMD,

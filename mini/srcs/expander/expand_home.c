@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <linux/limits.h>
 
 static int	read_file(char *path, char *buffer, int size)
 {
@@ -44,7 +45,7 @@ static char	*search_passwd_home(uid_t uid, char *buffer)
 				start = buffer + 1;
 			if (*buffer == ':' && colons++ <= 5)
 				*buffer = '\0';
-			else if (colons == 2 && ft_isdigit(*ptr))
+			else if (colons == 2 && ft_isdigit(*buffer))
 				id = id * 10 + (*buffer - '0');
 			buffer++;
 		}
@@ -60,7 +61,7 @@ static char	*get_home(void)
 {
 	struct stat	st;
 	char		*home;
-	char		buffer[MAX_PATH];
+	char		buffer[PATH_MAX];
 
 	if (stat("/proc/self", &st) < 0)
 	{
@@ -68,7 +69,7 @@ static char	*get_home(void)
 		if (!home || stat(home, &st) < 0)
 			return (NULL);
 	}
-	if (read_file("/etc/passwd", buffer, MAX_PATH) > 0)
+	if (read_file("/etc/passwd", buffer, PATH_MAX) > 0)
 	{
 		home = search_passwd_home(st.st_uid, buffer);
 		if (home)

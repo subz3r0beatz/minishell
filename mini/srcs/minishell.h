@@ -45,6 +45,9 @@
 # include "environment/environment.h"
 # include "builtin/builtin.h"
 # include "prompt/prompt.h"
+# include "lexer/lexer.h"
+# include "parser/parser.h"
+# include "expander/expand.h"
 # include "lookup_table/lookup_table.h"
 //# include "error/error.h"
 

@@ -14,6 +14,7 @@
 
 char	*handle_special_param(t_minishell *shell, char *word, size_t *i)
 {
-	
-
+	(void)shell;
+	(*i)++;
+	return (word);
 }

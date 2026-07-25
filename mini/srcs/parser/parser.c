@@ -19,10 +19,10 @@ static t_ast_node	*parse_logic(t_token **token)
 	t_token_type	op;
 
 	left = parse_pipeline(token);
+	right = parse_pipeline(token->next)
 }
 
 t_ast_node	*parser(t_token *head)
 {
-
 	return (NULL);
 }

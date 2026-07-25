@@ -15,28 +15,22 @@
 static char	**add_to_matrix(char **matrix, char *str)
 {
 	char	**new_matrix;
-	size_t	i;
+	size_t	len;
 
-	i = 0;
-	while (matrix && matrix[i])
-		i++;
-	new_matrix = malloc(sizeof(char *) * (i + 2));
+	len = ft_memlen(matrix, sizeof(char *));
+	new_matrix = ft_realloc(matrix, len + 2, sizeof(char *));
 	if (!new_matrix)
-		return (NULL);
-	i = 0;
-	while (matrix && matrix[i])
 	{
-		new_matrix[i] = matrix[i];
-		i++;
-	}
-	new_matrix[i] = ft_strdup(str);
-	if (!new_matrix[i])
-	{
-		free(new_matrix);
+		ft_free_matrix(matrix, len);
 		return (NULL);
 	}
-	new_matrix[i + 1] = NULL;
-	free(matrix);
+	new_matrix[len] = ft_strdup(str);
+	if (!new_matrix[len])
+	{
+		ft_free_matrix(new_matrix, len);
+		return (NULL);
+	}
+	new_matrix[len + 1] = NULL;
 	return (new_matrix);
 }
 
