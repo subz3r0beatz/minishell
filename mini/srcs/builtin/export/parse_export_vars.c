@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/18 15:31:03 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/23 20:00:01 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/25 18:44:31 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ static int	insert_var(t_minishell *shell, char *str)
 	i = is_valid_key(str, &append);
 	if (!i)
 		return (1);
-	key = ft_substr(str, 0, i);
+	key = ft_substr(str, 0, i - append);
 	if (!key)
 		return (2);
 	get_var_value(shell, key, &oldvalue);

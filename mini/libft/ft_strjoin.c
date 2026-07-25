@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 19:45:26 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/21 18:29:38 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/25 18:46:10 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 			ns = ft_strdup(s2);
 		else if (!s2)
 			ns = ft_strdup(s1);
-		if (!ns)
-			return (NULL);
+		return (ns);
 	}
 	ls1 = ft_strlen(s1);
 	ls2 = ft_strlen(s2);

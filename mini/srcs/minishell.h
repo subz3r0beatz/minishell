@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:35:52 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/19 18:43:25 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/25 18:31:38 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@
 # include "prompt/prompt.h"
 # include "lexer/lexer.h"
 # include "parser/parser.h"
-# include "expander/expand.h"
+# include "expand/expand.h"
 # include "lookup_table/lookup_table.h"
 //# include "error/error.h"
 

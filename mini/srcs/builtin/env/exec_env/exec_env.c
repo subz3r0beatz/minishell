@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 10:33:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/21 23:51:45 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/25 18:32:49 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static int	exec_cmd(char **args, char **exported, char *cmd)
 	return (0);
 }
 
-static int	parse_cmd(char **matrices[2],
+static int	resolve_cmd(char **matrices[2],
 	t_flags *flags, t_max_uints *max_uints)
 {
 	int		exit_code;
@@ -90,7 +90,7 @@ static void	run_child(char **matrices[2], t_flags *flags,
 		exit(exit_env(matrices, flags, max_uints, 125));
 	}
 	exit(exit_env(matrices, flags, max_uints,
-			parse_cmd(matrices, flags, max_uints)));
+			resolve_cmd(matrices, flags, max_uints)));
 }
 
 int	exec_env(t_minishell *shell, char **matrices[2],

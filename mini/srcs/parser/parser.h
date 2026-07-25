@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/23 17:47:49 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/21 23:43:53 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/25 19:00:26 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,12 @@ typedef struct s_ast_node
 	char				**args;
 	t_redir				*redir;
 }				t_ast_node;
+
+int			parse_redir(t_token **token, t_redir **redir_head);
+t_ast_node	*parse_cmd(t_token **token);
+t_ast_node	*parse_pipeline(t_token **token);
+t_ast_node	*parse_logic(t_token **token);
+
+t_ast_node	*parser(t_token *tokens);
 
 #endif
