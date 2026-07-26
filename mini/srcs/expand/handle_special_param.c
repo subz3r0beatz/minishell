@@ -14,12 +14,12 @@
 
 static char	*get_param_value(t_minishell *shell, char *argv0, char param)
 {
-	if (param == '?')
-		return (ft_itoa(shell->exit_status));
+	//if (param == '?')
+		//return (ft_itoa(shell->exit_status));
 	if (param == '0')
 		return (ft_strdup(argv0));
-	if (param == '$')
-		return (ft_itoa(shell->pid));
+	//if (param == '$')
+		//return (ft_itoa(shell->pid));
 	return (ft_strdup(""));
 }
 
