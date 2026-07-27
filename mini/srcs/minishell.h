@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:35:52 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/25 18:31:38 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/26 14:38:00 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,13 @@
 
 typedef struct s_minishell
 {
-	t_robin			*env;
-	char			**exported;
-	size_t			exported_count;
-	uint8_t			token_type_table[256][256];
+	t_robin	*env;
+	char	**exported;
+	size_t	exported_count;
+	uint8_t	token_type_table[256][256];
+	char	*pid;
+	char	*last_pid;
+	int		exit_status;
 }				t_minishell;
 
 #endif

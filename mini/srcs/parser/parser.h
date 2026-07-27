@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/23 17:47:49 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/25 19:00:26 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/26 14:58:38 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@ typedef enum e_node_type
 	NODE_PIPE,
 	NODE_AND,
 	NODE_OR,
-	NODE_SUBSHELL
+	NODE_SUBSHELL,
+	NODE_SEMI,
+	NODE_BACKGR
 }			t_node_type;
 
 typedef struct s_redir
@@ -46,6 +48,7 @@ int			parse_redir(t_token **token, t_redir **redir_head);
 t_ast_node	*parse_cmd(t_token **token);
 t_ast_node	*parse_pipeline(t_token **token);
 t_ast_node	*parse_logic(t_token **token);
+t_ast_node	*parse_list(t_token **token);
 
 t_ast_node	*parser(t_token *tokens);
 

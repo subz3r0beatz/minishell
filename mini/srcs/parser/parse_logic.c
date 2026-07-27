@@ -6,13 +6,13 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 17:19:27 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/25 17:49:35 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/26 15:13:59 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast_node	*loop_tokens(t_token **token, t_ast_node *left)
+static t_ast_node	*loop_logic(t_token **token, t_ast_node *left)
 {
 	t_ast_node	*right;
 	t_ast_node	*parent;
@@ -48,6 +48,6 @@ t_ast_node	*parse_logic(t_token **token)
 	left = parse_pipeline(token);
 	if (!left)
 		return (NULL);
-	left = loop_tokens(token, left);
+	left = loop_logic(token, left);
 	return (left);
 }

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/16 22:35:26 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/25 19:53:44 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/26 16:33:36 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,6 @@ char	*expand_home(t_minishell *shell, char *word)
 		free(word);
 		return (tmp);
 	}
+	free(word);
 	return (home);
 }

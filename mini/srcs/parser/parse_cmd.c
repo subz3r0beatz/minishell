@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/25 15:32:45 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/25 17:39:49 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/26 14:56:33 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static t_ast_node	*parse_subshell(t_token **token)
 	t_ast_node	*node;
 
 	*token = (*token)->next;
-	sub_ast = parse_logic(token);
+	sub_ast = parse_list(token);
 	if (!sub_ast)
 		return (NULL);
 	if (!*token || (*token)->type != TOKEN_RPAREN)

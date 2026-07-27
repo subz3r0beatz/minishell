@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/16 15:58:21 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/25 20:01:41 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/26 14:37:14 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,6 @@ static char	*expand_variable(t_minishell *shell, char *word, size_t *i)
 	return (new_word);
 }
 
-static int	is_param(char c)
-{
-	if (c == '?' || c == '0' || c == '#'
-		|| c == '*' || c == '!' || c == '@')
-		return (1);
-	return (0);
-}
-
 static char	*expand_word(t_minishell *shell, char *word)
 {
 	size_t	i;
@@ -64,7 +56,8 @@ static char	*expand_word(t_minishell *shell, char *word)
 			quote_state = 0;
 		if (word[i] == '$' && quote_state != '\'')
 		{
-			if (is_param(word[i + 1]))
+			if (word[i + 1] == '?' || word[i + 1] == '0'
+				|| word[i + 1] == '$' || word[i + 1] == '!')
 				word = handle_special_param(shell, word, &i);
 			else
 				word = expand_variable(shell, word, &i);

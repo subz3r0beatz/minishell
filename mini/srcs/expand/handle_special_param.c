@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/16 23:50:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/25 20:09:14 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/26 16:32:14 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,14 @@
 
 static char	*get_param_value(t_minishell *shell, char *argv0, char param)
 {
-	//if (param == '?')
-		//return (ft_itoa(shell->exit_status));
+	if (param == '?')
+		return (ft_itoa(shell->exit_status));
 	if (param == '0')
 		return (ft_strdup(argv0));
-	//if (param == '$')
-		//return (ft_itoa(shell->pid));
+	if (param == '$' && shell->pid)
+		return (ft_strdup(shell->pid));
+	if (param == '!' && shell->last_pid)
+		return (ft_strdup(shell->last_pid));
 	return (ft_strdup(""));
 }
 
