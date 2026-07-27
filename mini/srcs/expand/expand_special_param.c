@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_special_param.c                             :+:      :+:    :+:   */
+/*   expand_special_param.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/16 23:50:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/26 16:32:14 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/27 23:23:23 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static char	*get_param_value(t_minishell *shell, char *argv0, char param)
 	return (ft_strdup(""));
 }
 
-char	*handle_special_param(t_minishell *shell, char *argv0,
+char	*expand_special_param(t_minishell *shell, char *argv0,
 	char *word, size_t *i)
 {
 	char	*value;

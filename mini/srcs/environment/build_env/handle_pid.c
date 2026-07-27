@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/26 14:18:58 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/26 16:30:57 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/27 19:55:30 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ int	handle_pid(t_minishell *shell)
 		i++;
 	shell->pid = ft_substr(buffer, 0, i);
 	if (!shell->pid)
+		return (1);
+	shell->last_pid = ft_strdup("");
+	if (!shell->last_pid)
 		return (1);
 	return (0);
 }

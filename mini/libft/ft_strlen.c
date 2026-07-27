@@ -6,7 +6,7 @@
 /*   By: fldumas- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 13:35:37 by fldumas-          #+#    #+#             */
-/*   Updated: 2025/10/13 13:53:58 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/27 23:41:13 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ size_t	ft_strlen(const char *s)
 	size_t	i;
 
 	i = 0;
-	while (s[i])
+	while (s && s[i])
 		i++;
 	return (i);
 }

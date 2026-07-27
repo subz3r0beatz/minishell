@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 17:46:29 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/23 18:29:24 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/27 20:01:07 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,13 @@ static int	init_minishell(t_minishell *shell, char **envp, char *argv0)
 	shell->exported_count = 0;
 	shell->env = NULL;
 	shell->exported = NULL;
+	shell->pid = NULL;
+	shell->last_pid = NULL;
 	if (build_env(shell, envp, argv0))
 	{
 		robin_free(shell->env);
+		free(shell->pid);
+		free(shell->last_pid);
 		ft_putstr_fd("minishell: shell-init: malloc: "
 			"cannot allocate memory\n", STDERR_FILENO);
 		return (1);
@@ -117,10 +121,14 @@ int	main(int argc, char **argv, char **envp)
 		ft_putendl_fd("minishell: command not found", 2);
 		close(fd_out);
 		robin_free(shell.env);
+		free(shell.pid);
+		free(shell.last_pid);
 		return (1);
 	}
 	close(fd_out);
 	robin_free(shell.env);
+	free(shell.pid);
+	free(shell.last_pid);
 	//main_loop(minishell);
 	return (status);
 }
