@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lookup_table.h                                     :+:      :+:    :+:   */
+/*   signals.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/23 16:35:58 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/30 02:12:47 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/07/29 19:46:53 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/29 19:49:03 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LOOKUP_TABLE_H
-# define LOOKUP_TABLE_H
+#ifndef SIGNALS_H
+# define SIGNALS_H
 
-void	init_escape_table(char table[256]);
-void	init_token_type_table(uint8_t table[256][256]);
-void	init_exec_func_table(int (*exec_func_table[7])(t_minishell *shell,
-				t_ast_node *node, char *argv0));
+extern volatile sig_atomic_t	g_signal_status;
+
+void	init_interactive_signals(void);
+void	init_child_signals(void);
+void	init_ignore_signals(void);
+void	init_heredoc_signals(void);
 
 #endif

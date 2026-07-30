@@ -6,14 +6,13 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:35:52 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/26 14:38:00 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/30 02:08:56 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-// Bright Text Colors
 # define C_B_BLACK   "\001\033[1;30m\002"
 # define C_B_RED     "\001\033[1;31m\002"
 # define C_B_GREEN   "\001\033[1;32m\002"
@@ -23,7 +22,6 @@
 # define C_B_CYAN    "\001\033[1;36m\002"
 # define C_B_WHITE   "\001\033[1;37m\002"
 
-// Standard Text Colors
 # define C_BLACK   "\001\033[0;30m\002"
 # define C_RED     "\001\033[0;31m\002"
 # define C_GREEN   "\001\033[0;32m\002"
@@ -33,11 +31,10 @@
 # define C_CYAN    "\001\033[0;36m\002"
 # define C_WHITE   "\001\033[0;37m\002"
 
-// Formatting and Resets
 # define C_RESET     "\001\033[0m\002"
 # define C_BOLD      "\001\033[1m\002"
 # define C_UNDERLINE "\001\033[4m\002"
-# define C_REVERSED  "\001\033[7m\002" // Swaps foreground and background colors
+# define C_REVERSED  "\001\033[7m\002"
 
 # include "includes.h"
 # include "../libft/libft.h"
@@ -48,8 +45,9 @@
 # include "lexer/lexer.h"
 # include "parser/parser.h"
 # include "expand/expand.h"
+# include "exec/exec.h"
+# include "signals/signals.h"
 # include "lookup_table/lookup_table.h"
-//# include "error/error.h"
 
 typedef struct s_minishell
 {
@@ -57,6 +55,8 @@ typedef struct s_minishell
 	char	**exported;
 	size_t	exported_count;
 	uint8_t	token_type_table[256][256];
+	int		(*exec_func_table[8])(t_minishell *shell,
+			t_ast_node *node, char *argv0);
 	char	*pid;
 	char	*last_pid;
 	int		exit_status;
