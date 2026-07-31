@@ -18,14 +18,14 @@ static void	process_input(t_minishell *shell, char *input, char *argv0)
 	t_ast_node	*ast;
 
 	add_history(input);
-	tokens = lexer(input, shell->token_type_table);
-	if (!tokens)
+	shell->tokens = lexer(input, shell->token_type_table);
+	if (!shell->tokens)
 		return ;
-	ast = parser(tokens);
-	if (!ast)
+	shell->ast = parser(tokens);
+	if (!shell->ast)
 		return ;
-	shell->exit_status = exec(shell, ast, argv0);
-	free_ast(ast);
+	shell->exit_status = exec(shell, shell->ast, argv0);
+	free_ast(shell->ast);
 }
 
 static void	main_loop(t_minishell *shell, char *argv0)
@@ -60,6 +60,8 @@ static void	init_minishell(t_minishell *shell, char **envp, char *argv0)
 	shell->exported_count = 0;
 	shell->env = NULL;
 	shell->exported = NULL;
+	shell->tokens = NULL;
+	shell->ast = NULL;
 	shell->pid = NULL;
 	shell->last_pid = NULL;
 	shell->exit_status = 0;

@@ -14,25 +14,39 @@
 
 int	exec_pipe(t_minishell *shell, t_ast_node *node)
 {
-	int		pdf[2];
+	int		pfd[2];
 	pid_t	left_pid;
 	pid_t	right_pid;
 	int		status_left;
 	int		status_right;
 
-	if (pipe(pdf) < 0)
+	if (pipe(pfd) < 0)
 		return (1);
 	init_ignore_signals();
 	left_pid = fork();
+	if (left_pid < 0)
+	{
+		ft_putstr_fd("minishell: exec: fork failed\n", STDERR_FILENO);
+		close(pfd[0]);
+		close(pfd[1]);
+		return (1);
+	}
 	if (left_pid == 0)
 	{
 		init_child_signals();
-		close(pdf[0]);
-		dup2(pdf[1], STDOUT_FILENO);
-		close(pdf[1]);
+		close(pfd[0]);
+		dup2(pfd[1], STDOUT_FILENO);
+		close(pfd[1]);
 		exec(shell, node->left, NULL);
 	}
 	right_pid = fork();
+	if (right_pid < 0)
+	{
+		ft_putstr_fd("minishell: exec: fork failed\n", STDERR_FILENO);
+		close(pfd[0]);
+		close(pfd[1]);
+		return (1);
+	}
 	if (right_pid == 0)
 	{
 		init_child_signals();

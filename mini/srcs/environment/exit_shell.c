@@ -20,7 +20,14 @@ void	exit_shell(t_minishell *shell, char **args, int fd_out, int exit_status)
 		free(shell->last_pid);
 	if (args)
 		ft_free_matrix(args, ft_memlen(args, sizeof(char *)));
-	robin_free(shell->env);
+	if (shell->exported)
+		ft_free_matrix(exported, ft_memlen(exported, sizeof(char *)));
+	if (shell->tokens)
+	
+	if (shell->ast)
+			free_ast(shell->ast);
+	if (shell->env)
+		robin_free(shell->env);
 	close(fd_out);
 	exit(exit_status);
 }

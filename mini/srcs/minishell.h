@@ -54,6 +54,8 @@ typedef struct s_minishell
 	t_robin	*env;
 	char	**exported;
 	size_t	exported_count;
+	t_token	*tokens;
+	t_ast_node	*ast;
 	uint8_t	token_type_table[256][256];
 	int		(*exec_func_table[8])(t_minishell *shell,
 			t_ast_node *node, char *argv0);
