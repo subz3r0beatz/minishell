@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_pipe.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/31 16:50:30 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/07/31 16:50:36 by fldumas-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	left_fork_error(t_minishell *shell, int pfd[2])
@@ -56,7 +68,7 @@ int	wait_exec(t_minishell *shell, pid_t left_pid, pid_t right_pid, int pfd[2])
 	{
 		shell->exit_status = 128 + WTERMSIG(status);
 		if (shell->exit_status - 128 == SIGINT)
-			ft_putstr_fd("\n", STDOUT_FILENO);
+			ft_putstr_fd("\n", STDERR_FILENO);
 		if (shell->exit_status - 128 == SIGQUIT)
 			ft_putstr_fd("Quit\n", STDERR_FILENO);
 	}

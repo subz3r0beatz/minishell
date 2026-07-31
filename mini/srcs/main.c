@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 17:46:29 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/30 01:55:41 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/07/31 16:12:37 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ static void	init_minishell(t_minishell *shell, char **envp, char *argv0)
 		exit_shell(shell, NULL, 0, 1);
 	}
 	init_token_type_table(shell->token_type_table);
+	init_exec_func_table(shell->exec_func_table);
 }
 
 int	main(int argc, char **argv, char **envp)
