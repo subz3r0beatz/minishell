@@ -14,19 +14,23 @@
 
 int	is_builtin(char *cmd)
 {
-	if (ft_strcmp(cmd, "cd") == 0)
-		return (1);
-	if (ft_strcmp(cmd, "pwd") == 0)
-		return (2);
-	if (ft_strcmp(cmd, "echo") == 0)
-		return (3);
-	if (ft_strcmp(cmd, "exit") == 0)
-		return (4);
-	if (ft_strcmp(cmd, "env") == 0)
-		return (5);
+	if (cmd[0] == 'e')
+	{
+		if (ft_strcmp(cmd, "echo") == 0)
+			return (1);
+		if (ft_strcmp(cmd, "exit") == 0)
+			return (2);
+		if (ft_strcmp(cmd, "env") == 0)
+			return (3);
+		if (ft_strcmp(cmd, "export") == 0)
+			return (4);
+		return (0);
+	}
 	if (ft_strcmp(cmd, "unset") == 0)
+		return (5);
+	if (ft_strcmp(cmd, "cd") == 0)
 		return (6);
-	if (ft_strcmp(cmd, "export") == 0)
+	if (ft_strcmp(cmd, "pwd") == 0)
 		return (7);
 	return (0);
 }
@@ -48,22 +52,7 @@ int	exec_builtin(t_minishell *shell, t_ast_node *node, int builtin)
 		shell->exit_status = 1;
 		return (1);
 	}
-	status = exec_
-	if (builtin == 1)
-		return (ft_cd(shell, node->args, fd));
-	if (builtin == 2)
-		return (ft_pwd(shell, node->args, fd));
-	if (builtin == 3)
-		return (ft_echo(shell, node->args, fd));
-	if (builtin == 4)
-		return (ft_exit(shell, node->args, fd));
-	if (builtin == 5)
-		return (ft_env(shell, node->args, fd));
-	if (builtin == 6)
-		return (ft_unset(shell, node->args, fd));
-	if (builtin == 7)
-		return (ft_export(shell, node->args, fd));
-	return (0);
+	status = shell->builtin_func_table[builtin - 1](shell, node->args);
 }
 
 int	exec_child_binary(t_minishell *shell, t_ast_node *node)
