@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 23:22:23 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/27 23:49:36 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 13:16:19 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static char	*expand_variable(t_minishell *shell, char *word, size_t *i)
 	return (new_word);
 }
 
-char	*expand_word(t_minishell *shell, char *word, char *argv0)
+char	*expand_word(t_minishell *shell, char *word)
 {
 	size_t	i;
 	char	quote_state;
@@ -77,7 +77,7 @@ char	*expand_word(t_minishell *shell, char *word, char *argv0)
 		{
 			if (word[i + 1] == '?' || word[i + 1] == '0'
 				|| word[i + 1] == '$' || word[i + 1] == '!')
-				word = expand_special_param(shell, argv0, word, &i);
+				word = expand_special_param(shell, word, &i);
 			else
 				word = expand_variable(shell, word, &i);
 		}

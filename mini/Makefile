@@ -1,6 +1,6 @@
 TARGET = minishell
 CC     = gcc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=undefined -g
+CFLAGS = -Wall -Wextra -Werror -lreadline -fsanitize=undefined -g
 OBJDIR = build
 
 # 1. Identify independent sub-projects (like libft/)
@@ -42,14 +42,27 @@ $(OBJDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+SUPP_FILE = readline.supp
+
+valgrind: $(TARGET)
+	@if [ ! -f $(SUPP_FILE) ]; then \
+		echo "{" > $(SUPP_FILE); \
+		echo "   ignore_readline" >> $(SUPP_FILE); \
+		echo "   Memcheck:Leak" >> $(SUPP_FILE); \
+		echo "   ..." >> $(SUPP_FILE); \
+		echo "   obj:*/libreadline.so*" >> $(SUPP_FILE); \
+		echo "}" >> $(SUPP_FILE); \
+	fi
+	valgrind --suppressions=$(SUPP_FILE) --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(TARGET)
+
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(OBJDIR) $(SUPP_FILE)
 	@for dir in $(REC_DIRS); do \
 		$(MAKE) -C $$dir clean; \
 	done
 
 fclean: clean
-	rm -f $(TARGET)
+	rm -f $(TARGET) 
 	@for dir in $(REC_DIRS); do \
 		$(MAKE) -C $$dir fclean 2>/dev/null || $(MAKE) -C $$dir clean; \
 	done

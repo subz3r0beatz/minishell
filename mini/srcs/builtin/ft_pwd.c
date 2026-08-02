@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 22:52:56 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/18 04:55:29 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 13:19:30 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static int	check_flags(char **args)
 	return (flag);
 }
 
-static int	handle_logical(t_minishell *shell, int fd_out)
+static int	handle_logical(t_minishell *shell)
 {
 	t_robin_node	*robin_node;
 	char			*pwd;
@@ -67,14 +67,14 @@ static int	handle_logical(t_minishell *shell, int fd_out)
 		if (pwd_stat.st_ino == dot_stat.st_ino
 			&& pwd_stat.st_dev == dot_stat.st_dev)
 		{
-			ft_putendl_fd(pwd, fd_out);
+			ft_putendl_fd(pwd, STDOUT_FILENO);
 			return (0);
 		}
 	}
 	return (1);
 }
 
-int	ft_pwd(t_minishell *shell, char **args, int fd_out)
+int	ft_pwd(t_minishell *shell, char **args)
 {
 	int				flag;
 	char			pwd[8192];
@@ -83,7 +83,7 @@ int	ft_pwd(t_minishell *shell, char **args, int fd_out)
 	if (!flag)
 		return (2);
 	if (flag == 1)
-		if (!handle_logical(shell, fd_out))
+		if (!handle_logical(shell))
 			return (0);
 	if (!getcwd(pwd, 8192))
 	{
@@ -91,6 +91,6 @@ int	ft_pwd(t_minishell *shell, char **args, int fd_out)
 			"getcwd: cannot access parent directories");
 		return (1);
 	}
-	ft_putendl_fd(pwd, fd_out);
+	ft_putendl_fd(pwd, STDOUT_FILENO);
 	return (0);
 }

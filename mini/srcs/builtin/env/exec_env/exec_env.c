@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 10:33:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/27 20:02:46 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 14:51:43 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	malloc_error(char *cmd)
 	return (125);
 }
 
-static int	exec_cmd(char **args, char **exported, char *cmd)
+static int	exec_env_cmd(char **args, char **exported, char *cmd)
 {
 	int	err;
 
@@ -66,7 +66,7 @@ static int	resolve_cmd(char **matrices[2],
 		if (!matrices[1][max_uints->i])
 			return (malloc_error(cmd));
 	}
-	return (exec_cmd(&matrices[1][max_uints->i], matrices[0], cmd));
+	return (exec_env_cmd(&matrices[1][max_uints->i], matrices[0], cmd));
 }
 
 static void	run_child(char **matrices[2], t_flags *flags,
@@ -74,11 +74,6 @@ static void	run_child(char **matrices[2], t_flags *flags,
 {
 	int	err;
 
-	if (flags->fd_out != STDOUT_FILENO)
-	{
-		dup2(flags->fd_out, STDOUT_FILENO);
-		close(flags->fd_out);
-	}
 	if (flags->chdir_path && chdir(flags->chdir_path))
 	{
 		err = errno;

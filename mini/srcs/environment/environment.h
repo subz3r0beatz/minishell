@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 23:53:20 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/23 18:27:15 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 14:35:46 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,7 @@ int				get_var_value(t_minishell *shell, char *key, char **ptr);
 int				insert_new_node(t_minishell *shell, char *key, char *value,
 					int is_exported);
 int				update_var_value(t_minishell *shell, char *key, char *value);
-void			exit_shell(t_minishell *shell, char **args,
-					int fd_out, int exit_status);
+void			exit_shell(t_minishell *shell, int exit_status);
 int				check_exported(t_minishell *shell, char *key);
 
 #endif

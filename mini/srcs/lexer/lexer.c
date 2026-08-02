@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/22 09:22:01 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/25 19:00:58 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 17:56:32 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,19 +62,6 @@ static t_token	*handle_token(char *input, size_t *i,
 	token->next = NULL;
 	*i += len;
 	return (token);
-}
-
-static void	free_tokens(t_token *head)
-{
-	t_token	*tmp;
-
-	while (head)
-	{
-		tmp = head;
-		head = head->next;
-		free(tmp->value);
-		free(tmp);
-	}
 }
 
 static t_token	*add_token(t_token *head, t_token *token)

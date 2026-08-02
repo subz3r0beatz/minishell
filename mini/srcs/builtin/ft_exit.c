@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 01:50:30 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/21 23:56:44 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 13:08:53 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ static long long	overflow_atoll(const char *str, int *error)
 	return (nb * sign);
 }
 
-int	ft_exit(t_minishell *shell, char **args, int fd_out)
+int	ft_exit(t_minishell *shell, char **args)
 {
 	int		status;
 	int		error;
@@ -94,7 +94,7 @@ int	ft_exit(t_minishell *shell, char **args, int fd_out)
 	if (!args[i])
 		status = 0;
 	else if (check_numeric(args[i]))
-		exit_shell(shell, NULL, fd_out, 2);
+		exit_shell(shell, 2);
 	else if (args[i + 1])
 		return (argument_error());
 	else
@@ -103,6 +103,6 @@ int	ft_exit(t_minishell *shell, char **args, int fd_out)
 		numeric_error(args[i]);
 	else if (isatty(STDERR_FILENO))
 		ft_putstr_fd("exit\n", STDERR_FILENO);
-	exit_shell(shell, NULL, fd_out, status);
+	exit_shell(shell, status);
 	return (status);
 }

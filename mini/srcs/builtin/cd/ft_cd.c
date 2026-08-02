@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 18:33:00 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/21 23:46:24 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 17:37:42 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ static int	update_vars(t_minishell *shell, char *dir)
 	char			*pwd_value;
 	char			*oldpwd_value;
 
+	ft_free_matrix(shell->exported, ft_memlen(shell->exported, sizeof(char *)));
 	if (get_var_value(shell, "PWD", &pwd_value))
 	{
 		if (insert_new_node(shell, "PWD", dir, 0))
@@ -86,7 +87,7 @@ static int	update_vars(t_minishell *shell, char *dir)
 	return (0);
 }
 
-int	ft_cd(t_minishell *shell, char **args, int fd_out)
+int	ft_cd(t_minishell *shell, char **args)
 {
 	int		logical;
 	int		e_flag;
@@ -109,7 +110,7 @@ int	ft_cd(t_minishell *shell, char **args, int fd_out)
 	if (move_dir(shell, &dir, logical, e_flag))
 		return (1);
 	if (print_path)
-		ft_putendl_fd(dir, fd_out);
+		ft_putendl_fd(dir, STDOUT_FILENO);
 	if (update_vars(shell, dir))
 		return (1);
 	return (0);

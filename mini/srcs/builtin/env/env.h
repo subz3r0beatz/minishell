@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 16:57:02 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/18 06:58:25 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 13:28:47 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 
 typedef struct s_flags
 {
-	int		fd_out;
 	int		print_help;
 	int		ignore_env;
 	int		null_term;
@@ -35,9 +34,9 @@ typedef struct s_max_uints
 	size_t	args_len;
 }				t_max_uints;
 
-int		ft_env(t_minishell *shell, char **args, int fd_out);
+int		ft_env(t_minishell *shell, char **args);
 int		exit_env(char **matrices[2], t_flags *flags,
 			t_max_uints *max_uints, int exit_code);
-void	print_env(char **exported, int null, int fd_out);
+void	print_env(char **exported, int null);
 
 #endif

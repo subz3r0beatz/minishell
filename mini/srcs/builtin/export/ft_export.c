@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/06 06:51:45 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/18 01:05:30 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 13:20:33 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static size_t	check_flags(char **args, int *print, int *unexport)
 	return (i);
 }
 
-int	ft_export(t_minishell *shell, char **args, int fd_out)
+int	ft_export(t_minishell *shell, char **args)
 {
 	int		status;
 	int		print;
@@ -63,7 +63,7 @@ int	ft_export(t_minishell *shell, char **args, int fd_out)
 	if (i == 0)
 		return (2);
 	if (print)
-		return (print_export(shell->env, fd_out));
+		return (print_export(shell->env));
 	else if (unexport)
 		status = unexport_vars(shell, &args[i]);
 	else

@@ -1,0 +1,1973 @@
+[33mCompiling Malloc Saboteur (with GDB Tripwires)...[0m
+==========================================================
+    Extensive Minishell Tester (Sections 1 to 19) 
+==========================================================
+
+[33m--- 1. Testing cd Builtin & Canonicalization...[0m
+Test [cd .]                                                  [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "cd .", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "cd .", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "cd .") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/2/bash_out.tmp	2026-08-02 18:20:08.416302030 +0200
+    +++ /dev/shm/mini_tester_4128986/2/mini_out.tmp	2026-08-02 18:20:08.412301978 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd .
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [cd ..]                                                 [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "cd ..", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "cd ..", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "cd ..") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/3/bash_out.tmp	2026-08-02 18:20:08.468302715 +0200
+    +++ /dev/shm/mini_tester_4128986/3/mini_out.tmp	2026-08-02 18:20:08.464302662 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd ..
+    +fldumas-@1B2:~/Documents/minishell$
+    +exit $?
+Test [cd /tmp]                                               [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "cd /tmp", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "cd /tmp", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "cd /tmp") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/4/bash_out.tmp	2026-08-02 18:20:08.420302083 +0200
+    +++ /dev/shm/mini_tester_4128986/4/mini_out.tmp	2026-08-02 18:20:08.416302030 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd /tmp
+    +fldumas-@1B2:/tmp$
+    +exit $?
+Test [cd -L /tmp]                                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x555555613396 "/tmp", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "cd -L /tmp", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "cd -L /tmp") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/5/bash_out.tmp	2026-08-02 18:20:08.484302925 +0200
+    +++ /dev/shm/mini_tester_4128986/5/mini_out.tmp	2026-08-02 18:20:08.480302873 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd -L /tmp
+    +fldumas-@1B2:/tmp$
+    +exit $?
+Test [cd -P /tmp]                                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x555555613396 "/tmp", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "cd -P /tmp", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "cd -P /tmp") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/6/bash_out.tmp	2026-08-02 18:20:08.944308978 +0200
+    +++ /dev/shm/mini_tester_4128986/6/mini_out.tmp	2026-08-02 18:20:08.944308978 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd -P /tmp
+    +fldumas-@1B2:/tmp$
+    +exit $?
+Test [cd -e /tmp]                                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x555555613396 "/tmp", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "cd -e /tmp", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "cd -e /tmp") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/7/bash_out.tmp	2026-08-02 18:20:08.496303083 +0200
+    +++ /dev/shm/mini_tester_4128986/7/mini_out.tmp	2026-08-02 18:20:08.492303030 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd -e /tmp
+    +fldumas-@1B2:/tmp$
+    +exit $?
+Test [cd /does_not_exist]                                    [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/8/bash_out.tmp	2026-08-02 18:20:08.896308346 +0200
+    +++ /dev/shm/mini_tester_4128986/8/mini_out.tmp	2026-08-02 18:20:08.896308346 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd /does_not_exist
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [cd /tmp/../tmp/../tmp]                                 [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "cd /tmp/../tmp/../tmp", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "cd /tmp/../tmp/../tmp", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "cd /tmp/../tmp/../tmp") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/9/bash_out.tmp	2026-08-02 18:20:08.488302978 +0200
+    +++ /dev/shm/mini_tester_4128986/9/mini_out.tmp	2026-08-02 18:20:08.484302925 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd /tmp/../tmp/../tmp
+    +fldumas-@1B2:/tmp$
+    +exit $?
+Test [cd -]                                                  [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "cd -", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "cd -", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "cd -") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/10/bash_out.tmp	2026-08-02 18:20:08.924308715 +0200
+    +++ /dev/shm/mini_tester_4128986/10/mini_out.tmp	2026-08-02 18:20:08.920308662 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd -
+     /home/fldumas-
+    +fldumas-@1B2:~$
+    +exit $?
+Test [cd ~]                                                  [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "cd ~", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "cd ~", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "cd ~") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/11/bash_out.tmp	2026-08-02 18:20:08.940308925 +0200
+    +++ /dev/shm/mini_tester_4128986/11/mini_out.tmp	2026-08-02 18:20:08.936308873 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd ~
+    +fldumas-@1B2:~$
+    +exit $?
+
+[33m--- 2. Testing pwd Builtin...[0m
+Test [pwd]                                                   [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #239[0m
+      [33mMalloc:[0m get_hostname (env=0x5555555deeb0, buffer=0x7ffffffed7a0 "1B2.42angouleme.fr
+") at srcs/prompt/get_hostname.c:45
+        -> build_hostname (env=0x5555555deeb0, hostname=0x7ffffffed838, size=0x7ffffffed828) at srcs/prompt/build_prompt.c:29
+        -> build_prompt (env=0x5555555deeb0, prompt=0x7ffffffed888) at srcs/prompt/build_prompt.c:78
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:37
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/13/bash_out.tmp	2026-08-02 18:20:10.628331137 +0200
+    +++ /dev/shm/mini_tester_4128986/13/mini_out.tmp	2026-08-02 18:20:10.628331137 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +pwd
+     /home/fldumas-/Documents/minishell/mini
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [pwd -L]                                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "pwd -L", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "pwd -L", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "pwd -L") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/14/bash_out.tmp	2026-08-02 18:20:10.660331558 +0200
+    +++ /dev/shm/mini_tester_4128986/14/mini_out.tmp	2026-08-02 18:20:10.656331505 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +pwd -L
+     /home/fldumas-/Documents/minishell/mini
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [pwd -P]                                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "pwd -P", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "pwd -P", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "pwd -P") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/15/bash_out.tmp	2026-08-02 18:20:10.656331505 +0200
+    +++ /dev/shm/mini_tester_4128986/15/mini_out.tmp	2026-08-02 18:20:10.652331452 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +pwd -P
+     /home/fldumas-/Documents/minishell/mini
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [pwd -LLLLPPPPLLLLPPPP]                                 [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "pwd -LLLLPPPPLLLLPPPP", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "pwd -LLLLPPPPLLLLPPPP", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "pwd -LLLLPPPPLLLLPPPP") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/16/bash_out.tmp	2026-08-02 18:20:10.644331347 +0200
+    +++ /dev/shm/mini_tester_4128986/16/mini_out.tmp	2026-08-02 18:20:10.644331347 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +pwd -LLLLPPPPLLLLPPPP
+     /home/fldumas-/Documents/minishell/mini
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+
+[33m--- 3. Testing echo Builtin & Escapes...[0m
+Test [echo]                                                  [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #239[0m
+      [33mMalloc:[0m get_hostname (env=0x5555555deeb0, buffer=0x7ffffffed7a0 "1B2.42angouleme.fr
+") at srcs/prompt/get_hostname.c:45
+        -> build_hostname (env=0x5555555deeb0, hostname=0x7ffffffed838, size=0x7ffffffed828) at srcs/prompt/build_prompt.c:29
+        -> build_prompt (env=0x5555555deeb0, prompt=0x7ffffffed888) at srcs/prompt/build_prompt.c:78
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:37
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/18/bash_out.tmp	2026-08-02 18:20:12.680358137 +0200
+    +++ /dev/shm/mini_tester_4128986/18/mini_out.tmp	2026-08-02 18:20:12.676358084 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo
+     
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo hello world]                                      [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x55555561339b "world", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo hello world", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo hello world") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/19/bash_out.tmp	2026-08-02 18:20:13.204365032 +0200
+    +++ /dev/shm/mini_tester_4128986/19/mini_out.tmp	2026-08-02 18:20:13.200364979 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo hello world
+     hello world
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo -n hello world]                                   [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #251[0m
+      [33mMalloc:[0m new_cmd_node (node=0x7ffffffed720) at srcs/parser/ast/new_cmd_node.c:17
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:70
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+        -> parse_list (token=0x7ffffffed818) at srcs/parser/parse_list.c:64
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/20/bash_out.tmp	2026-08-02 18:20:12.768359295 +0200
+    +++ /dev/shm/mini_tester_4128986/20/mini_out.tmp	2026-08-02 18:20:12.764359242 +0200
+    @@ -1 +1,4 @@
+    -hello world
+    \ No newline at end of file
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo -n hello world
+    +hello worldfldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo -nnnn hello]                                      [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x55555561339b "hello", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo -nnnn hello", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo -nnnn hello") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/21/bash_out.tmp	2026-08-02 18:20:12.736358874 +0200
+    +++ /dev/shm/mini_tester_4128986/21/mini_out.tmp	2026-08-02 18:20:12.736358874 +0200
+    @@ -1 +1,4 @@
+    -hello
+    \ No newline at end of file
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo -nnnn hello
+    +hellofldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo -e 'hello
+world	!']                             [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x5555555fa6a8 "'hello
+world	!'", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x5555555fa6a0 "echo -e 'hello
+world	!'", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x5555555fa6a0 "echo -e 'hello
+world	!'") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/22/bash_out.tmp	2026-08-02 18:20:13.216365190 +0200
+    +++ /dev/shm/mini_tester_4128986/22/mini_out.tmp	2026-08-02 18:20:13.212365137 +0200
+    @@ -1,2 +1,6 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo -e 'hello
+world	!'
+     hello
+     world	!
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo -E 'hello
+world	!']                             [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x5555555fa6a8 "'hello
+world	!'", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x5555555fa6a0 "echo -E 'hello
+world	!'", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x5555555fa6a0 "echo -E 'hello
+world	!'") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/23/bash_out.tmp	2026-08-02 18:20:12.764359242 +0200
+    +++ /dev/shm/mini_tester_4128986/23/mini_out.tmp	2026-08-02 18:20:12.760359190 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo -E 'hello
+world	!'
+     hello
+world	!
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo -ne 'test
+']                                     [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x555555613399 "'test
+'", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo -ne 'test
+'", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo -ne 'test
+'") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/24/bash_out.tmp	2026-08-02 18:20:12.728358769 +0200
+    +++ /dev/shm/mini_tester_4128986/24/mini_out.tmp	2026-08-02 18:20:12.728358769 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo -ne 'test
+'
+     test
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo -e 'ABC']                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x555555613398 "'ABC'", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo -e 'ABC'", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo -e 'ABC'") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/25/bash_out.tmp	2026-08-02 18:20:13.232365400 +0200
+    +++ /dev/shm/mini_tester_4128986/25/mini_out.tmp	2026-08-02 18:20:13.232365400 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo -e 'ABC'
+     ABC
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo -e 'Before
+Test [echo -e '\\']                                        [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x555555613398 "'\\'", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo -e '\\'", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo -e '\\'") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/27/bash_out.tmp	2026-08-02 18:20:13.208365084 +0200
+    +++ /dev/shm/mini_tester_4128986/27/mini_out.tmp	2026-08-02 18:20:13.204365032 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo -e '\\'
+     \
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+
+[33m--- 4. Testing export Builtin & Identifier Parsing...[0m
+Test [export]                                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #239[0m
+      [33mMalloc:[0m get_hostname (env=0x5555555deeb0, buffer=0x7ffffffed7a0 "1B2.42angouleme.fr
+") at srcs/prompt/get_hostname.c:45
+        -> build_hostname (env=0x5555555deeb0, hostname=0x7ffffffed838, size=0x7ffffffed828) at srcs/prompt/build_prompt.c:29
+        -> build_prompt (env=0x5555555deeb0, prompt=0x7ffffffed888) at srcs/prompt/build_prompt.c:78
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:37
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/29/bash_out.tmp	2026-08-02 18:20:15.208391401 +0200
+    +++ /dev/shm/mini_tester_4128986/29/mini_out.tmp	2026-08-02 18:20:15.212391453 +0200
+    @@ -50,3 +50,7 @@
+     declare -x XAUTHORITY="/home/fldumas-/.Xauthority"
+     declare -x XMODIFIERS="@im=ibus"
+     declare -x ZSH="/home/fldumas-/.oh-my-zsh"
+    +exit $?
+    +export
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+Test [export -p]                                             [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "export -p", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "export -p", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "export -p") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/30/bash_out.tmp	2026-08-02 18:20:15.288392453 +0200
+    +++ /dev/shm/mini_tester_4128986/30/mini_out.tmp	2026-08-02 18:20:15.288392453 +0200
+    @@ -50,3 +50,7 @@
+     declare -x XAUTHORITY="/home/fldumas-/.Xauthority"
+     declare -x XMODIFIERS="@im=ibus"
+     declare -x ZSH="/home/fldumas-/.oh-my-zsh"
+    +exit $?
+    +export -p
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+Test [export VAR_TEST=123]                                   [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "export VAR_TEST=123", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "export VAR_TEST=123", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "export VAR_TEST=123") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/31/bash_out.tmp	2026-08-02 18:20:15.288392453 +0200
+    +++ /dev/shm/mini_tester_4128986/31/mini_out.tmp	2026-08-02 18:20:15.288392453 +0200
+    @@ -0,0 +1,4 @@
+    +exit $?
+    +export VAR_TEST=123
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+Test [export VAR_TEST+=456]                                  [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "export VAR_TEST+=456", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "export VAR_TEST+=456", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "export VAR_TEST+=456") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/32/bash_out.tmp	2026-08-02 18:20:15.240391822 +0200
+    +++ /dev/shm/mini_tester_4128986/32/mini_out.tmp	2026-08-02 18:20:15.240391822 +0200
+    @@ -0,0 +1,4 @@
+    +exit $?
+    +export VAR_TEST+=456
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+Test [export BAD-VAR=123]                                    [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/33/bash_out.tmp	2026-08-02 18:20:15.268392190 +0200
+    +++ /dev/shm/mini_tester_4128986/33/mini_out.tmp	2026-08-02 18:20:15.268392190 +0200
+    @@ -0,0 +1,4 @@
+    +exit $?
+    +export BAD-VAR=123
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+Test [export _VALID=1 2INVALID=2 ALSO_VALID=3]               [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/34/bash_out.tmp	2026-08-02 18:20:15.268392190 +0200
+    +++ /dev/shm/mini_tester_4128986/34/mini_out.tmp	2026-08-02 18:20:15.268392190 +0200
+    @@ -0,0 +1,4 @@
+    +exit $?
+    +export _VALID=1 2INVALID=2 ALSO_VALID=3
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+Test [export NULL_VAR EMPTY_VAR=]                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x5555555fa6b0 "EMPTY_VAR=", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x5555555fa6a0 "export NULL_VAR EMPTY_VAR=", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x5555555fa6a0 "export NULL_VAR EMPTY_VAR=") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/35/bash_out.tmp	2026-08-02 18:20:15.308392716 +0200
+    +++ /dev/shm/mini_tester_4128986/35/mini_out.tmp	2026-08-02 18:20:15.308392716 +0200
+    @@ -0,0 +1,4 @@
+    +exit $?
+    +export NULL_VAR EMPTY_VAR=
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+Test [export WEIRD_VAR="hello=world=test=123"]               [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x5555555fa6a0 "export WEIRD_VAR=\"hello=world=test=123\"", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x5555555fa6a0 "export WEIRD_VAR=\"hello=world=test=123\"", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x5555555fa6a0 "export WEIRD_VAR=\"hello=world=test=123\"") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/36/bash_out.tmp	2026-08-02 18:20:15.300392611 +0200
+    +++ /dev/shm/mini_tester_4128986/36/mini_out.tmp	2026-08-02 18:20:15.300392611 +0200
+    @@ -0,0 +1,4 @@
+    +exit $?
+    +export WEIRD_VAR="hello=world=test=123"
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+
+[33m--- 5. Testing unset Builtin...[0m
+Test [unset PATH]                                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "unset PATH", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "unset PATH", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "unset PATH") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/38/bash_out.tmp	2026-08-02 18:20:17.052415664 +0200
+    +++ /dev/shm/mini_tester_4128986/38/mini_out.tmp	2026-08-02 18:20:17.052415664 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +unset PATH
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [unset DOES_NOT_EXIST]                                  [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "unset DOES_NOT_EXIST", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "unset DOES_NOT_EXIST", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "unset DOES_NOT_EXIST") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/39/bash_out.tmp	2026-08-02 18:20:17.004415032 +0200
+    +++ /dev/shm/mini_tester_4128986/39/mini_out.tmp	2026-08-02 18:20:17.004415032 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +unset DOES_NOT_EXIST
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [unset BAD-NAME]                                        [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mExit Differs:[0m Bash=0, Mini=1
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/40/bash_out.tmp	2026-08-02 18:20:16.972414611 +0200
+    +++ /dev/shm/mini_tester_4128986/40/mini_out.tmp	2026-08-02 18:20:16.968414559 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +unset BAD-NAME
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/40/bash_err.tmp	2026-08-02 18:20:16.972414611 +0200
+    +++ /dev/shm/mini_tester_4128986/40/mini_err.tmp	2026-08-02 18:20:16.976414664 +0200
+    @@ -0,0 +1 @@
+    +unset: `BAD-NAME': not a valid identifier
+Test [unset -v PATH]                                         [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x555555613399 "PATH", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "unset -v PATH", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "unset -v PATH") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/41/bash_out.tmp	2026-08-02 18:20:17.072415928 +0200
+    +++ /dev/shm/mini_tester_4128986/41/mini_out.tmp	2026-08-02 18:20:17.072415928 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +unset -v PATH
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+
+[33m--- 6. Testing env Builtin & Options...[0m
+Test [env]                                                   [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #239[0m
+      [33mMalloc:[0m get_hostname (env=0x5555555deeb0, buffer=0x7ffffffed7a0 "1B2.42angouleme.fr
+") at srcs/prompt/get_hostname.c:45
+        -> build_hostname (env=0x5555555deeb0, hostname=0x7ffffffed838, size=0x7ffffffed828) at srcs/prompt/build_prompt.c:29
+        -> build_prompt (env=0x5555555deeb0, prompt=0x7ffffffed888) at srcs/prompt/build_prompt.c:78
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:37
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/43/bash_out.tmp	2026-08-02 18:20:19.204443980 +0200
+    +++ /dev/shm/mini_tester_4128986/43/mini_out.tmp	2026-08-02 18:20:19.204443980 +0200
+    @@ -4,6 +4,10 @@
+     DISPLAY=:0
+     DOCKER_HOST=unix:///run/user/102247/docker.sock
+     EDITOR=nvim
+    +env
+    +exit $?
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+     FT_HOOK_NAME=login-user
+     FT_HOOK_PATHNAME=login-user.d
+     GDMSESSION=ubuntu
+Test [env -i]                                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "env -i", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "env -i", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "env -i") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/44/bash_out.tmp	2026-08-02 18:20:19.704450559 +0200
+    +++ /dev/shm/mini_tester_4128986/44/mini_out.tmp	2026-08-02 18:20:19.708450612 +0200
+    @@ -0,0 +1,4 @@
+    +env -i
+    +exit $?
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+Test [env -0]                                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "env -0", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "env -0", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "env -0") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/45/bash_out.tmp	2026-08-02 18:20:19.252444612 +0200
+    +++ /dev/shm/mini_tester_4128986/45/mini_out.tmp	2026-08-02 18:20:19.252444612 +0200
+    @@ -4,6 +4,10 @@
+     DISPLAY=:0
+     DOCKER_HOST=unix:///run/user/102247/docker.sock
+     EDITOR=nvim
+    +env -0
+    +exit $?
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+     FT_HOOK_NAME=login-user
+     FT_HOOK_PATHNAME=login-user.d
+     GDMSESSION=ubuntu
+Test [env -u PATH]                                           [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x555555613397 "PATH", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "env -u PATH", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "env -u PATH") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/46/bash_out.tmp	2026-08-02 18:20:19.252444612 +0200
+    +++ /dev/shm/mini_tester_4128986/46/mini_out.tmp	2026-08-02 18:20:19.256444664 +0200
+    @@ -4,6 +4,10 @@
+     DISPLAY=:0
+     DOCKER_HOST=unix:///run/user/102247/docker.sock
+     EDITOR=nvim
+    +env -u PATH
+    +exit $?
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+     FT_HOOK_NAME=login-user
+     FT_HOOK_PATHNAME=login-user.d
+     GDMSESSION=ubuntu
+Test [env -C /tmp pwd]                                       [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #251[0m
+      [33mMalloc:[0m new_cmd_node (node=0x7ffffffed720) at srcs/parser/ast/new_cmd_node.c:17
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:70
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+        -> parse_list (token=0x7ffffffed818) at srcs/parser/parse_list.c:64
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/47/bash_out.tmp	2026-08-02 18:20:19.768451401 +0200
+    +++ /dev/shm/mini_tester_4128986/47/mini_out.tmp	2026-08-02 18:20:19.768451401 +0200
+    @@ -1 +1,5 @@
+    +env -C /tmp pwd
+    +exit $?
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+     /tmp
+Test [env -a ARGV0 echo hello]                               [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #255[0m
+      [33mMalloc:[0m ft_strdup (s=0x555555613360 "env") at libft/ft_strdup.c:23
+        -> add_to_matrix (matrix=0x0, str=0x555555613360 "env") at srcs/parser/parse_cmd.c:27
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:78
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/48/bash_out.tmp	2026-08-02 18:20:19.324445559 +0200
+    +++ /dev/shm/mini_tester_4128986/48/mini_out.tmp	2026-08-02 18:20:19.328445612 +0200
+    @@ -1 +1,5 @@
+    +env -a ARGV0 echo hello
+    +exit $?
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+     hello
+Test [env -S 'echo hello split string']                      [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x5555555fa6a7 "'echo hello split string'", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x5555555fa6a0 "env -S 'echo hello split string'", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x5555555fa6a0 "env -S 'echo hello split string'") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/49/bash_out.tmp	2026-08-02 18:20:19.788451664 +0200
+    +++ /dev/shm/mini_tester_4128986/49/mini_out.tmp	2026-08-02 18:20:19.788451664 +0200
+    @@ -1 +1,5 @@
+    +env -S 'echo hello split string'
+    +exit $?
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+     hello split string
+Test [env --ignore-environment]                              [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x5555555fa6a0 "env --ignore-environment", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x5555555fa6a0 "env --ignore-environment", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x5555555fa6a0 "env --ignore-environment") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/50/bash_out.tmp	2026-08-02 18:20:19.692450401 +0200
+    +++ /dev/shm/mini_tester_4128986/50/mini_out.tmp	2026-08-02 18:20:19.696450454 +0200
+    @@ -0,0 +1,4 @@
+    +env --ignore-environment
+    +exit $?
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+Test [env --null]                                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "env --null", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "env --null", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "env --null") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/51/bash_out.tmp	2026-08-02 18:20:19.276444928 +0200
+    +++ /dev/shm/mini_tester_4128986/51/mini_out.tmp	2026-08-02 18:20:19.280444980 +0200
+    @@ -4,6 +4,10 @@
+     DISPLAY=:0
+     DOCKER_HOST=unix:///run/user/102247/docker.sock
+     EDITOR=nvim
+    +env --null
+    +exit $?
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+     FT_HOOK_NAME=login-user
+     FT_HOOK_PATHNAME=login-user.d
+     GDMSESSION=ubuntu
+Test [env --chdir=/tmp pwd]                                  [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #247[0m
+      [33mMalloc:[0m handle_token (input=0x5555556133a1 "pwd", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "env --chdir=/tmp pwd", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "env --chdir=/tmp pwd") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/52/bash_out.tmp	2026-08-02 18:20:19.300445243 +0200
+    +++ /dev/shm/mini_tester_4128986/52/mini_out.tmp	2026-08-02 18:20:19.304445296 +0200
+    @@ -1 +1,5 @@
+    +env --chdir=/tmp pwd
+    +exit $?
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+     /tmp
+
+[33m--- 7. Testing exit Builtin...[0m
+Test [exit 0]                                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "exit 0", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "exit 0", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "exit 0") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/54/bash_out.tmp	2026-08-02 18:20:21.908479559 +0200
+    +++ /dev/shm/mini_tester_4128986/54/mini_out.tmp	2026-08-02 18:20:21.904479507 +0200
+    @@ -0,0 +1,2 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit 0
+Test [exit 42]                                               [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/55/bash_out.tmp	2026-08-02 18:20:21.956480191 +0200
+    +++ /dev/shm/mini_tester_4128986/55/mini_out.tmp	2026-08-02 18:20:21.956480191 +0200
+    @@ -0,0 +1,2 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit 42
+Test [exit -42]                                              [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/56/bash_out.tmp	2026-08-02 18:20:21.892479349 +0200
+    +++ /dev/shm/mini_tester_4128986/56/mini_out.tmp	2026-08-02 18:20:21.888479296 +0200
+    @@ -0,0 +1,2 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit -42
+Test [exit 9223372036854775807]                              [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/57/bash_out.tmp	2026-08-02 18:20:21.960480243 +0200
+    +++ /dev/shm/mini_tester_4128986/57/mini_out.tmp	2026-08-02 18:20:21.956480191 +0200
+    @@ -0,0 +1,2 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit 9223372036854775807
+Test [exit 9223372036854775808]                              [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/58/bash_out.tmp	2026-08-02 18:20:22.332485138 +0200
+    +++ /dev/shm/mini_tester_4128986/58/mini_out.tmp	2026-08-02 18:20:22.328485086 +0200
+    @@ -0,0 +1,2 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit 9223372036854775808
+Test [exit 42 42]                                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/59/bash_out.tmp	2026-08-02 18:20:21.944480033 +0200
+    +++ /dev/shm/mini_tester_4128986/59/mini_out.tmp	2026-08-02 18:20:21.940479980 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit 42 42
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [exit hello]                                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/60/bash_out.tmp	2026-08-02 18:20:21.916479665 +0200
+    +++ /dev/shm/mini_tester_4128986/60/mini_out.tmp	2026-08-02 18:20:21.916479665 +0200
+    @@ -0,0 +1,2 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit hello
+Test [exit 42hello]                                          [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/61/bash_out.tmp	2026-08-02 18:20:21.864478980 +0200
+    +++ /dev/shm/mini_tester_4128986/61/mini_out.tmp	2026-08-02 18:20:21.860478928 +0200
+    @@ -0,0 +1,2 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit 42hello
+Test [exit -- -42]                                           [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/62/bash_out.tmp	2026-08-02 18:20:22.332485138 +0200
+    +++ /dev/shm/mini_tester_4128986/62/mini_out.tmp	2026-08-02 18:20:22.328485086 +0200
+    @@ -0,0 +1,2 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit -- -42
+
+[33m--- 8. SINGLE-SHELL SESSIONS: Persistent Shell State Sequences...[0m
+Test [export A=10 ; export B=20 ; echo "A=$A B=$B" ; unset...] [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #317[0m
+      [33mMalloc:[0m handle_token (input=0x555555613310 "echo \"A=$A B=$B\"", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613310 "echo \"A=$A B=$B\"", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613310 "echo \"A=$A B=$B\"") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/64/bash_out.tmp	2026-08-02 18:20:24.664515823 +0200
+    +++ /dev/shm/mini_tester_4128986/64/mini_out.tmp	2026-08-02 18:20:24.664515823 +0200
+    @@ -1,2 +1,14 @@
+     A=10 B=20
+     A= B=20
+    +echo "A=$A B=$B"
+    +echo "A=$A B=$B"
+    +exit $?
+    +export A=10
+    +export B=20
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +unset A
+Test [cd /tmp ; pwd ; cd .. ; pwd]                           [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #296[0m
+      [33mMalloc:[0m ft_strdup (s=0x5555555f9990 "fldumas-") at libft/ft_strdup.c:23
+        -> get_username (env=0x5555555deeb0, buffer=0x7ffffffeb7e0 "\270\332\377\377\377\177") at srcs/prompt/get_username.c:65
+        -> build_username (env=0x5555555deeb0, username=0x7ffffffed830, size=0x7ffffffed828) at srcs/prompt/build_prompt.c:19
+        -> build_prompt (env=0x5555555deeb0, prompt=0x7ffffffed888) at srcs/prompt/build_prompt.c:77
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:37
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/65/bash_out.tmp	2026-08-02 18:20:24.612515139 +0200
+    +++ /dev/shm/mini_tester_4128986/65/mini_out.tmp	2026-08-02 18:20:24.608515086 +0200
+    @@ -1,2 +1,12 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd /tmp
+    +fldumas-@1B2:/tmp$
+    +pwd
+     /tmp
+    -/
+    +fldumas-@1B2:/tmp$
+    +cd ..
+    +fldumas-@1B2:.$
+    +pwd
+    +/tmp
+    +fldumas-@1B2:.$
+    +exit $?
+Test [export VAR=hello ; export VAR+=_world ; echo $VAR]     [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #280[0m
+      [33mMalloc:[0m handle_token (input=0x555555631050 "echo $VAR", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555631050 "echo $VAR", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555631050 "echo $VAR") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/66/bash_out.tmp	2026-08-02 18:20:24.488513507 +0200
+    +++ /dev/shm/mini_tester_4128986/66/mini_out.tmp	2026-08-02 18:20:24.488513507 +0200
+    @@ -1 +1,9 @@
+    +echo $VAR
+    +exit $?
+    +export VAR=hello
+    +export VAR+=_world
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+     hello_world
+Test [export X=1 ; (export X=2; echo "subshell X=$X") ; ec...] [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #284[0m
+      [33mMalloc:[0m ft_realloc (ptr=0x5555556311d0, elem_count=3, elem_size=8) at libft/ft_realloc.c:28
+        -> add_to_matrix (matrix=0x5555556311d0, str=0x5555556310b0 "\"subshell X=$X\"") at srcs/parser/parse_cmd.c:21
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:78
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/67/bash_out.tmp	2026-08-02 18:20:24.616515191 +0200
+    +++ /dev/shm/mini_tester_4128986/67/mini_out.tmp	2026-08-02 18:20:24.620515244 +0200
+    @@ -1,2 +1,10 @@
+    +echo "parent X=$X"
+    +exit $?
+    +export X=1
+    +(export X=2; echo "subshell X=$X")
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+     parent X=1
+     subshell X=2
+Test [cd /tmp ; (cd /var; echo "subshell pwd="; pwd) ; ech...] [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #301[0m
+      [33mMalloc:[0m ft_strdup (s=0x555555613370 "/tmp") at libft/ft_strdup.c:23
+        -> get_raw_cwd (env=0x5555555deeb0, buffer=0x7ffffffec7e0 "") at srcs/prompt/get_prompt_pwd.c:23
+        -> get_prompt_pwd (env=0x5555555deeb0, buffer=0x7ffffffec7e0 "") at srcs/prompt/get_prompt_pwd.c:44
+        -> build_pwd (env=0x5555555deeb0, pwd=0x7ffffffed840, size=0x7ffffffed828) at srcs/prompt/build_prompt.c:39
+        -> build_prompt (env=0x5555555deeb0, prompt=0x7ffffffed888) at srcs/prompt/build_prompt.c:79
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/68/bash_out.tmp	2026-08-02 18:20:24.680516033 +0200
+    +++ /dev/shm/mini_tester_4128986/68/mini_out.tmp	2026-08-02 18:20:24.676515981 +0200
+    @@ -1,4 +1,12 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd /tmp
+    +fldumas-@1B2:/tmp$
+    +(cd /var; echo "subshell pwd="; pwd)
+     subshell pwd=
+     /var
+    +fldumas-@1B2:/tmp$
+    +echo "parent pwd="; pwd
+     parent pwd=
+     /tmp
+    +fldumas-@1B2:/tmp$
+    +exit $?
+Test [export FOO=bar ; env | grep FOO ; unset FOO ; env | ...] [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mExit Differs:[0m Bash=1, Mini=2
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/69/bash_out.tmp	2026-08-02 18:21:01.060994726 +0200
+    +++ /dev/shm/mini_tester_4128986/69/mini_out.tmp	2026-08-02 18:21:01.064994779 +0200
+    @@ -1 +1,10 @@
+    -FOO=bar
+    +env | grep FOO
+    +env | grep FOO
+    +exit $?
+    +export FOO=bar
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +unset FOO
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/69/bash_err.tmp	2026-08-02 18:21:01.064994779 +0200
+    +++ /dev/shm/mini_tester_4128986/69/mini_err.tmp	2026-08-02 18:21:01.068994831 +0200
+    @@ -0,0 +1,4 @@
+    +grep: (standard input): Bad file descriptor
+    +grep: (standard input): Bad file descriptor
+    +grep: (standard input): Bad file descriptor
+    +grep: (standard input): Bad file descriptor
+Test [ls /does_not_exist ; echo "Status 1: $?" ; ls -d /tm...] [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/70/bash_out.tmp	2026-08-02 18:20:27.648555086 +0200
+    +++ /dev/shm/mini_tester_4128986/70/mini_out.tmp	2026-08-02 18:20:27.644555033 +0200
+    @@ -1,3 +1,13 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +ls /does_not_exist
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo "Status 1: $?"
+     Status 1: 2
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +ls -d /tmp
+     /tmp
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo "Status 2: $?"
+     Status 2: 0
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+
+[33m--- 9. Variable, Tilde, & Special Expansions...[0m
+Test [echo $USER]                                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "echo $USER", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo $USER", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo $USER") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/72/bash_out.tmp	2026-08-02 18:21:02.925019251 +0200
+    +++ /dev/shm/mini_tester_4128986/72/mini_out.tmp	2026-08-02 18:21:02.921019199 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo $USER
+     fldumas-
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [ls /does_not_exist; echo $?]                           [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/73/bash_out.tmp	2026-08-02 18:21:05.225049513 +0200
+    +++ /dev/shm/mini_tester_4128986/73/mini_out.tmp	2026-08-02 18:21:05.225049513 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +ls /does_not_exist; echo $?
+     2
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo $0]                                               [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "echo $0", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo $0", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo $0") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/74/bash_out.tmp	2026-08-02 18:21:03.405025566 +0200
+    +++ /dev/shm/mini_tester_4128986/74/mini_out.tmp	2026-08-02 18:21:03.401025514 +0200
+    @@ -1 +1,5 @@
+    -bash
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo $0
+    +/home/fldumas-/Documents/minishell/mini/minishell
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo $$]                                               [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "echo $$", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo $$", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo $$") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/75/bash_out.tmp	2026-08-02 18:21:03.421025777 +0200
+    +++ /dev/shm/mini_tester_4128986/75/mini_out.tmp	2026-08-02 18:21:03.421025777 +0200
+    @@ -1 +1,5 @@
+    -5955
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo $$
+    +5959
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo $!]                                               [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "echo $!", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo $!", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo $!") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/76/bash_out.tmp	2026-08-02 18:21:02.909019040 +0200
+    +++ /dev/shm/mini_tester_4128986/76/mini_out.tmp	2026-08-02 18:21:02.905018988 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo $!
+     
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo ~]                                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "echo ~", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo ~", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo ~") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/77/bash_out.tmp	2026-08-02 18:21:03.421025777 +0200
+    +++ /dev/shm/mini_tester_4128986/77/mini_out.tmp	2026-08-02 18:21:03.421025777 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo ~
+     /home/fldumas-
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo ~/]                                               [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "echo ~/", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo ~/", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo ~/") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/78/bash_out.tmp	2026-08-02 18:21:02.941019462 +0200
+    +++ /dev/shm/mini_tester_4128986/78/mini_out.tmp	2026-08-02 18:21:02.937019409 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo ~/
+     /home/fldumas-/
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo '$USER' "$USER" $USER]                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #251[0m
+      [33mMalloc:[0m new_cmd_node (node=0x7ffffffed720) at srcs/parser/ast/new_cmd_node.c:17
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:70
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+        -> parse_list (token=0x7ffffffed818) at srcs/parser/parse_list.c:64
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/79/bash_out.tmp	2026-08-02 18:21:02.953019620 +0200
+    +++ /dev/shm/mini_tester_4128986/79/mini_out.tmp	2026-08-02 18:21:02.949019567 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo '$USER' "$USER" $USER
+     $USER fldumas- fldumas-
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [export FOO=bar; echo $FOO]                             [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #260[0m
+      [33mMalloc:[0m ft_strdup (s=0x555555630f80 "echo") at libft/ft_strdup.c:23
+        -> add_to_matrix (matrix=0x0, str=0x555555630f80 "echo") at srcs/parser/parse_cmd.c:27
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:78
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/80/bash_out.tmp	2026-08-02 18:21:03.485026619 +0200
+    +++ /dev/shm/mini_tester_4128986/80/mini_out.tmp	2026-08-02 18:21:03.489026671 +0200
+    @@ -1 +1,5 @@
+     bar
+    +exit $?
+    +export FOO=bar; echo $FOO
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+Test [echo $NOSUCHVARIABLE_XYZ_123]                          [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x5555555fa6a0 "echo $NOSUCHVARIABLE_XYZ_123", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x5555555fa6a0 "echo $NOSUCHVARIABLE_XYZ_123", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x5555555fa6a0 "echo $NOSUCHVARIABLE_XYZ_123") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/81/bash_out.tmp	2026-08-02 18:21:03.465026356 +0200
+    +++ /dev/shm/mini_tester_4128986/81/mini_out.tmp	2026-08-02 18:21:03.461026304 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo $NOSUCHVARIABLE_XYZ_123
+     
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo $1 $2 $99]                                        [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #251[0m
+      [33mMalloc:[0m new_cmd_node (node=0x7ffffffed720) at srcs/parser/ast/new_cmd_node.c:17
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:70
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+        -> parse_list (token=0x7ffffffed818) at srcs/parser/parse_list.c:64
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/82/bash_out.tmp	2026-08-02 18:21:03.485026619 +0200
+    +++ /dev/shm/mini_tester_4128986/82/mini_out.tmp	2026-08-02 18:21:03.481026567 +0200
+    @@ -1 +1,5 @@
+    -9
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo $1 $2 $99
+    +  
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+
+[33m--- 10. Quotes, Whitespace, & Parsing Anomalies...[0m
+Test [echo '' '' '   ' '']                                   [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #255[0m
+      [33mMalloc:[0m ft_strdup (s=0x555555613330 "echo") at libft/ft_strdup.c:23
+        -> add_to_matrix (matrix=0x0, str=0x555555613330 "echo") at srcs/parser/parse_cmd.c:27
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:78
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/84/bash_out.tmp	2026-08-02 18:21:07.269076406 +0200
+    +++ /dev/shm/mini_tester_4128986/84/mini_out.tmp	2026-08-02 18:21:07.265076353 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo '' '' '   ' ''
+           
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo "" "   " ""]                                      [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #251[0m
+      [33mMalloc:[0m new_cmd_node (node=0x7ffffffed720) at srcs/parser/ast/new_cmd_node.c:17
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:70
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+        -> parse_list (token=0x7ffffffed818) at srcs/parser/parse_list.c:64
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/85/bash_out.tmp	2026-08-02 18:21:07.217075722 +0200
+    +++ /dev/shm/mini_tester_4128986/85/mini_out.tmp	2026-08-02 18:21:07.213075669 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo "" "   " ""
+          
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo   a    b      c  ]                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #251[0m
+      [33mMalloc:[0m new_cmd_node (node=0x7ffffffed720) at srcs/parser/ast/new_cmd_node.c:17
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:70
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+        -> parse_list (token=0x7ffffffed818) at srcs/parser/parse_list.c:64
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/86/bash_out.tmp	2026-08-02 18:21:07.261076301 +0200
+    +++ /dev/shm/mini_tester_4128986/86/mini_out.tmp	2026-08-02 18:21:07.261076301 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo   a    b      c  
+     a b c
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo 'a   b   c']                                      [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "echo 'a   b   c'", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo 'a   b   c'", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo 'a   b   c'") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/87/bash_out.tmp	2026-08-02 18:21:07.233075932 +0200
+    +++ /dev/shm/mini_tester_4128986/87/mini_out.tmp	2026-08-02 18:21:07.229075880 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo 'a   b   c'
+     a   b   c
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo "a   b   c"]                                      [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "echo \"a   b   c\"", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo \"a   b   c\"", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo \"a   b   c\"") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/88/bash_out.tmp	2026-08-02 18:21:07.249076143 +0200
+    +++ /dev/shm/mini_tester_4128986/88/mini_out.tmp	2026-08-02 18:21:07.249076143 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo "a   b   c"
+     a   b   c
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo "'hello'"]                                        [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "echo \"'hello'\"", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo \"'hello'\"", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo \"'hello'\"") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/89/bash_out.tmp	2026-08-02 18:21:07.233075932 +0200
+    +++ /dev/shm/mini_tester_4128986/89/mini_out.tmp	2026-08-02 18:21:07.233075932 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo "'hello'"
+     'hello'
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo '"hello"']                                        [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "echo '\"hello\"'", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo '\"hello\"'", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo '\"hello\"'") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/90/bash_out.tmp	2026-08-02 18:21:07.205075564 +0200
+    +++ /dev/shm/mini_tester_4128986/90/mini_out.tmp	2026-08-02 18:21:07.201075511 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo '"hello"'
+     "hello"
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo "$USER's laptop"]                                 [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #243[0m
+      [33mMalloc:[0m handle_token (input=0x555555613390 "echo \"$USER's laptop\"", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "echo \"$USER's laptop\"", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "echo \"$USER's laptop\"") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/91/bash_out.tmp	2026-08-02 18:21:07.225075826 +0200
+    +++ /dev/shm/mini_tester_4128986/91/mini_out.tmp	2026-08-02 18:21:07.221075774 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo "$USER's laptop"
+     fldumas-'s laptop
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+
+[33m--- 11. Redirections (<, >, >>)...[0m
+Test [echo hello > /tmp/mini_test_r1.txt; cat /tmp/mini_te...] [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/93/bash_out.tmp	2026-08-02 18:21:11.713134876 +0200
+    +++ /dev/shm/mini_tester_4128986/93/mini_out.tmp	2026-08-02 18:21:11.709134824 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo hello > /tmp/mini_test_r1.txt; cat /tmp/mini_test_r1.txt; rm -f /tmp/mini_test_r1.txt
+     hello
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo line1 > /tmp/mini_test_r2.txt; echo line2 >> /t...] [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/94/bash_out.tmp	2026-08-02 18:21:11.829136402 +0200
+    +++ /dev/shm/mini_tester_4128986/94/mini_out.tmp	2026-08-02 18:21:11.825136350 +0200
+    @@ -1,2 +1,6 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo line1 > /tmp/mini_test_r2.txt; echo line2 >> /tmp/mini_test_r2.txt; cat /tmp/mini_test_r2.txt; rm -f /tmp/mini_test_r2.txt
+     line1
+     line2
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [cat < /etc/hostname]                                   [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #245[0m
+      [33mMalloc:[0m handle_token (input=0x555555613394 "< /etc/hostname", i=0x7ffffffed800, table=0x7ffffffed8f8) at srcs/lexer/lexer.c:43
+        -> lexer (input=0x555555613390 "cat < /etc/hostname", table=0x7ffffffed8f8) at srcs/lexer/lexer.c:96
+        -> process_input (shell=0x7ffffffed8d0, input=0x555555613390 "cat < /etc/hostname") at srcs/main.c:18
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:50
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/95/bash_out.tmp	2026-08-02 18:21:09.189101668 +0200
+    +++ /dev/shm/mini_tester_4128986/95/mini_out.tmp	2026-08-02 18:21:09.185101614 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cat < /etc/hostname
+     1B2.42angouleme.fr
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [> /tmp/mini_empty.txt; ls -l /tmp/mini_empty.txt; rm...] [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/96/bash_out.tmp	2026-08-02 18:21:11.985138455 +0200
+    +++ /dev/shm/mini_tester_4128986/96/mini_out.tmp	2026-08-02 18:21:11.981138402 +0200
+    @@ -1 +1,2 @@
+    --rw-r--r-- 1 fldumas- 2025_angouleme 0 Aug  2 18:21 /tmp/mini_empty.txt
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +> /tmp/mini_empty.txt; ls -l /tmp/mini_empty.txt; rm -f /tmp/mini_empty.txt
+Test [cat < /tmp/file_does_not_exist_xyz]                    [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/97/bash_out.tmp	2026-08-02 18:21:09.197101773 +0200
+    +++ /dev/shm/mini_tester_4128986/97/mini_out.tmp	2026-08-02 18:21:09.193101720 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cat < /tmp/file_does_not_exist_xyz
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo first > /tmp/m1.txt > /tmp/m2.txt; cat /tmp/m1....] [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/98/bash_out.tmp	2026-08-02 18:21:12.281142349 +0200
+    +++ /dev/shm/mini_tester_4128986/98/mini_out.tmp	2026-08-02 18:21:12.277142297 +0200
+    @@ -1,2 +1,6 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo first > /tmp/m1.txt > /tmp/m2.txt; cat /tmp/m1.txt; echo "---"; cat /tmp/m2.txt; rm -f /tmp/m1.txt /tmp/m2.txt
+     ---
+     first
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+
+[33m--- 12. Pipelines (|)...[0m
+Test [echo hello | cat]                                      [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mExit Differs:[0m Bash=0, Mini=1
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/100/bash_out.tmp	2026-08-02 18:21:14.385170032 +0200
+    +++ /dev/shm/mini_tester_4128986/100/mini_out.tmp	2026-08-02 18:21:14.381169979 +0200
+    @@ -1 +1,4 @@
+    -hello
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo hello | cat
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/100/bash_err.tmp	2026-08-02 18:21:14.385170032 +0200
+    +++ /dev/shm/mini_tester_4128986/100/mini_err.tmp	2026-08-02 18:21:14.389170084 +0200
+    @@ -0,0 +1 @@
+    +cat: -: Bad file descriptor
+Test [cat /etc/hostname | grep -o a | wc -l]                 [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mExit Differs:[0m Bash=0, Mini=1
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/101/bash_out.tmp	2026-08-02 18:21:14.477171242 +0200
+    +++ /dev/shm/mini_tester_4128986/101/mini_out.tmp	2026-08-02 18:21:14.473171190 +0200
+    @@ -1 +1,5 @@
+    -1
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cat /etc/hostname | grep -o a | wc -l
+    +0
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/101/bash_err.tmp	2026-08-02 18:21:14.477171242 +0200
+    +++ /dev/shm/mini_tester_4128986/101/mini_err.tmp	2026-08-02 18:21:14.481171295 +0200
+    @@ -0,0 +1,4 @@
+    +cat: write error: Bad file descriptor
+    +grep: (standard input): Bad file descriptor
+    +grep: (standard input): Bad file descriptor
+    +wc: 'standard input': Bad file descriptor
+Test [ls -la | grep srcs | wc -l]                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mExit Differs:[0m Bash=0, Mini=1
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/102/bash_out.tmp	2026-08-02 18:21:14.505171610 +0200
+    +++ /dev/shm/mini_tester_4128986/102/mini_out.tmp	2026-08-02 18:21:14.505171610 +0200
+    @@ -1 +1,5 @@
+    -1
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +ls -la | grep srcs | wc -l
+    +0
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/102/bash_err.tmp	2026-08-02 18:21:14.509171663 +0200
+    +++ /dev/shm/mini_tester_4128986/102/mini_err.tmp	2026-08-02 18:21:14.509171663 +0200
+    @@ -0,0 +1,4 @@
+    +ls: write error: Bad file descriptor
+    +wc: 'standard input': Bad file descriptor
+    +grep: (standard input): Bad file descriptor
+    +grep: (standard input): Bad file descriptor
+Test [export TEST_PIPE=42 | echo hello; echo $TEST_PIPE]     [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #267[0m
+      [33mMalloc:[0m ft_realloc (ptr=0x555555631160, elem_count=3, elem_size=8) at libft/ft_realloc.c:28
+        -> add_to_matrix (matrix=0x555555631160, str=0x555555631020 "hello") at srcs/parser/parse_cmd.c:21
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:78
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:29
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/103/bash_out.tmp	2026-08-02 18:21:14.505171610 +0200
+    +++ /dev/shm/mini_tester_4128986/103/mini_out.tmp	2026-08-02 18:21:14.505171610 +0200
+    @@ -1,2 +1,6 @@
+     
+    +exit $?
+    +export TEST_PIPE=42 | echo hello; echo $TEST_PIPE
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+     hello
+Test [ls /does_not_exist | wc -l]                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mExit Differs:[0m Bash=0, Mini=1
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/104/bash_out.tmp	2026-08-02 18:21:14.433170663 +0200
+    +++ /dev/shm/mini_tester_4128986/104/mini_out.tmp	2026-08-02 18:21:14.429170611 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +ls /does_not_exist | wc -l
+     0
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/104/bash_err.tmp	2026-08-02 18:21:14.437170715 +0200
+    +++ /dev/shm/mini_tester_4128986/104/mini_err.tmp	2026-08-02 18:21:14.437170715 +0200
+    @@ -1 +1,2 @@
+     ls: cannot access '/does_not_exist': No such file or directory
+    +wc: 'standard input': Bad file descriptor
+Test [echo hello | cat | cat | cat | grep h]                 [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mExit Differs:[0m Bash=0, Mini=2
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/105/bash_out.tmp	2026-08-02 18:21:14.581172610 +0200
+    +++ /dev/shm/mini_tester_4128986/105/mini_out.tmp	2026-08-02 18:21:14.577172558 +0200
+    @@ -1 +1,4 @@
+    -hello
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo hello | cat | cat | cat | grep h
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/105/bash_err.tmp	2026-08-02 18:21:14.581172610 +0200
+    +++ /dev/shm/mini_tester_4128986/105/mini_err.tmp	2026-08-02 18:21:14.585172662 +0200
+    @@ -0,0 +1,5 @@
+    +grep: (standard input): Bad file descriptor
+    +grep: (standard input): Bad file descriptor
+    +cat: -: Bad file descriptor
+    +cat: -: Bad file descriptor
+    +cat: -: Bad file descriptor
+
+[33m--- 13. Logical Operators (&&, ||)...[0m
+Test [true && echo yes]                                      [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #251[0m
+      [33mMalloc:[0m new_cmd_node (node=0x7ffffffed720) at srcs/parser/ast/new_cmd_node.c:17
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:70
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+        -> parse_list (token=0x7ffffffed818) at srcs/parser/parse_list.c:64
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/107/bash_out.tmp	2026-08-02 18:21:16.673200135 +0200
+    +++ /dev/shm/mini_tester_4128986/107/mini_out.tmp	2026-08-02 18:21:16.669200082 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +true && echo yes
+     yes
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [false || echo no]                                      [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/108/bash_out.tmp	2026-08-02 18:21:18.517224397 +0200
+    +++ /dev/shm/mini_tester_4128986/108/mini_out.tmp	2026-08-02 18:21:18.513224343 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +false || echo no
+     no
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [false && echo no]                                      [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/109/bash_out.tmp	2026-08-02 18:21:16.597199134 +0200
+    +++ /dev/shm/mini_tester_4128986/109/mini_out.tmp	2026-08-02 18:21:16.593199082 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +false && echo no
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [true || echo no]                                       [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/110/bash_out.tmp	2026-08-02 18:21:18.493224080 +0200
+    +++ /dev/shm/mini_tester_4128986/110/mini_out.tmp	2026-08-02 18:21:18.489224028 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +true || echo no
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [echo 1 && echo 2 || echo 3]                            [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/111/bash_out.tmp	2026-08-02 18:21:18.285221343 +0200
+    +++ /dev/shm/mini_tester_4128986/111/mini_out.tmp	2026-08-02 18:21:18.285221343 +0200
+    @@ -1,2 +1,6 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo 1 && echo 2 || echo 3
+     1
+     2
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [ls /does_not_exist && echo success || echo failed]     [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/112/bash_out.tmp	2026-08-02 18:21:19.233233817 +0200
+    +++ /dev/shm/mini_tester_4128986/112/mini_out.tmp	2026-08-02 18:21:19.233233817 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +ls /does_not_exist && echo success || echo failed
+     failed
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [false || false || echo third_time_charm]               [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/113/bash_out.tmp	2026-08-02 18:21:18.777227817 +0200
+    +++ /dev/shm/mini_tester_4128986/113/mini_out.tmp	2026-08-02 18:21:18.773227765 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +false || false || echo third_time_charm
+     third_time_charm
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+
+[33m--- 14. Subshells (...)...[0m
+Test [(echo inside subshell)]                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/115/bash_out.tmp	2026-08-02 18:21:25.685318705 +0200
+    +++ /dev/shm/mini_tester_4128986/115/mini_out.tmp	2026-08-02 18:21:25.685318705 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +(echo inside subshell)
+     inside subshell
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [(export SUB_VAR=sub); echo $SUB_VAR]                   [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #260[0m
+      [33mMalloc:[0m ft_realloc (ptr=0x555555631090, elem_count=3, elem_size=8) at libft/ft_realloc.c:28
+        -> add_to_matrix (matrix=0x555555631090, str=0x555555630f40 "SUB_VAR=sub") at srcs/parser/parse_cmd.c:21
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:78
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/116/bash_out.tmp	2026-08-02 18:21:21.321261289 +0200
+    +++ /dev/shm/mini_tester_4128986/116/mini_out.tmp	2026-08-02 18:21:21.321261289 +0200
+    @@ -1 +1,5 @@
+     
+    +exit $?
+    +(export SUB_VAR=sub); echo $SUB_VAR
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+Test [((echo nested))]                                       [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mExit Differs:[0m Bash=1, Mini=0
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/117/bash_out.tmp	2026-08-02 18:21:28.797359648 +0200
+    +++ /dev/shm/mini_tester_4128986/117/mini_out.tmp	2026-08-02 18:21:28.797359648 +0200
+    @@ -0,0 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +((echo nested))
+    +nested
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/117/bash_err.tmp	2026-08-02 18:21:28.801359701 +0200
+    +++ /dev/shm/mini_tester_4128986/117/mini_err.tmp	2026-08-02 18:21:28.801359701 +0200
+    @@ -1 +0,0 @@
+    -((: echo nested: syntax error in expression (error token is "nested")
+Test [(echo hello) > /tmp/mini_sub_out.txt; cat /tmp/mini_...] [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/118/bash_out.tmp	2026-08-02 18:21:28.201351806 +0200
+    +++ /dev/shm/mini_tester_4128986/118/mini_out.tmp	2026-08-02 18:21:28.197351754 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +(echo hello) > /tmp/mini_sub_out.txt; cat /tmp/mini_sub_out.txt; rm -f /tmp/mini_sub_out.txt
+     hello
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [(cd /tmp && pwd); pwd]                                 [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #264[0m
+      [33mMalloc:[0m new_cmd_node (node=0x7ffffffed5a0) at srcs/parser/ast/new_cmd_node.c:17
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:70
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> loop_logic (token=0x7ffffffed818, left=0x5555555fa6a0) at srcs/parser/parse_logic.c:30
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:51
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/119/bash_out.tmp	2026-08-02 18:21:21.353261710 +0200
+    +++ /dev/shm/mini_tester_4128986/119/mini_out.tmp	2026-08-02 18:21:21.349261656 +0200
+    @@ -1,2 +1,6 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +(cd /tmp && pwd); pwd
+     /tmp
+     /home/fldumas-/Documents/minishell/mini
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+
+[33m--- 15. Control Structures & Semicolons (;)...[0m
+Test [echo 1; echo 2; echo 3]                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #271[0m
+      [33mMalloc:[0m ft_realloc (ptr=0x0, elem_count=2, elem_size=8) at libft/ft_realloc.c:28
+        -> add_to_matrix (matrix=0x0, str=0x555555631080 "echo") at srcs/parser/parse_cmd.c:21
+        -> parse_cmd (token=0x7ffffffed818) at srcs/parser/parse_cmd.c:78
+        -> parse_pipeline (token=0x7ffffffed818) at srcs/parser/parse_pipeline.c:21
+        -> parse_logic (token=0x7ffffffed818) at srcs/parser/parse_logic.c:48
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/121/bash_out.tmp	2026-08-02 18:21:30.813386173 +0200
+    +++ /dev/shm/mini_tester_4128986/121/mini_out.tmp	2026-08-02 18:21:30.809386120 +0200
+    @@ -1,3 +1,7 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo 1; echo 2; echo 3
+     1
+     2
+     3
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [pwd; cd /tmp; pwd]                                     [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #269[0m
+      [33mMalloc:[0m strip_quotes (word=0x5555556310b0 "cd") at srcs/expand/strip_quotes.c:44
+        -> expand (shell=0x7ffffffed8d0, node=0x555555631060) at srcs/expand/expand.c:32
+        -> exec_cmd (shell=0x7ffffffed8d0, node=0x555555631060) at srcs/exec/exec_cmd.c:170
+        -> exec (shell=0x7ffffffed8d0, node=0x555555631060) at srcs/exec/exec.c:19
+        -> exec_semi (shell=0x7ffffffed8d0, node=0x5555556310f0) at srcs/exec/exec_semi.c:21
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/122/bash_out.tmp	2026-08-02 18:21:30.817386225 +0200
+    +++ /dev/shm/mini_tester_4128986/122/mini_out.tmp	2026-08-02 18:21:30.817386225 +0200
+    @@ -1,2 +1,6 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +pwd; cd /tmp; pwd
+     /home/fldumas-/Documents/minishell/mini
+     /tmp
+    +fldumas-@1B2:/tmp$
+    +exit $?
+Test [;;]                                                    [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mExit Differs:[0m Bash=2, Mini=0
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/123/bash_out.tmp	2026-08-02 18:21:32.161403908 +0200
+    +++ /dev/shm/mini_tester_4128986/123/mini_out.tmp	2026-08-02 18:21:32.157403855 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +;;
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/123/bash_err.tmp	2026-08-02 18:21:32.161403908 +0200
+    +++ /dev/shm/mini_tester_4128986/123/mini_err.tmp	2026-08-02 18:21:32.165403960 +0200
+    @@ -1,2 +0,0 @@
+    -syntax error near unexpected token `;;'
+    -`;;'
+Test [echo 1; ; echo 2]                                      [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [36mCLEAN[0m
+  [33mExit Differs:[0m Bash=2, Mini=0
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/124/bash_out.tmp	2026-08-02 18:21:32.217404644 +0200
+    +++ /dev/shm/mini_tester_4128986/124/mini_out.tmp	2026-08-02 18:21:32.213404592 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +echo 1; ; echo 2
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/124/bash_err.tmp	2026-08-02 18:21:32.217404644 +0200
+    +++ /dev/shm/mini_tester_4128986/124/mini_err.tmp	2026-08-02 18:21:32.221404698 +0200
+    @@ -1,2 +0,0 @@
+    -syntax error near unexpected token `;'
+    -`echo 1; ; echo 2'
+
+[33m--- 16. HARDCORE: Rug Pull (Deleted Directory)...[0m
+Test [pwd]                                                   [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #233[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/126/bash_out.tmp	2026-08-02 18:21:34.409433484 +0200
+    +++ /dev/shm/mini_tester_4128986/126/mini_out.tmp	2026-08-02 18:21:34.405433431 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:$
+    +pwd
+    +fldumas-@1B2:$
+    +exit $?
+Test [cd .]                                                  [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #242[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/127/bash_out.tmp	2026-08-02 18:21:34.445433958 +0200
+    +++ /dev/shm/mini_tester_4128986/127/mini_out.tmp	2026-08-02 18:21:34.441433905 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:$
+    +cd .
+    +fldumas-@1B2:.$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/127/bash_err.tmp	2026-08-02 18:21:34.445433958 +0200
+    +++ /dev/shm/mini_tester_4128986/127/mini_err.tmp	2026-08-02 18:21:34.449434010 +0200
+    @@ -1,2 +1,2 @@
+     shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory
+    -chdir: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory
+    +cd: chdir: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory
+Test [cd ..]                                                 [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #242[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/128/bash_out.tmp	2026-08-02 18:21:34.469434273 +0200
+    +++ /dev/shm/mini_tester_4128986/128/mini_out.tmp	2026-08-02 18:21:34.465434221 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:$
+    +cd ..
+    +fldumas-@1B2:.$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/128/bash_err.tmp	2026-08-02 18:21:34.473434326 +0200
+    +++ /dev/shm/mini_tester_4128986/128/mini_err.tmp	2026-08-02 18:21:34.473434326 +0200
+    @@ -1,2 +1,2 @@
+     shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory
+    -chdir: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory
+    +cd: chdir: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory
+
+[33m--- 17. HARDCORE: Executable & Path Resolution (126/127)...[0m
+Test [env /tmp]                                              [31mFAIL[0m | Val: [31mFAILED[0m | Malloc: [36mCLEAN[0m
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/130/bash_out.tmp	2026-08-02 18:21:35.857452535 +0200
+    +++ /dev/shm/mini_tester_4128986/130/mini_out.tmp	2026-08-02 18:21:35.857452535 +0200
+    @@ -0,0 +1,4 @@
+    +env /tmp
+    +exit $?
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +fldumas-@1B2:~/Documents/minishell/mini$
+  [35mValgrind Report:[0m
+    ==71376==    definitely lost: 0 bytes in 0 blocks
+    ==71376==    indirectly lost: 0 bytes in 0 blocks
+    ==71376==      possibly lost: 0 bytes in 0 blocks
+    ==71376==    still reachable: 73 bytes in 4 blocks
+    ==71376==         suppressed: 208,588 bytes in 228 blocks
+    ==71376== 
+    ==71376== For lists of detected and suppressed errors, rerun with: -s
+    ==71376== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 69 from 69)
+    ==71290== 
+    ==71290== HEAP SUMMARY:
+    ==71290==     in use at exit: 208,542 bytes in 225 blocks
+    ==71290==   total heap usage: 870 allocs, 645 frees, 420,582 bytes allocated
+    ==71290== 
+    ==71290== LEAK SUMMARY:
+    ==71290==    definitely lost: 0 bytes in 0 blocks
+    ==71290==    indirectly lost: 0 bytes in 0 blocks
+    ==71290==      possibly lost: 0 bytes in 0 blocks
+    ==71290==    still reachable: 0 bytes in 0 blocks
+    ==71290==         suppressed: 208,542 bytes in 225 blocks
+    ==71290== 
+    ==71290== For lists of detected and suppressed errors, rerun with: -s
+    ==71290== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 66 from 66)
+Test [/tmp/mini_no_exec]                                     [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/131/bash_out.tmp	2026-08-02 18:21:36.817465165 +0200
+    +++ /dev/shm/mini_tester_4128986/131/mini_out.tmp	2026-08-02 18:21:36.817465165 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +/tmp/mini_no_exec
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [/does_not_exist_mini_bin]                              [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mExit Differs:[0m Bash=127, Mini=126
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/132/bash_out.tmp	2026-08-02 18:21:36.801464955 +0200
+    +++ /dev/shm/mini_tester_4128986/132/mini_out.tmp	2026-08-02 18:21:36.801464955 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +/does_not_exist_mini_bin
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test ['']                                                    [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/133/bash_out.tmp	2026-08-02 18:21:36.785464744 +0200
+    +++ /dev/shm/mini_tester_4128986/133/mini_out.tmp	2026-08-02 18:21:36.781464692 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +''
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/133/bash_err.tmp	2026-08-02 18:21:36.785464744 +0200
+    +++ /dev/shm/mini_tester_4128986/133/mini_err.tmp	2026-08-02 18:21:36.789464796 +0200
+    @@ -1 +0,0 @@
+    -: command not found
+Test [.]                                                     [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mExit Differs:[0m Bash=2, Mini=126
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/134/bash_out.tmp	2026-08-02 18:21:36.777464639 +0200
+    +++ /dev/shm/mini_tester_4128986/134/mini_out.tmp	2026-08-02 18:21:36.773464586 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +.
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/134/bash_err.tmp	2026-08-02 18:21:36.777464639 +0200
+    +++ /dev/shm/mini_tester_4128986/134/mini_err.tmp	2026-08-02 18:21:36.781464692 +0200
+    @@ -1,2 +1 @@
+    -.: filename argument required
+    -.: usage: . filename [arguments]
+    +.: Permission denied
+Test [..]                                                    [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mExit Differs:[0m Bash=127, Mini=126
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/135/bash_out.tmp	2026-08-02 18:21:36.845465534 +0200
+    +++ /dev/shm/mini_tester_4128986/135/mini_out.tmp	2026-08-02 18:21:36.845465534 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +..
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+  [33mStderr Differs:[0m
+    --- /dev/shm/mini_tester_4128986/135/bash_err.tmp	2026-08-02 18:21:36.849465586 +0200
+    +++ /dev/shm/mini_tester_4128986/135/mini_err.tmp	2026-08-02 18:21:36.849465586 +0200
+    @@ -1 +1 @@
+    -..: command not found
+    +..: Permission denied
+
+[33m--- 18. HARDCORE: State Corruption & Gaslighting...[0m
+Test [pwd]                                                   [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #238[0m
+      [33mMalloc:[0m ft_strdup (s=0x5555555f9990 "fldumas-") at libft/ft_strdup.c:23
+        -> get_username (env=0x5555555deeb0, buffer=0x7ffffffeb7e0 "\270\332\377\377\377\177") at srcs/prompt/get_username.c:65
+        -> build_username (env=0x5555555deeb0, username=0x7ffffffed830, size=0x7ffffffed828) at srcs/prompt/build_prompt.c:19
+        -> build_prompt (env=0x5555555deeb0, prompt=0x7ffffffed888) at srcs/prompt/build_prompt.c:77
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:37
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/137/bash_out.tmp	2026-08-02 18:21:38.841491794 +0200
+    +++ /dev/shm/mini_tester_4128986/137/mini_out.tmp	2026-08-02 18:21:38.837491742 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +pwd
+     /home/fldumas-/Documents/minishell/mini
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [pwd -L]                                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #242[0m
+      [33mMalloc:[0m cpy_prompt (username=0x5555555fa660 "fldumas-", hostname=0x5555555fa680 "1B2", pwd=0x5555555fa6d0 "~/Documents/minishell/mini", size=44) at srcs/prompt/build_prompt.c:49
+        -> build_prompt (env=0x5555555deeb0, prompt=0x7ffffffed888) at srcs/prompt/build_prompt.c:82
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:37
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/138/bash_out.tmp	2026-08-02 18:21:38.865492109 +0200
+    +++ /dev/shm/mini_tester_4128986/138/mini_out.tmp	2026-08-02 18:21:38.861492057 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +pwd -L
+     /home/fldumas-/Documents/minishell/mini
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [pwd -P]                                                [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #242[0m
+      [33mMalloc:[0m cpy_prompt (username=0x5555555fa660 "fldumas-", hostname=0x5555555fa680 "1B2", pwd=0x5555555fa6d0 "~/Documents/minishell/mini", size=44) at srcs/prompt/build_prompt.c:49
+        -> build_prompt (env=0x5555555deeb0, prompt=0x7ffffffed888) at srcs/prompt/build_prompt.c:82
+        -> main_loop (shell=0x7ffffffed8d0) at srcs/main.c:37
+        -> main (argc=1, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:87
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/139/bash_out.tmp	2026-08-02 18:21:38.865492109 +0200
+    +++ /dev/shm/mini_tester_4128986/139/mini_out.tmp	2026-08-02 18:21:38.861492057 +0200
+    @@ -1 +1,5 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +pwd -P
+     /home/fldumas-/Documents/minishell/mini
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+Test [cd -]                                                  [31mFAIL[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #233[0m
+      [33mMalloc:[0m ft_strdup (s=0x5555555abc38 "_") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:22
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+  [33mStdout Differs:[0m
+    --- /dev/shm/mini_tester_4128986/140/bash_out.tmp	2026-08-02 18:21:38.825491584 +0200
+    +++ /dev/shm/mini_tester_4128986/140/mini_out.tmp	2026-08-02 18:21:38.825491584 +0200
+    @@ -0,0 +1,4 @@
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +cd -
+    +fldumas-@1B2:~/Documents/minishell/mini$
+    +exit $?
+
+[33m--- 19. FLAG PARSING: Invalid Builtin Options...[0m
+Test [cd -Z /tmp]                                            [32mPASS[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+Test [pwd -Z]                                                [32mPASS[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+Test [export -Z]                                             [32mPASS[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+Test [unset -Z]                                              [32mPASS[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+Test [env -Z]                                                [32mPASS[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+Test [exit -Z]                                               [32mPASS[0m | Val: [36mCLEAN[0m | Malloc: [33mSILENT FAIL @ alloc #234[0m
+      [33mMalloc:[0m ft_strdup (s=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at libft/ft_strdup.c:23
+        -> insert_new_node (shell=0x7ffffffed8d0, key=0x5555555abc38 "_", value=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell", is_exported=1) at srcs/environment/insert_new_node.c:23
+        -> handle_underscore (shell=0x7ffffffed8d0, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/handle_underscore.c:88
+        -> build_env (shell=0x7ffffffed8d0, envp=0x7fffffffdac8, argv0=0x7fffffffdead "/home/fldumas-/Documents/minishell/mini/minishell") at srcs/environment/build_env/build_env.c:105
+        -> init_minishell (shell=0x7ffffffed8d0, argv=0x7fffffffdab8, envp=0x7fffffffdac8) at srcs/main.c:66
+
+==========================================================
+[33mWaiting for all background jobs and tests to finish...[0m
+
+==========================================================
+[31mLogic: FAILED (6 / 128)[0m
+[35mMemory (Normal): LEAKS DETECTED (127 / 128 tests passed)[0m
+[35mMemory (Malloc Crash): CRASHES/LEAKS DETECTED (18 / 128 tests passed)[0m

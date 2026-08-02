@@ -6,29 +6,26 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 17:46:29 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/31 16:12:37 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 18:03:02 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	process_input(t_minishell *shell, char *input, char *argv0)
+static void	process_input(t_minishell *shell, char *input)
 {
-	t_token		*tokens;
-	t_ast_node	*ast;
-
 	add_history(input);
 	shell->tokens = lexer(input, shell->token_type_table);
 	if (!shell->tokens)
 		return ;
-	shell->ast = parser(tokens);
+	shell->ast = parser(shell->tokens);
 	if (!shell->ast)
 		return ;
-	shell->exit_status = exec(shell, shell->ast, argv0);
+	shell->exit_status = exec(shell, shell->ast);
 	free_ast(shell->ast);
 }
 
-static void	main_loop(t_minishell *shell, char *argv0)
+static void	main_loop(t_minishell *shell)
 {
 	int		status;
 	char	*input;
@@ -37,7 +34,7 @@ static void	main_loop(t_minishell *shell, char *argv0)
 	while (1)
 	{
 		init_interactive_signals();
-		status = build_prompt(env, &prompt);
+		status = build_prompt(shell->env, &prompt);
 		if (status)
 			ft_putendl_fd("minishell: malloc: allocation failed", 2);
 		input = readline(prompt);
@@ -50,42 +47,43 @@ static void	main_loop(t_minishell *shell, char *argv0)
 			break ;
 		}
 		if (*input)
-			process_input(shell, input, argv0);
+			process_input(shell, input);
 		free(input);
 	}
 }
 
-static void	init_minishell(t_minishell *shell, char **envp, char *argv0)
+static void	init_minishell(t_minishell *shell, char **argv, char **envp)
 {
 	shell->exported_count = 0;
 	shell->env = NULL;
 	shell->exported = NULL;
 	shell->tokens = NULL;
 	shell->ast = NULL;
+	shell->argv0 = argv[0];
 	shell->pid = NULL;
 	shell->last_pid = NULL;
 	shell->exit_status = 0;
-	if (build_env(shell, envp, argv0))
+	if (build_env(shell, envp, argv[0]))
 	{
 		ft_putstr_fd("minishell: shell-init: malloc: "
 			"cannot allocate memory\n", STDERR_FILENO);
-		exit_shell(shell, NULL, 0, 1);
+		exit_shell(shell, 1);
 	}
 	init_token_type_table(shell->token_type_table);
 	init_exec_func_table(shell->exec_func_table);
+	init_builtin_func_table(shell->builtin_func_table);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	shell;
-	size_t		i;
 
 	if (argc != 1)
 	{
 		ft_putendl_fd("minishell: too many arguments", STDERR_FILENO);
 		return (1);
 	}
-	init_minishell(&shell, envp, argv[0]);
-	main_loop(shell);
+	init_minishell(&shell, argv, envp);
+	main_loop(&shell);
 	return (0);
 }

@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lookup_table.h                                     :+:      :+:    :+:   */
+/*   free_tokens.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/23 16:35:58 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 18:03:43 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/08/02 17:56:40 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/08/02 17:56:51 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LOOKUP_TABLE_H
-# define LOOKUP_TABLE_H
+#include "minishell.h"
 
-void	init_escape_table(char table[256]);
-void	init_token_type_table(uint8_t table[256][256]);
-void	init_exec_func_table(int (*exec_func_table[7])(t_minishell *shell,
-				t_ast_node *node));
-void	init_builtin_func_table(int (*builtin_func_table[7])
-			(t_minishell *shell, char **args));
+void	free_tokens(t_token *head)
+{
+	t_token	*tmp;
 
-#endif
+	while (head)
+	{
+		tmp = head;
+		head = head->next;
+		free(tmp->value);
+		free(tmp);
+	}
+}

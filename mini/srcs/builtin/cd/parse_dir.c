@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 10:11:47 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/21 23:48:46 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/01 04:25:54 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ static int	parse_cdpath(t_minishell *shell, char *arg,
 	return (ret);
 }
 
-int	parse_dir(t_minishell *shell, char *arg, char **dir, int	*print_path)
+int	parse_dir(t_minishell *shell, char *arg, char **dir, int *print_path)
 {
 	*dir = NULL;
 	*print_path = 0;

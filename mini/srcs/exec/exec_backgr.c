@@ -6,13 +6,13 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/31 15:13:06 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/31 15:22:51 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 13:33:19 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exec_backgr(t_minishell *shell, t_ast_node *node, char *argv0)
+int	exec_backgr(t_minishell *shell, t_ast_node *node)
 {
 	pid_t	pid;
 
@@ -28,7 +28,7 @@ int	exec_backgr(t_minishell *shell, t_ast_node *node, char *argv0)
 	if (pid == 0)
 	{
 		init_child_signals();
-		exit_shell(shell, NULL, 0, exec(shell, node->left, argv0));
+		exit_shell(shell, exec(shell, node->left));
 	}
 	free(shell->last_pid);
 	shell->last_pid = ft_itoa(pid);
@@ -37,6 +37,6 @@ int	exec_backgr(t_minishell *shell, t_ast_node *node, char *argv0)
 			"cannot allocate memory\n", STDERR_FILENO);
 	shell->exit_status = 0;
 	if (node->right)
-		return (exec(shell, node->right, argv0));
+		return (exec(shell, node->right));
 	return (0);
 }

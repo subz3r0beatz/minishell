@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 11:43:27 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/23 18:26:03 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/01 04:49:14 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	handle_relative(t_minishell *shell, char *argv0)
 	return (0);
 }
 
-int	handle_path(t_minishell *shell, char **split, char *argv0)
+static int	handle_path(t_minishell *shell, char **split, char *argv0)
 {
 	char	*underscore;
 	char	*tmp;

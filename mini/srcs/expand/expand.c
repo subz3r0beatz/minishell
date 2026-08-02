@@ -6,13 +6,13 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/16 15:58:21 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/27 23:50:11 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 13:15:05 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	expand(t_minishell *shell, t_ast_node *node, char *argv0)
+int	expand(t_minishell *shell, t_ast_node *node)
 {
 	size_t	i;
 
@@ -26,7 +26,7 @@ int	expand(t_minishell *shell, t_ast_node *node, char *argv0)
 			node->args[i] = expand_home(shell, node->args[i]);
 		if (!node->args[i])
 			return (1);
-		node->args[i] = expand_word(shell, node->args[i], argv0);
+		node->args[i] = expand_word(shell, node->args[i]);
 		if (!node->args[i])
 			return (1);
 		node->args[i] = strip_quotes(node->args[i]);
@@ -34,5 +34,5 @@ int	expand(t_minishell *shell, t_ast_node *node, char *argv0)
 			return (1);
 		i++;
 	}
-	return (expand_redirs(shell, node->redir, argv0));
+	return (expand_redirs(shell, node->redir));
 }

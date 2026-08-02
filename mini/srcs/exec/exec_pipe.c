@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/31 16:50:30 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/31 16:50:36 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 17:43:31 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,24 +33,32 @@ int	right_fork_error(t_minishell *shell, pid_t left_pid, int pfd[2])
 	return (1);
 }
 
-void	exec_left_child(t_minishell *shell, t_ast_node *node, char *argv0, int pfd[2])
+void	exec_left_child(t_minishell *shell, t_ast_node *node,
+	int pfd[2])
 {
 	init_child_signals();
-	close(pfd[0]);
-	if (dup2(pfd[1], STDOUT_FILENO) < 0)
-		exit_shell(shell, NULL, pfd[1], 1);
 	close(pfd[1]);
-	exit_shell(shell, NULL, 0, exec(shell, node->left, argv0));
+	if (dup2(pfd[0], STDOUT_FILENO) < 0)
+	{
+		close(pfd[0]);
+		exit_shell(shell, 1);
+	}
+	close(pfd[0]);
+	exit_shell(shell, exec(shell, node->left));
 }
 
-void	exec_right_child(t_minishell *shell, t_ast_node *node, char *argv0, int pfd[2])
+void	exec_right_child(t_minishell *shell, t_ast_node *node,
+	int pfd[2])
 {
 	init_child_signals();
-	close(pfd[1]);
-	if (dup2(pfd[0], STDIN_FILENO) < 0)
-		exit_shell(shell, NULL, pfd[0], 1);
 	close(pfd[0]);
-	exit_shell(shell, NULL, 0, exec(shell, node->right, argv0));
+	if (dup2(pfd[1], STDIN_FILENO) < 0)
+	{
+		close(pfd[1]);
+		exit_shell(shell, 1);
+	}
+	close(pfd[1]);
+	exit_shell(shell, exec(shell, node->right));
 }
 
 int	wait_exec(t_minishell *shell, pid_t left_pid, pid_t right_pid, int pfd[2])
@@ -75,7 +83,7 @@ int	wait_exec(t_minishell *shell, pid_t left_pid, pid_t right_pid, int pfd[2])
 	return (shell->exit_status);
 }
 
-int	exec_pipe(t_minishell *shell, t_ast_node *node, char *argv0)
+int	exec_pipe(t_minishell *shell, t_ast_node *node)
 {
 	int		pfd[2];
 	pid_t	left_pid;
@@ -92,11 +100,11 @@ int	exec_pipe(t_minishell *shell, t_ast_node *node, char *argv0)
 	if (left_pid < 0)
 		return (left_fork_error(shell, pfd));
 	if (left_pid == 0)
-		exec_left_child(shell, node, argv0, pfd);
+		exec_left_child(shell, node, pfd);
 	right_pid = fork();
 	if (right_pid < 0)
 		return (right_fork_error(shell, left_pid, pfd));
 	if (right_pid == 0)
-		exec_right_child(shell, node, argv0, pfd);
+		exec_right_child(shell, node, pfd);
 	return (wait_exec(shell, left_pid, right_pid, pfd));
 }

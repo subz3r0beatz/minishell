@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/23 17:48:19 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/26 14:55:51 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 17:58:04 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,10 @@ t_ast_node	*parser(t_token *tokens)
 	curr = tokens;
 	ast = parse_list(&curr);
 	if (curr != NULL)
+	{
+		free_tokens(tokens);
 		return (free_ast(ast));
+	}
+	free_tokens(tokens);
 	return (ast);
 }

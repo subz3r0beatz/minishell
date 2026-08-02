@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 12:15:58 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/21 23:54:01 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 13:29:07 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,6 @@ int		parse_long_flags(char **matrices[2],
 			t_flags *flags, t_max_uints *max_uints);
 int		parse_short_flags(char **matrices[2],
 			t_flags *flags, t_max_uints *max_uints);
-int		print_env_help(int fd_out);
+int		print_env_help(void);
 
 #endif

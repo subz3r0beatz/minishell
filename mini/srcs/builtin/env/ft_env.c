@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/06 03:45:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/21 19:35:38 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 13:27:28 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static int	redo_env(char **matrices[2],
 }
 
 static int	check_flags(char **matrices[2],
-		t_flags *flags, t_max_uints *max_uints, int fd_out)
+		t_flags *flags, t_max_uints *max_uints)
 {
 	if (!matrices[1][max_uints->i])
 	{
@@ -80,7 +80,7 @@ static int	check_flags(char **matrices[2],
 				STDERR_FILENO);
 			return (exit_env(matrices, flags, max_uints, 126));
 		}
-		print_env(matrices[0], flags->null_term, fd_out);
+		print_env(matrices[0], flags->null_term);
 		return (exit_env(matrices, flags, max_uints, 1));
 	}
 	if (flags->null_term)
@@ -114,7 +114,7 @@ static int	resize_env(char **matrices[2],
 	return (0);
 }
 
-int	ft_env(t_minishell *shell, char **args, int fd_out)
+int	ft_env(t_minishell *shell, char **args)
 {
 	int			status;
 	char		**matrices[2];
@@ -125,15 +125,14 @@ int	ft_env(t_minishell *shell, char **args, int fd_out)
 	status = init_env(shell, matrices, &flags, &max_uints);
 	if (status)
 		return (status);
-	flags.fd_out = fd_out;
 	max_uints.i = parse_env_flags(matrices, &flags, &max_uints);
 	if (flags.print_help)
-		return (exit_env(matrices, &flags, &max_uints, print_env_help(fd_out)));
+		return (exit_env(matrices, &flags, &max_uints, print_env_help()));
 	if (max_uints.i == 0)
 		return (exit_env(matrices, &flags, &max_uints, 125));
 	if (redo_env(matrices, &flags, &max_uints, &status))
 		return (status);
-	status = check_flags(matrices, &flags, &max_uints, fd_out);
+	status = check_flags(matrices, &flags, &max_uints);
 	if (status)
 		return (status - 1);
 	if (resize_env(matrices, &flags, &max_uints, &status))

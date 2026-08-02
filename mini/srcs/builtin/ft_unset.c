@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/06 07:09:11 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/19 14:36:02 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 13:20:09 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,12 +95,11 @@ static int	parse_vars(t_minishell *shell, char **args)
 	return (status);
 }
 
-int	ft_unset(t_minishell *shell, char **args, int fd_out)
+int	ft_unset(t_minishell *shell, char **args)
 {
 	size_t	i;
 	int		status;
 
-	(void) fd_out;
 	if (!args[1])
 		return (0);
 	i = check_flags(args, &status);

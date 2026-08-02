@@ -1,0 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.h                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/02 14:36:16 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/08/02 17:44:42 by fldumas-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef EXEC_H
+# define EXEC_H
+
+int	exec(t_minishell *shell, t_ast_node *node);
+int	exec_and(t_minishell *shell, t_ast_node *node);
+int	exec_or(t_minishell *shell, t_ast_node *node);
+int	exec_pipe(t_minishell *shell, t_ast_node *node);
+int	exec_cmd(t_minishell *shell, t_ast_node *node);
+int	exec_pipe(t_minishell *shell, t_ast_node *node);
+int	exec_subshell(t_minishell *shell, t_ast_node *node);
+int	exec_semi(t_minishell *shell, t_ast_node *node);
+int	exec_backgr(t_minishell *shell, t_ast_node *node);
+int	apply_redirections(t_redir *redir);
+int	is_builtin(char *cmd);
+int	exec_builtin(t_minishell *shell, t_ast_node *node, int builtin);
+
+#endif

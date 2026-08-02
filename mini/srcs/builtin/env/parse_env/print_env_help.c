@@ -6,13 +6,13 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/07 17:53:32 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/16 15:53:38 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 13:29:17 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	print_env_help(int fd_out)
+int	print_env_help(void)
 {
 	ft_putstr_fd("Usage: env [OPTION]... [-] [NAME=VALUE]... "
 		"[COMMAND [ARG]...]\nSet each NAME to VALUE in the environment "
@@ -27,6 +27,6 @@ int	print_env_help(int fd_out)
 		"COMMAND, print the resulting environment.\n\nExit status:\n  125  "
 		"if the env command itself fails\n  126  if COMMAND is found but "
 		"cannot be invoked\n  127  if COMMAND cannot be found\n  -    the "
-		"exit status of COMMAND otherwise\n", fd_out);
+		"exit status of COMMAND otherwise\n", STDERR_FILENO);
 	return (0);
 }
