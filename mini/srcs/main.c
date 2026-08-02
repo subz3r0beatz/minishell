@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 17:46:29 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 18:03:02 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 19:11:01 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,12 @@ static void	main_loop(t_minishell *shell)
 	while (1)
 	{
 		init_interactive_signals();
-		status = build_prompt(shell->env, &prompt);
-		if (status)
-			ft_putendl_fd("minishell: malloc: allocation failed", 2);
+		if (isatty(STDIN_FILENO))
+		{
+			status = build_prompt(shell->env, &prompt);
+			if (status)
+				ft_putendl_fd("minishell: malloc: allocation failed", 2);
+		}
 		input = readline(prompt);
 		if (status != 2)
 			free(prompt);

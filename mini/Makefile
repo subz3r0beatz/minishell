@@ -56,7 +56,7 @@ valgrind: $(TARGET)
 	valgrind --suppressions=$(SUPP_FILE) --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(TARGET)
 
 clean:
-	rm -rf $(OBJDIR) $(SUPP_FILE)
+	rm -rf $(OBJDIR)
 	@for dir in $(REC_DIRS); do \
 		$(MAKE) -C $$dir clean; \
 	done

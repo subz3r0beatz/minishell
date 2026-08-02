@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/31 16:50:30 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 17:43:31 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/02 19:01:28 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,13 @@ void	exec_left_child(t_minishell *shell, t_ast_node *node,
 	int pfd[2])
 {
 	init_child_signals();
-	close(pfd[1]);
-	if (dup2(pfd[0], STDOUT_FILENO) < 0)
+	close(pfd[0]);
+	if (dup2(pfd[1], STDOUT_FILENO) < 0)
 	{
-		close(pfd[0]);
+		close(pfd[1]);
 		exit_shell(shell, 1);
 	}
-	close(pfd[0]);
+	close(pfd[1]);
 	exit_shell(shell, exec(shell, node->left));
 }
 
@@ -51,13 +51,13 @@ void	exec_right_child(t_minishell *shell, t_ast_node *node,
 	int pfd[2])
 {
 	init_child_signals();
-	close(pfd[0]);
-	if (dup2(pfd[1], STDIN_FILENO) < 0)
+	close(pfd[1]);
+	if (dup2(pfd[0], STDIN_FILENO) < 0)
 	{
-		close(pfd[1]);
+		close(pfd[0]);
 		exit_shell(shell, 1);
 	}
-	close(pfd[1]);
+	close(pfd[0]);
 	exit_shell(shell, exec(shell, node->right));
 }
 

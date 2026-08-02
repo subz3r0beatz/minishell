@@ -88,29 +88,52 @@ cat << 'EOF' > "$ROOT_DIR/faulty_malloc.c"
 
 void *malloc(size_t size) {
     static void *(*real_malloc)(size_t) = NULL;
-    char *target_env;
-    int target_alloc;
+    static int in_malloc = 0;
+    static int target_alloc = -1;
+    static int init_env = 0;
     static int alloc_count = 0;
     Dl_info info;
 
     if (!real_malloc)
         real_malloc = dlsym(RTLD_NEXT, "malloc");
 
-    if (dladdr(__builtin_return_address(0), &info) && info.dli_fname) {
+    /* Prevent recursive interception */
+    if (in_malloc)
+        return real_malloc(size);
+
+    in_malloc = 1;
+
+    if (!init_env) {
+        char *env = getenv("FAIL_MALLOC_AT");
+        if (env)
+            target_alloc = atoi(env);
+        init_env = 1;
+    }
+
+    if (target_alloc > 0 && dladdr(__builtin_return_address(0), &info) && info.dli_fname) {
         if (strstr(info.dli_fname, "minishell")) {
-            alloc_count++;
-            target_env = getenv("FAIL_MALLOC_AT");
-            if (target_env) {
-                target_alloc = atoi(target_env);
-                if (target_alloc > 0 && alloc_count == target_alloc) {
+            /* Skip glibc / readline internal symbols */
+            int is_libc_internal = 0;
+            if (info.dli_sname) {
+                if (strstr(info.dli_sname, "tsearch") || 
+                    strstr(info.dli_sname, "environ") || 
+                    strstr(info.dli_sname, "readline") || 
+                    strstr(info.dli_sname, "rl_"))
+                    is_libc_internal = 1;
+            }
+            if (!is_libc_internal) {
+                alloc_count++;
+                if (alloc_count == target_alloc) {
                     if (getenv("TRACE_MALLOC")) {
-                        raise(SIGTRAP); 
+                        raise(SIGTRAP);
                     }
-                    return NULL;
+                    in_malloc = 0;
+                    return NULL; /* SABOTAGE! */
                 }
             }
         }
     }
+    in_malloc = 0;
     return real_malloc(size);
 }
 EOF
@@ -247,7 +270,7 @@ run_test() {
 
     if [ "$ENABLE_MALLOC_STRESS" = true ] && [ "$valgrind_ok" = true ] && [ -n "$TOTAL_ALLOCS" ] && [ "$TOTAL_ALLOCS" -gt 0 ]; then
         for (( i=1; i<=TOTAL_ALLOCS; i++ )); do
-            FAIL_MALLOC_AT=$i LD_PRELOAD="$ROOT_DIR/faulty_malloc.so" $MINISHELL < "$IN_TMP" > /dev/null 2> "$M_ERR_LOG"
+			{ FAIL_MALLOC_AT=$i LD_PRELOAD="$ROOT_DIR/faulty_malloc.so" $MINISHELL < "$IN_TMP" > /dev/null 2> "$M_ERR_LOG"; } 2>/dev/null
             local crash_status=$?
             
             if [ $crash_status -eq 139 ] || [ $crash_status -eq 134 ] || [ $crash_status -eq 137 ] || [ $crash_status -eq 136 ]; then
