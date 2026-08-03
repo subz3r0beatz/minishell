@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/home/fldumas-/Downloads/bash-5.2/bash
 
 # ==============================================================================
 #  MINISHELL ULTIMATE TESTER (Logic + Valgrind + Stderr + Malloc Fault Injection)
@@ -182,6 +182,9 @@ normalize_env() {
 # --- Helper: Clean Readline Prompts and Output Noise ---
 normalize_stdout() {
     local file=$1
+    # 1. Strip Readline VT100 escape sequences and control bytes
+    sed -i -E 's/\x01|\x02|\x1B\[[0-9;]*[a-zA-Z]//g' "$file"
+    # 2. Strip prompt headers and exit noise
     sed -i -E 's/^[a-zA-Z0-9_\.-]+@[a-zA-Z0-9_\.-]+:.*\$ //g' "$file"
     sed -i -E '/^\$ $/d' "$file"
     sed -i -E 's/^\$ //g' "$file"

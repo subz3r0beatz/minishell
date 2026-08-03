@@ -34437,3 +34437,5 @@ Test [exit -Z]                                               [32mPASS[0m | Val
 [31mLogic: FAILED (6 / 128)[0m
 [35mMemory (Normal): LEAKS DETECTED (0 / 128 tests passed)[0m
 [32mMemory (Malloc Crash): ALL SURVIVED! (128 / 128)[0m
+hello
+hi

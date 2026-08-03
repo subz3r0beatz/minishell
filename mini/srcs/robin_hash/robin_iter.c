@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/02 02:24:38 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/19 16:04:08 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/03 02:47:12 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	robin_iter(t_robin *robin,
 {
 	size_t	i;
 
+	if (!robin || !f)
+		return (1);
 	i = 0;
 	while (i < robin->capacity)
 	{

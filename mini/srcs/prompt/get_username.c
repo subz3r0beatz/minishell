@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 01:01:10 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/16 22:34:30 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/03 03:33:14 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ static int	read_file(char *path, char *buffer, int size)
 	return (bytes_read);
 }
 
-static char	*search_passwd_username(uid_t uid, char *buffer)
+static char	*search_passwd_username(uid_t uid, char *buffer,
+	int *no_malloc_error)
 {
 	char	*start;
 	uid_t	id;
@@ -51,10 +52,11 @@ static char	*search_passwd_username(uid_t uid, char *buffer)
 		if (*buffer == '\n')
 			buffer++;
 	}
+	*no_malloc_error = 1;
 	return (NULL);
 }
 
-char	*get_username(t_robin *env, char *buffer)
+char	*get_username(t_robin *env, char *buffer, int *no_malloc_error)
 {
 	struct stat		st;
 	char			*usr;
@@ -70,13 +72,15 @@ char	*get_username(t_robin *env, char *buffer)
 	{
 		usr = ttyname(0);
 		if (!usr || stat(usr, &st) < 0)
+			*no_malloc_error = 1;
+		if (*no_malloc_error)
 			return (NULL);
 	}
-	if (read_file("/etc/passwd", buffer, 8192) > 0)
+	if (read_file("/etc/passwd", buffer, 32768) > 0)
 	{
-		usr = search_passwd_username(st.st_uid, buffer);
-		if (usr)
-			return (usr);
+		usr = search_passwd_username(st.st_uid, buffer, no_malloc_error);
+		return (usr);
 	}
+	*no_malloc_error = 1;
 	return (NULL);
 }

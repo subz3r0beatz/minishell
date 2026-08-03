@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 23:22:23 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 13:16:19 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/03 03:59:01 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,15 @@ static char	*expand_variable(t_minishell *shell, char *word, size_t *i)
 	return (new_word);
 }
 
+
+
 char	*expand_word(t_minishell *shell, char *word)
 {
-	size_t	i;
-	char	quote_state;
+	char	*new_word;
+	size_t	word_len;
 
+	word_len = calculate_word_len(shell, word);
+	new_word = copy_new_word(word);
 	i = 0;
 	quote_state = 0;
 	while (word[i])

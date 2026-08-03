@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 17:46:29 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 19:11:01 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/03 03:59:03 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ static void	main_loop(t_minishell *shell)
 
 	while (1)
 	{
+		status = 0;
+		prompt = NULL;
 		init_interactive_signals();
 		if (isatty(STDIN_FILENO))
 		{
@@ -88,5 +90,5 @@ int	main(int argc, char **argv, char **envp)
 	}
 	init_minishell(&shell, argv, envp);
 	main_loop(&shell);
-	return (0);
+	return (shell.exit_status);
 }

@@ -6,12 +6,11 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/01 21:13:34 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/22 00:15:44 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/03 02:47:29 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stddef.h>
 
 t_robin_node	*robin_search(const t_robin *robin, const void *key)
 {
@@ -21,7 +20,7 @@ t_robin_node	*robin_search(const t_robin *robin, const void *key)
 	size_t	i;
 	uint8_t	psl;
 
-	if (robin->count == 0)
+	if (!robin || robin->count == 0)
 		return (NULL);
 	target_hash = robin->hash_function(key);
 	mask = robin->capacity - 1;

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 01:05:43 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/16 21:50:20 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/03 03:33:38 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	read_hostname(char *buffer)
 	return (bytes_read);
 }
 
-char	*get_hostname(t_robin *env, char *buffer)
+char	*get_hostname(t_robin *env, char *buffer, int *no_malloc_error)
 {
 	int				i;
 	int				bytes_read;
@@ -36,6 +36,8 @@ char	*get_hostname(t_robin *env, char *buffer)
 	if (node && node->value && ((t_env *)node->value)->value)
 		return (ft_strdup(((t_env *)node->value)->value));
 	bytes_read = read_hostname(buffer);
+	if (bytes_read <= 0)
+		*no_malloc_error = 1;
 	if (bytes_read <= 0)
 		return (NULL);
 	buffer[bytes_read] = '\0';
