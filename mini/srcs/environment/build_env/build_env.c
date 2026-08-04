@@ -62,13 +62,14 @@ static int	parse_var(t_minishell *shell, char *str)
 	while (str[i] && str[i] != '=')
 		i++;
 	key = ft_substr(str, 0, i);
+	if (!key)
+		return (1);
 	value = NULL;
 	if (str[i])
 		value = ft_strdup(str + i + 1);
-	if (!key || (str[i] && !value))
+	if ((str[i] && !value))
 	{
 		free(key);
-		free(value);
 		return (1);
 	}
 	if (insert_new_var(shell, key, value))

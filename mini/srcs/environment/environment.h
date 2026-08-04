@@ -29,7 +29,6 @@ t_env			*create_env_node(char *key, char *value, int is_exported);
 t_robin_node	create_node(t_robin *env,
 					char *key, char *value, int is_exported);
 int				delete_node(void *key, void *value);
-void			free_matrix(char **matrix, size_t size);
 char			**env_to_matrix(t_minishell *shell);
 int				get_var_value(t_minishell *shell, char *key, char **ptr);
 int				insert_new_node(t_minishell *shell, char *key, char *value,

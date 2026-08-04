@@ -26,9 +26,6 @@ int	expand_redirs(t_minishell *shell, t_redir *redir)
 			redir->file = expand_word(shell, redir->file);
 			if (!redir->file)
 				return (1);
-			redir->file = strip_quotes(redir->file);
-			if (!redir->file)
-				return (1);
 		}
 		redir = redir->next;
 	}

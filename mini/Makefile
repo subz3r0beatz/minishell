@@ -45,15 +45,7 @@ $(OBJDIR)/%.o: %.c
 SUPP_FILE = readline.supp
 
 valgrind: $(TARGET)
-	@if [ ! -f $(SUPP_FILE) ]; then \
-		echo "{" > $(SUPP_FILE); \
-		echo "   ignore_readline" >> $(SUPP_FILE); \
-		echo "   Memcheck:Leak" >> $(SUPP_FILE); \
-		echo "   ..." >> $(SUPP_FILE); \
-		echo "   obj:*/libreadline.so*" >> $(SUPP_FILE); \
-		echo "}" >> $(SUPP_FILE); \
-	fi
-	valgrind --suppressions=$(SUPP_FILE) --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(TARGET)
+	valgrind --suppressions=$(SUPP_FILE) --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(TARGET)
 
 clean:
 	rm -rf $(OBJDIR)

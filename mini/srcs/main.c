@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "environment/environment.h"
 #include "minishell.h"
+#include <unistd.h>
 
 static void	process_input(t_minishell *shell, char *input)
 {
@@ -23,37 +25,69 @@ static void	process_input(t_minishell *shell, char *input)
 		return ;
 	shell->exit_status = exec(shell, shell->ast);
 	free_ast(shell->ast);
+	shell->ast = NULL;
+}
+
+static char	*read_line_non_interactive(int fd)
+{
+	char	*line;
+	char	c;
+	size_t	i;
+	int		bytes;
+
+	line = malloc(sizeof(char) * 4096);
+	if (!line)
+	{
+		ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
+		return (NULL);
+	}
+	i = 0;
+	bytes = read(fd, &c, 1);
+	if (bytes <= 0)
+	{
+		free(line);
+		return (NULL);
+	}
+	while (bytes > 0 && c != '\n' && i < 4095)
+	{
+		line[i++] = c;
+		bytes = read(fd, &c, 1);
+	}
+	line[i] = '\0';
+	return (line);
 }
 
 static void	main_loop(t_minishell *shell)
 {
 	int		status;
-	char	*input;
 	char	*prompt;
 
 	while (1)
 	{
 		status = 0;
 		prompt = NULL;
+		shell->input = NULL;
 		init_interactive_signals();
 		if (isatty(STDIN_FILENO))
 		{
 			status = build_prompt(shell->env, &prompt);
 			if (status)
-				ft_putendl_fd("minishell: malloc: allocation failed", 2);
+				ft_putendl_fd("minishell: malloc: cannot allocate memory", STDERR_FILENO);
+			shell->input = readline(prompt);
+			if (status != 2)
+				free(prompt);
 		}
-		input = readline(prompt);
-		if (status != 2)
-			free(prompt);
-		if (!input)
+		else
+			shell->input = read_line_non_interactive(STDIN_FILENO);
+		if (!shell->input)
 		{
 			if (isatty(STDIN_FILENO))
 				ft_putstr_fd("exit\n", STDERR_FILENO);
 			break ;
 		}
-		if (*input)
-			process_input(shell, input);
-		free(input);
+		if (*shell->input)
+			process_input(shell, shell->input);
+		free(shell->input);
 	}
 }
 
@@ -64,6 +98,7 @@ static void	init_minishell(t_minishell *shell, char **argv, char **envp)
 	shell->exported = NULL;
 	shell->tokens = NULL;
 	shell->ast = NULL;
+	shell->input = NULL;
 	shell->argv0 = argv[0];
 	shell->pid = NULL;
 	shell->last_pid = NULL;
@@ -90,5 +125,5 @@ int	main(int argc, char **argv, char **envp)
 	}
 	init_minishell(&shell, argv, envp);
 	main_loop(&shell);
-	return (shell.exit_status);
+	exit_shell(&shell, shell.exit_status);
 }

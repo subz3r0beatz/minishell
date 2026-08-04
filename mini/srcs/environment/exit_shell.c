@@ -25,6 +25,8 @@ void	exit_shell(t_minishell *shell, int exit_status)
 		free_ast(shell->ast);
 	if (shell->env)
 		robin_free(shell->env);
+	if (shell->input)
+		free(shell->input);
 	rl_clear_history();
 	exit(exit_status);
 }

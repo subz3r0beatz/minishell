@@ -24,8 +24,10 @@ t_ast_node	*parser(t_token *tokens)
 	if (curr != NULL)
 	{
 		free_tokens(tokens);
+		tokens = NULL;
 		return (free_ast(ast));
 	}
 	free_tokens(tokens);
+	tokens = NULL;
 	return (ast);
 }

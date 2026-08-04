@@ -29,9 +29,6 @@ int	expand(t_minishell *shell, t_ast_node *node)
 		node->args[i] = expand_word(shell, node->args[i]);
 		if (!node->args[i])
 			return (1);
-		node->args[i] = strip_quotes(node->args[i]);
-		if (!node->args[i])
-			return (1);
 		i++;
 	}
 	return (expand_redirs(shell, node->redir));

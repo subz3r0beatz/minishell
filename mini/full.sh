@@ -1,4 +1,4 @@
-#!/home/fldumas-/Downloads/bash-5.2/bash
+#!/bin/bash
 
 # ==============================================================================
 #  MINISHELL ULTIMATE TESTER (Logic + Valgrind + Stderr + Malloc Fault Injection)
@@ -157,6 +157,8 @@ get_gdb_trace() {
     local test_dir=$3
     local GDB_SCRIPT="$test_dir/gdb_script.gdb"
     cat <<EOF > "$GDB_SCRIPT"
+unset env LINES
+unset env COLUMNS
 set env FAIL_MALLOC_AT $test_i
 set env LD_PRELOAD $ROOT_DIR/faulty_malloc.so
 $( [ "$mode" == "malloc" ] && echo "set env TRACE_MALLOC 1" )
