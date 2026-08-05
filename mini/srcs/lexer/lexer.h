@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/22 09:16:07 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 17:57:05 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/05 02:19:50 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ typedef enum e_token_type
 	TOKEN_GREAT,
 	TOKEN_LPAREN,
 	TOKEN_RPAREN,
-	TOKEN_SEMI
+	TOKEN_SEMI,
+	TOKEN_TLESS,
 }				t_token_type;
 
 typedef struct s_token

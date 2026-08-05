@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:35:52 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 14:46:49 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/05 03:25:56 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,18 @@ typedef struct s_minishell
 	size_t		exported_count;
 	t_token		*tokens;
 	t_ast_node	*ast;
-	uint8_t		token_type_table[256][256];
+	int			syn_err;
 	char		*input;
 	char		*argv0;
 	char		*pid;
 	char		*last_pid;
 	int			exit_status;
+	uint8_t		token_type_table[256][256];
 	int			(*exec_func_table[8])(t_minishell *shell, t_ast_node *node);
 	int			(*builtin_func_table[7])(t_minishell *shell, char **args);
 }				t_minishell;
+
+void	main_loop(t_minishell *shell);
+char	*read_line_non_interactive(int fd);
 
 #endif

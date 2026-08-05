@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 11:57:32 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/06/29 18:55:26 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/05 00:30:37 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static char	**ft_getsplits(char **strs, const char *s, char c, size_t words)
 	j = 0;
 	while (i < words)
 	{
-		while (!ft_getwords_len(s + j, c, 0))
+		while (s[j] && !ft_getwords_len(s + j, c, 0))
 			j++;
 		wordlen = ft_getwords_len(s + j, c, 0);
 		strs[i] = ft_substr(s, j, wordlen);

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/13 10:33:08 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 14:51:43 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/04 18:15:58 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,9 @@ int	exec_env(t_minishell *shell, char **matrices[2],
 	}
 	if (pid == 0)
 	{
-		robin_free(shell->env);
-		free(shell->pid);
-		free(shell->last_pid);
+		close(3);
+		close(4);
+		free_shell(shell, 0);
 		run_child(matrices, flags, max_uints);
 	}
 	waitpid(pid, &status, 0);

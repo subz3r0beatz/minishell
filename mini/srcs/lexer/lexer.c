@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/22 09:22:01 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 17:56:32 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/05 02:39:22 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,28 @@ static size_t	get_word_len(char *input, uint8_t table[256][256])
 	return (len);
 }
 
+static size_t	handle_rest(char *input, t_token *token,
+	uint8_t table[256][256])
+{
+	token->type
+		= (t_token_type)table[(unsigned char)input[0]][(unsigned char)input[1]];
+	if (token->type == TOKEN_WORD)
+		return (get_word_len(input, table));
+	else if (token->type == TOKEN_OR || token->type == TOKEN_AND
+		|| token->type == TOKEN_DLESS || token->type == TOKEN_DGREAT)
+		return (2);
+	else
+	{
+		if (input[0] == ';' && input[1] == '&')
+			return (2);
+		if (input[0] == ';' && input[1] == ';' && input[2] == '&')
+			return (3);
+		if (input[0] == ';' && input[1] == ';' && input[2] != '&')
+			return (2);
+		return (1);
+	}
+}
+
 static t_token	*handle_token(char *input, size_t *i,
 		uint8_t table[256][256])
 {
@@ -43,16 +65,13 @@ static t_token	*handle_token(char *input, size_t *i,
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	token->type
-		= (t_token_type)table[(unsigned char)input[0]][(unsigned char)input[1]];
-	len = 0;
-	if (token->type == TOKEN_WORD)
-		len = get_word_len(input, table);
-	else if (token->type == TOKEN_OR || token->type == TOKEN_AND
-		|| token->type == TOKEN_DLESS || token->type == TOKEN_DGREAT)
-		len = 2;
+	if (input[0] == '<' && input[1] == '<' && input[2] == '<')
+	{
+		token->type = TOKEN_TLESS;
+		len = 3;
+	}
 	else
-		len = 1;
+		len = handle_rest(input, token, table);
 	token->value = ft_substr(input, 0, len);
 	if (!token->value)
 	{

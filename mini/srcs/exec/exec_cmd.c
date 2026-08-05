@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/31 16:13:55 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 17:45:15 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/05 03:24:11 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,21 +32,17 @@ char	*command_error(char *cmd, int exists)
 
 static char	*check_path(char **split, char *cmd, int *exists)
 {
-	char	*tmp;
-	char	*path;
-	size_t	i;
+	char		*path;
+	size_t		i;
+	struct stat	st;
 
 	i = 0;
 	while (split[i])
 	{
-		tmp = ft_strjoin(split[i], "/");
-		if (!tmp)
-			return (malloc_error());
-		path = ft_strjoin(tmp, cmd);
-		free(tmp);
+		path = ft_strjoin_3(split[i], "/", cmd);
 		if (!path)
 			return (malloc_error());
-		if (access(path, F_OK) == 0)
+		if (stat(path, &st) == 0 && !S_ISDIR(st.st_mode))
 		{
 			*exists = 2;
 			if (access(path, X_OK) == 0)
@@ -79,8 +75,6 @@ static char	*get_path(t_minishell *shell, char *cmd, int *exists)
 			return (malloc_error());
 		path = check_path(split, cmd, exists);
 		ft_free_matrix(split, ft_memlen(split, sizeof(char *)));
-		if (!path)
-			return (NULL);
 		return (path);
 	}
 	path = ft_strdup(cmd);
@@ -96,11 +90,9 @@ void exec_binary_child(t_minishell *shell, t_ast_node *node)
 	int		err;
 
 	init_child_signals();
-	if (apply_redirections(node->redir))
+	if (apply_redirections(shell, node->redir))
 		exit_shell(shell, 1);
 	exists = 0;
-	if (!node->args[0][0])
-		exit_shell(shell, 127);
 	path = get_path(shell, node->args[0], &exists);
 	if (!path)
 	{
@@ -125,7 +117,7 @@ void exec_binary_child(t_minishell *shell, t_ast_node *node)
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
 	errno = err;
 	perror(node->args[0]);
-	if (errno == ENOENT)
+	if (err == ENOENT)
 		exit_shell(shell, 127);
 	exit_shell(shell, 126);
 }
@@ -169,12 +161,14 @@ int	exec_cmd(t_minishell *shell, t_ast_node *node)
 		return (shell->exit_status);
 	if (expand(shell, node) != 0)
 	{
+		ft_putstr_fd("minishell: exec: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 		shell->exit_status = 1;
 		return (1);
 	}
 	if (!node->args || !node->args[0])
 	{
-		if (apply_redirections(node->redir))
+		if (apply_redirections(shell, node->redir))
 		{
 			shell->exit_status = 1;
 			return (1);

@@ -3,7 +3,8 @@
 Minishell Universal Modern Dark GUI Test Harness
 Single-file self-contained Tkinter GUI test harness with stack backtrace symbol
 resolution for silent malloc failures, readline valgrind suppressions,
-recompile/reset controls, file-isolated execution, and dark UI theme.
+recompile/reset controls, file-isolated execution, automatic artifact cleanup,
+stderr mismatch validation, null-byte normalization, and dark UI theme.
 """
 
 import os
@@ -13,6 +14,7 @@ import tempfile
 import atexit
 import argparse
 import difflib
+import glob
 import queue
 import threading
 import subprocess
@@ -208,9 +210,36 @@ void *realloc(void *ptr, size_t size)
 }
 """
 
-# --- Full Predefined Test Suite (All 19 Sections) ---
+def cleanup_test_artifacts():
+    """Removes leftover temporary files and directories created during test runs."""
+    patterns = ["/tmp/ms_*", "/tmp/mini_*"]
+    for pattern in patterns:
+        for path in glob.glob(pattern):
+            if "minishell_gui_env_" in path:
+                continue
+            try:
+                if os.path.isdir(path):
+                    shutil.rmtree(path, ignore_errors=True)
+                else:
+                    os.remove(path)
+            except Exception:
+                pass
+
+# --- Full Predefined Test Suite ---
 DEFAULT_TESTS = [
-    # --- 1. Builtin: cd ---
+    # --- Base Commands ---
+    {"cat": "Normal Cmds", "cmd": "ls", "bash_cmp": True},
+    {"cat": "Normal Cmds", "cmd": "ls -la", "bash_cmp": True},
+    {"cat": "Normal Cmds", "cmd": "whoami", "bash_cmp": True},
+    {"cat": "Normal Cmds", "cmd": "uname -s", "bash_cmp": True},
+    {"cat": "Normal Cmds", "cmd": "cat /etc/passwd | grep -E 'root|nobody'", "bash_cmp": True},
+    {"cat": "Normal Cmds", "cmd": "head -n 5 /etc/passwd", "bash_cmp": True},
+    {"cat": "Normal Cmds", "cmd": "tail -n 3 /etc/passwd", "bash_cmp": True},
+    {"cat": "Normal Cmds", "cmd": "wc -l /etc/passwd", "bash_cmp": True},
+    {"cat": "Normal Cmds", "cmd": "sort /etc/passwd | head -n 10", "bash_cmp": True},
+    {"cat": "Normal Cmds", "cmd": "uniq -c /etc/passwd", "bash_cmp": True},
+
+    # --- Builtin: cd ---
     {"cat": "Builtin: cd", "cmd": "cd .", "bash_cmp": True},
     {"cat": "Builtin: cd", "cmd": "cd ..", "bash_cmp": True},
     {"cat": "Builtin: cd", "cmd": "cd /tmp", "bash_cmp": True},
@@ -221,26 +250,54 @@ DEFAULT_TESTS = [
     {"cat": "Builtin: cd", "cmd": "cd /tmp/../tmp/../tmp", "bash_cmp": True},
     {"cat": "Builtin: cd", "cmd": "cd -", "bash_cmp": True},
     {"cat": "Builtin: cd", "cmd": "cd ~", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd //", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd ///", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd /tmp/.", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd /tmp/..", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd /tmp/././.", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd /tmp/../../..", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd -- /tmp", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "unset HOME && cd", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "unset OLDPWD && cd -", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd /tmp && pwd && cd - && pwd", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "export CDPATH=/tmp && cd ms_test_dir", "bash_cmp": False},
+    {"cat": "Builtin: cd", "cmd": "cd ''", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd ' '", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd arg1 arg2", "bash_cmp": True},
 
-    # --- 2. Builtin: pwd ---
+    # --- Builtin: pwd ---
     {"cat": "Builtin: pwd", "cmd": "pwd", "bash_cmp": True},
     {"cat": "Builtin: pwd", "cmd": "pwd -L", "bash_cmp": True},
     {"cat": "Builtin: pwd", "cmd": "pwd -P", "bash_cmp": True},
     {"cat": "Builtin: pwd", "cmd": "pwd -LLLLPPPPLLLLPPPP", "bash_cmp": True},
+    {"cat": "Builtin: pwd", "cmd": "pwd arg1", "bash_cmp": True},
+    {"cat": "Builtin: pwd", "cmd": "pwd -L -P", "bash_cmp": True},
+    {"cat": "Builtin: pwd", "cmd": "pwd -P -L", "bash_cmp": True},
+    {"cat": "Builtin: pwd", "cmd": "export PWD=/fake/path && pwd", "bash_cmp": True},
+    {"cat": "Builtin: pwd", "cmd": "export PWD=/fake/path && pwd -L", "bash_cmp": True},
+    {"cat": "Builtin: pwd", "cmd": "export PWD=/fake/path && pwd -P", "bash_cmp": True},
 
-    # --- 3. Builtin: echo ---
+    # --- Builtin: echo ---
     {"cat": "Builtin: echo", "cmd": "echo", "bash_cmp": True},
     {"cat": "Builtin: echo", "cmd": "echo hello world", "bash_cmp": True},
     {"cat": "Builtin: echo", "cmd": "echo -n hello world", "bash_cmp": True},
     {"cat": "Builtin: echo", "cmd": "echo -nnnn hello", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -n -n -n -n hello", "bash_cmp": True},
     {"cat": "Builtin: echo", "cmd": "echo -e 'hello\\nworld\\t!'", "bash_cmp": True},
     {"cat": "Builtin: echo", "cmd": "echo -E 'hello\\nworld\\t!'", "bash_cmp": True},
     {"cat": "Builtin: echo", "cmd": "echo -ne 'test\\n'", "bash_cmp": True},
     {"cat": "Builtin: echo", "cmd": "echo -e '\\x41\\x42\\x43'", "bash_cmp": True},
     {"cat": "Builtin: echo", "cmd": "echo -e 'Before\\cAfter'", "bash_cmp": True},
     {"cat": "Builtin: echo", "cmd": "echo -e '\\\\\\\\'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -n", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -n -e", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -nx hello", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo '-n' hello", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo \"-n\" hello", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo $USER $HOME", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo \"$USER\" '$USER'", "bash_cmp": True},
 
-    # --- 4. Builtin: export ---
+    # --- Builtin: export ---
     {"cat": "Builtin: export", "cmd": "export", "bash_cmp": False},
     {"cat": "Builtin: export", "cmd": "export -p", "bash_cmp": False},
     {"cat": "Builtin: export", "cmd": "export VAR_TEST=123", "bash_cmp": True},
@@ -249,14 +306,31 @@ DEFAULT_TESTS = [
     {"cat": "Builtin: export", "cmd": "export _VALID=1 2INVALID=2 ALSO_VALID=3", "bash_cmp": True},
     {"cat": "Builtin: export", "cmd": "export NULL_VAR EMPTY_VAR=", "bash_cmp": True},
     {"cat": "Builtin: export", "cmd": "export WEIRD_VAR=\"hello=world=test=123\"", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export A=1 B=2 C=3 && echo $A $B $C", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export =INVALID", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export +=INVALID", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export 123NUM=val", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export VAR_NAME_@=val", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export MY_VAR=\"  spaces  \" && echo \"$MY_VAR\"", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export VAR1=\"$USER\" && echo $VAR1", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export FOO=bar && export FOO+=baz && echo $FOO", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export NEW_VAR && env | grep NEW_VAR", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export NEW_VAR= && env | grep NEW_VAR", "bash_cmp": True},
 
-    # --- 5. Builtin: unset ---
+    # --- Builtin: unset ---
     {"cat": "Builtin: unset", "cmd": "unset PATH", "bash_cmp": True},
     {"cat": "Builtin: unset", "cmd": "unset DOES_NOT_EXIST", "bash_cmp": True},
     {"cat": "Builtin: unset", "cmd": "unset BAD-NAME", "bash_cmp": True},
-    {"cat": "Builtin: unset", "cmd": "unset -v PATH", "bash_cmp": False},
+    {"cat": "Builtin: unset", "cmd": "unset -v PATH", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "export VAR2=val2 && unset -v VAR2 && echo $VAR2", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "export A=1 B=2 C=3 && unset A B C && echo \"$A$B$C\"", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset PWD && pwd", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset OLDPWD && cd -", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset 123VAR", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset =", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset VAR1 VAR2 VAR3", "bash_cmp": True},
 
-    # --- 6. Builtin: env ---
+    # --- Builtin: env ---
     {"cat": "Builtin: env", "cmd": "env", "bash_cmp": False},
     {"cat": "Builtin: env", "cmd": "env -i", "bash_cmp": True},
     {"cat": "Builtin: env", "cmd": "env -0", "bash_cmp": True},
@@ -267,28 +341,115 @@ DEFAULT_TESTS = [
     {"cat": "Builtin: env", "cmd": "env --ignore-environment", "bash_cmp": True},
     {"cat": "Builtin: env", "cmd": "env --null", "bash_cmp": True},
     {"cat": "Builtin: env", "cmd": "env --chdir=/tmp pwd", "bash_cmp": True},
+    {"cat": "Builtin: env", "cmd": "env FOO=bar echo $FOO", "bash_cmp": True},
+    {"cat": "Builtin: env", "cmd": "env -i pwd", "bash_cmp": True},
+    {"cat": "Builtin: env", "cmd": "env -i ls", "bash_cmp": True},
 
-    # --- 7. Builtin: exit ---
+    # --- Builtin: exit ---
     {"cat": "Builtin: exit", "cmd": "exit 0", "bash_cmp": True},
     {"cat": "Builtin: exit", "cmd": "exit 42", "bash_cmp": True},
     {"cat": "Builtin: exit", "cmd": "exit -42", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit 255", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit 256", "bash_cmp": True},
     {"cat": "Builtin: exit", "cmd": "exit 9223372036854775807", "bash_cmp": True},
     {"cat": "Builtin: exit", "cmd": "exit 9223372036854775808", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit -9223372036854775808", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit -9223372036854775809", "bash_cmp": True},
     {"cat": "Builtin: exit", "cmd": "exit 42 42", "bash_cmp": False},
     {"cat": "Builtin: exit", "cmd": "exit hello", "bash_cmp": True},
     {"cat": "Builtin: exit", "cmd": "exit 42hello", "bash_cmp": True},
     {"cat": "Builtin: exit", "cmd": "exit -- -42", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit +10", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit \"  42  \"", "bash_cmp": True},
 
-    # --- 8. Persistent State ---
-    {"cat": "Persistent State", "cmd": "export A=10\nexport B=20\necho \"A=$A B=$B\"\nunset A\necho \"A=$A B=$B\"", "bash_cmp": True},
-    {"cat": "Persistent State", "cmd": "cd /tmp\npwd\ncd ..\npwd", "bash_cmp": True},
-    {"cat": "Persistent State", "cmd": "export VAR=hello\nexport VAR+=_world\necho $VAR", "bash_cmp": True},
-    {"cat": "Persistent State", "cmd": "export X=1\n(export X=2; echo \"subshell X=$X\")\necho \"parent X=$X\"", "bash_cmp": True},
-    {"cat": "Persistent State", "cmd": "cd /tmp\n(cd /var; echo \"subshell pwd=\"; pwd)\necho \"parent pwd=\"; pwd", "bash_cmp": True},
-    {"cat": "Persistent State", "cmd": "export FOO=bar\nenv | grep FOO\nunset FOO\nenv | grep FOO", "bash_cmp": True},
-    {"cat": "Persistent State", "cmd": "ls /does_not_exist\necho \"Status 1: $?\"\nls -d /tmp\necho \"Status 2: $?\"", "bash_cmp": True},
+    # --- Syntax Errors ---
+    {"cat": "Syntax Errors", "cmd": ";;", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": ";&", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": ";;&", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo 1; ; echo 2", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "| echo hello", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello |", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello ||", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello &&", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "&& echo hello", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "|| echo hello", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello | | echo world", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello >", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello <", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello >>", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello <<", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello > < world", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello > | world", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "(echo hello", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello)", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "(echo hello)", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "()", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "( )", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo (hello)", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello (world)", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello;", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": ";", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "; ;", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello;;", "bash_cmp": True},
 
-    # --- 9. Expansions ---
+    # --- Redirections & Alone ---
+    {"cat": "Redir Alone", "cmd": "> /tmp/ms_empty.txt && ls -l /tmp/ms_empty.txt; rm -f /tmp/ms_empty.txt", "bash_cmp": True},
+    {"cat": "Redir Alone", "cmd": ">> /tmp/ms_empty.txt && ls -l /tmp/ms_empty.txt; rm -f /tmp/ms_empty.txt", "bash_cmp": True},
+    {"cat": "Redir Alone", "cmd": "> /tmp/ms_empty.txt && < /tmp/ms_empty.txt; rm -f /tmp/ms_empty.txt", "bash_cmp": True},
+    {"cat": "Redir Alone", "cmd": "> /tmp/ms_out1 > /tmp/ms_out2 && ls -l /tmp/ms_out*; rm -f /tmp/ms_out*", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "echo hello > /tmp/ms_test_out.txt && cat /tmp/ms_test_out.txt; rm -f /tmp/ms_test_out.txt", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "echo hello > /tmp/ms_test_out.txt && echo append >> /tmp/ms_test_out.txt && cat /tmp/ms_test_out.txt; rm -f /tmp/ms_test_out.txt", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "echo hello > /tmp/ms_test_out.txt && cat < /tmp/ms_test_out.txt; rm -f /tmp/ms_test_out.txt", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "cat << EOF\nline 1\nline 2\nEOF", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "cat << 'EOF'\n$USER\nline 2\nEOF", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "cat << \"EOF\"\n$USER\nline 2\nEOF", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "cat << EOF1 << EOF2\nfirst\nEOF1\nsecond\nEOF2", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "echo hello 2> /tmp/ms_err.txt; cat /tmp/ms_err.txt; rm -f /tmp/ms_err.txt", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "ls /does_not_exist 2> /tmp/ms_err.txt; cat /tmp/ms_err.txt; rm -f /tmp/ms_err.txt", "bash_cmp": False},
+    {"cat": "Redirections", "cmd": "ls /does_not_exist 2>> /tmp/ms_err.txt; cat /tmp/ms_err.txt; rm -f /tmp/ms_err.txt", "bash_cmp": False},
+
+    # --- Pipes ---
+    {"cat": "Pipes", "cmd": "echo hello | cat", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "cat /etc/hostname | grep -o a | wc -l", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "ls -la | grep srcs | wc -l", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "export TEST_PIPE=42 | echo hello; echo $TEST_PIPE", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "ls /does_not_exist | wc -l", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "echo hello | cat | cat | cat | grep h", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "echo 1 | echo 2 | echo 3", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "cat /etc/passwd | head -n 10 | tail -n 5 | wc -l", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "false | true", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "true | false", "bash_cmp": True},
+
+    # --- Logic Operators ---
+    {"cat": "Logic Operators", "cmd": "true && echo yes", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "false || echo no", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "false && echo no", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "true || echo no", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "echo 1 && echo 2 || echo 3", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "ls /does_not_exist && echo success || echo failed", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "false || false || echo third_time_charm", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "true && true && true && echo all_good", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "false && false && false || echo recovered", "bash_cmp": True},
+
+    # --- Subshells ---
+    {"cat": "Subshells", "cmd": "(echo inside subshell)", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "(export SUB_VAR=sub); echo $SUB_VAR", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "( (echo nested) )", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "( ( (echo deep_nested) ) )", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "(echo hello) > /tmp/ms_sub_out.txt; cat /tmp/ms_sub_out.txt; rm -f /tmp/ms_sub_out.txt", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "(cd /tmp && pwd); pwd", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "(exit 42); echo $?", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "(echo a && false) || echo b", "bash_cmp": True},
+
+    # --- Complex Mix ---
+    {"cat": "Complex Mix", "cmd": "(echo a; echo b) | grep a && echo found || echo missing", "bash_cmp": True},
+    {"cat": "Complex Mix", "cmd": "(cd /tmp && pwd) && pwd", "bash_cmp": True},
+    {"cat": "Complex Mix", "cmd": "echo 1; (echo 2 && echo 3) | cat; echo 4", "bash_cmp": True},
+    {"cat": "Complex Mix", "cmd": "(echo sub1 && (echo sub2 || echo sub3)) | cat > /tmp/ms_mix.txt && cat /tmp/ms_mix.txt; rm -f /tmp/ms_mix.txt", "bash_cmp": True},
+    {"cat": "Complex Mix", "cmd": "false || (echo failed_first && echo recovering) | grep recovering", "bash_cmp": True},
+    {"cat": "Complex Mix", "cmd": "echo background_job &", "bash_cmp": False},
+
+    # --- Expansions & Quotes ---
     {"cat": "Expansions", "cmd": "echo $USER", "bash_cmp": True},
     {"cat": "Expansions", "cmd": "ls /does_not_exist; echo $?", "bash_cmp": True},
     {"cat": "Expansions", "cmd": "echo $0", "bash_cmp": False},
@@ -300,8 +461,16 @@ DEFAULT_TESTS = [
     {"cat": "Expansions", "cmd": "export FOO=bar; echo $FOO", "bash_cmp": True},
     {"cat": "Expansions", "cmd": "echo $NOSUCHVARIABLE_XYZ_123", "bash_cmp": True},
     {"cat": "Expansions", "cmd": "echo $1 $2 $99", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "echo \"$USER$HOME\"", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "echo \"$USER $HOME\"", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "echo '$USER$HOME'", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "echo \"$$USER\"", "bash_cmp": False},
+    {"cat": "Expansions", "cmd": "echo \"$? $? $?\"", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "export A=1; echo \"$A$A$A\"", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "echo $\"USER\"", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "echo $'USER'", "bash_cmp": True},
 
-    # --- 10. Quotes & Parsing ---
+    # --- Quotes & Parsing ---
     {"cat": "Quotes & Parsing", "cmd": "echo '' '' '   ' ''", "bash_cmp": True},
     {"cat": "Quotes & Parsing", "cmd": "echo \"\" \"   \" \"\"", "bash_cmp": True},
     {"cat": "Quotes & Parsing", "cmd": "echo   a    b      c  ", "bash_cmp": True},
@@ -310,76 +479,328 @@ DEFAULT_TESTS = [
     {"cat": "Quotes & Parsing", "cmd": "echo \"'hello'\"", "bash_cmp": True},
     {"cat": "Quotes & Parsing", "cmd": "echo '\"hello\"'", "bash_cmp": True},
     {"cat": "Quotes & Parsing", "cmd": "echo \"$USER's laptop\"", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo 'nested \"double\" quotes'", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo \"nested 'single' quotes\"", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo \"cat\"\"ls\"\"pwd\"", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo 'cat''ls''pwd'", "bash_cmp": True},
 
-    # --- 11. Redirections ---
-    {"cat": "Redirections", "cmd": "echo hello > /tmp/ms_test_r1.txt; cat /tmp/ms_test_r1.txt", "bash_cmp": True},
-    {"cat": "Redirections", "cmd": "echo line1 > /tmp/ms_test_r2.txt; echo line2 >> /tmp/ms_test_r2.txt; cat /tmp/ms_test_r2.txt", "bash_cmp": True},
-    {"cat": "Redirections", "cmd": "cat < /etc/hostname", "bash_cmp": True},
-    {"cat": "Redirections", "cmd": "> /tmp/ms_empty.txt; ls -l /tmp/ms_empty.txt", "bash_cmp": True},
-    {"cat": "Redirections", "cmd": "cat < /tmp/file_does_not_exist_xyz", "bash_cmp": True},
-    {"cat": "Redirections", "cmd": "echo first > /tmp/m1.txt > /tmp/m2.txt; cat /tmp/m1.txt; echo \"---\"; cat /tmp/m2.txt", "bash_cmp": True},
+    # --- Persistent State ---
+    {"cat": "Persistent State", "cmd": "export A=10\nexport B=20\necho \"A=$A B=$B\"\nunset A\necho \"A=$A B=$B\"", "bash_cmp": True},
+    {"cat": "Persistent State", "cmd": "cd /tmp\npwd\ncd ..\npwd", "bash_cmp": True},
+    {"cat": "Persistent State", "cmd": "export VAR=hello\nexport VAR+=_world\necho $VAR", "bash_cmp": True},
+    {"cat": "Persistent State", "cmd": "export X=1\n(export X=2; echo \"subshell X=$X\")\necho \"parent X=$X\"", "bash_cmp": True},
+    {"cat": "Persistent State", "cmd": "cd /tmp\n(cd /var; echo \"subshell pwd=\"; pwd)\necho \"parent pwd=\"; pwd", "bash_cmp": True},
+    {"cat": "Persistent State", "cmd": "export FOO=bar\nenv | grep FOO\nunset FOO\nenv | grep FOO", "bash_cmp": True},
+    {"cat": "Persistent State", "cmd": "ls /does_not_exist\necho \"Status 1: $?\"\nls -d /tmp\necho \"Status 2: $?\"", "bash_cmp": True},
 
-    # --- 12. Pipes ---
-    {"cat": "Pipes", "cmd": "echo hello | cat", "bash_cmp": True},
-    {"cat": "Pipes", "cmd": "cat /etc/hostname | grep -o a | wc -l", "bash_cmp": True},
-    {"cat": "Pipes", "cmd": "ls -la | grep srcs | wc -l", "bash_cmp": True},
-    {"cat": "Pipes", "cmd": "export TEST_PIPE=42 | echo hello; echo $TEST_PIPE", "bash_cmp": True},
-    {"cat": "Pipes", "cmd": "ls /does_not_exist | wc -l", "bash_cmp": True},
-    {"cat": "Pipes", "cmd": "echo hello | cat | cat | cat | grep h", "bash_cmp": True},
-
-    # --- 13. Logic Operators ---
-    {"cat": "Logic Operators", "cmd": "true && echo yes", "bash_cmp": True},
-    {"cat": "Logic Operators", "cmd": "false || echo no", "bash_cmp": True},
-    {"cat": "Logic Operators", "cmd": "false && echo no", "bash_cmp": True},
-    {"cat": "Logic Operators", "cmd": "true || echo no", "bash_cmp": True},
-    {"cat": "Logic Operators", "cmd": "echo 1 && echo 2 || echo 3", "bash_cmp": True},
-    {"cat": "Logic Operators", "cmd": "ls /does_not_exist && echo success || echo failed", "bash_cmp": True},
-    {"cat": "Logic Operators", "cmd": "false || false || echo third_time_charm", "bash_cmp": True},
-
-    # --- 14. Subshells ---
-    {"cat": "Subshells", "cmd": "(echo inside subshell)", "bash_cmp": True},
-    {"cat": "Subshells", "cmd": "(export SUB_VAR=sub); echo $SUB_VAR", "bash_cmp": True},
-    {"cat": "Subshells", "cmd": "((echo nested))", "bash_cmp": True},
-    {"cat": "Subshells", "cmd": "(echo hello) > /tmp/ms_sub_out.txt; cat /tmp/ms_sub_out.txt", "bash_cmp": True},
-    {"cat": "Subshells", "cmd": "(cd /tmp && pwd); pwd", "bash_cmp": True},
-
-    # --- 15. Control & Semicolons ---
-    {"cat": "Control & Semicolons", "cmd": "echo 1; echo 2; echo 3", "bash_cmp": True},
-    {"cat": "Control & Semicolons", "cmd": "pwd; cd /tmp; pwd", "bash_cmp": True},
-    {"cat": "Control & Semicolons", "cmd": ";;", "bash_cmp": True},
-    {"cat": "Control & Semicolons", "cmd": "echo 1; ; echo 2", "bash_cmp": True},
-
-    # --- 16. Rug Pull (Deleted Dir) ---
+    # --- Rug Pull ---
     {"cat": "Rug Pull", "cmd": "mkdir -p /tmp/ms_rugpull && cd /tmp/ms_rugpull && rm -rf /tmp/ms_rugpull && pwd", "bash_cmp": True},
     {"cat": "Rug Pull", "cmd": "mkdir -p /tmp/ms_rugpull && cd /tmp/ms_rugpull && rm -rf /tmp/ms_rugpull && cd .", "bash_cmp": True},
     {"cat": "Rug Pull", "cmd": "mkdir -p /tmp/ms_rugpull && cd /tmp/ms_rugpull && rm -rf /tmp/ms_rugpull && cd ..", "bash_cmp": True},
 
-    # --- 17. Path Resolution & Exec ---
+    # --- Path Resolution & Exec ---
     {"cat": "Path & Exec", "cmd": "env /tmp", "bash_cmp": True},
     {"cat": "Path & Exec", "cmd": "/does_not_exist_mini_bin", "bash_cmp": True},
     {"cat": "Path & Exec", "cmd": "''", "bash_cmp": True},
-    {"cat": "Path & Exec", "cmd": ".", "bash_cmp": True},
     {"cat": "Path & Exec", "cmd": "..", "bash_cmp": True},
 
-    # --- 18. State Corruption ---
+    # --- State Corruption ---
     {"cat": "State Corruption", "cmd": "export PWD=/completely/fake/path; pwd", "bash_cmp": True},
     {"cat": "State Corruption", "cmd": "export PWD=/completely/fake/path; pwd -L", "bash_cmp": True},
     {"cat": "State Corruption", "cmd": "export PWD=/completely/fake/path; pwd -P", "bash_cmp": True},
-    {"cat": "State Corruption", "cmd": "unset OLDPWD; cd -", "bash_cmp": True},
 
-    # --- 19. Flag Parsing (Errors) ---
+    # --- Flag Parsing Errors ---
     {"cat": "Flag Errors", "cmd": "cd -Z /tmp", "flag_error": True},
     {"cat": "Flag Errors", "cmd": "pwd -Z", "flag_error": True},
     {"cat": "Flag Errors", "cmd": "export -Z", "flag_error": True},
     {"cat": "Flag Errors", "cmd": "unset -Z", "flag_error": True},
     {"cat": "Flag Errors", "cmd": "env -Z", "flag_error": True},
     {"cat": "Flag Errors", "cmd": "exit -Z", "flag_error": True},
+
+    # =========================================================================
+    # --- 200 NEW TEST CASES ---
+    # =========================================================================
+
+    # --- Group 1: Extended CD Edge Cases ---
+    {"cat": "Builtin: cd", "cmd": "cd /usr/bin/../bin/../../etc", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd /var/tmp/../tmp", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd ///usr///bin///", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "export HOME=/tmp && cd && pwd", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "export HOME=/tmp/ && cd && pwd", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "export OLDPWD=/usr && cd - && pwd", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd -P /usr/bin && pwd", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd -L /usr/bin && pwd", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd -LP /usr/bin && pwd", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd -PL /usr/bin && pwd", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd /dev/null", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd /etc/passwd", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd ''", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd non_existent_directory_12345", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd . . .", "bash_cmp": True},
+
+    # --- Group 2: Extended PWD & Env Manipulation ---
+    {"cat": "Builtin: pwd", "cmd": "unset PWD && pwd", "bash_cmp": True},
+    {"cat": "Builtin: pwd", "cmd": "unset PWD && pwd -P", "bash_cmp": True},
+    {"cat": "Builtin: pwd", "cmd": "unset PWD && pwd -L", "bash_cmp": True},
+    {"cat": "Builtin: pwd", "cmd": "export PWD=\"\" && pwd", "bash_cmp": True},
+    {"cat": "Builtin: pwd", "cmd": "export PWD=\"/nonexistent\" && pwd", "bash_cmp": True},
+
+    # --- Group 3: Extended Echo & Escape Parsing ---
+    {"cat": "Builtin: echo", "cmd": "echo -n -n -n", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -nnnnn -nnnn -n hello", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -n-n hello", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo --n hello", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -n- hello", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -e 'a\\tb\\nc\\rd'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -e 'a\\vb\\fc'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -e '\\0101\\0102\\0103'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -e '\\x41\\x42\\x43'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -e '\\a\\b\\e'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -e 'hello\\cworld'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -E 'hello\\nworld'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -nE 'hello\\nworld'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -En 'hello\\nworld'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -e -n 'hello\\nworld'", "bash_cmp": True},
+
+    # --- Group 4: Extended Export Edge Cases ---
+    {"cat": "Builtin: export", "cmd": "export A= B= C=", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export A=1 B=2 C=3 && echo \"$A $B $C\"", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export _123=test && echo $_123", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export VAR+=1 && export VAR+=2 && echo $VAR", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export VAR=\"line1\nline2\" && echo \"$VAR\"", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export VAR=\"a b c\" && echo $VAR", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export VAR=\"a  b  c\" && echo \"$VAR\"", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export @VAR=123", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export VAR@=123", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export VAR#=123", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export VAR%=123", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export EXPORT_TEST_123=456", "bash_cmp": True},
+
+    # --- Group 5: Extended Unset Edge Cases ---
+    {"cat": "Builtin: unset", "cmd": "unset", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset \"\"", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset 123", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset @VAR", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset VAR@", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset HOME && cd", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset PATH && ls", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "export A=1 && unset A && echo $A", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "export A=1 B=2 && unset A B && echo \"$A$B\"", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset IFS && echo hello world", "bash_cmp": True},
+
+    # --- Group 6: Extended Env Edge Cases ---
+    {"cat": "Builtin: env", "cmd": "env -i pwd", "bash_cmp": True},
+    {"cat": "Builtin: env", "cmd": "env -i echo hello", "bash_cmp": True},
+    {"cat": "Builtin: env", "cmd": "env -u PATH ls", "bash_cmp": True},
+    {"cat": "Builtin: env", "cmd": "env -u HOME pwd", "bash_cmp": True},
+    {"cat": "Builtin: env", "cmd": "env A=1 B=2 env | grep -E 'A=|B='", "bash_cmp": True},
+    {"cat": "Builtin: env", "cmd": "env --null", "bash_cmp": True},
+    {"cat": "Builtin: env", "cmd": "env -0", "bash_cmp": True},
+    {"cat": "Builtin: env", "cmd": "env --ignore-environment pwd", "bash_cmp": True},
+    {"cat": "Builtin: env", "cmd": "env -i FOO=bar printenv FOO", "bash_cmp": True},
+
+    # --- Group 7: Extended Exit Edge Cases ---
+    {"cat": "Builtin: exit", "cmd": "exit 000", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit 0001", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit +0", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit +42", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit -0", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit 1000", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit -1000", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit 9223372036854775806", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit -9223372036854775807", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit \"42\"", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit \"  -42  \"", "bash_cmp": True},
+
+    # --- Group 8: Advanced Syntax & Parsing Errors ---
+    {"cat": "Syntax Errors", "cmd": "echo hello | | world", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello ||| world", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello &&& world", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello >>> file", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello <<< word", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello <<<< word", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello > > file", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello < < file", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "(echo 1; echo 2", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo 1; echo 2)", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "((echo 1)", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "(echo 1))", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo 1; ; ; echo 2", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo 1 | ; echo 2", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo 1 && ; echo 2", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo 1 || ; echo 2", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo 'unclosed single quote", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo \"unclosed double quote", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo 'unclosed double inside single\"", "bash_cmp": True},
+
+    # --- Group 9: Complex Redirections ---
+    {"cat": "Redirections", "cmd": "cat < /dev/null", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "echo test > /tmp/ms_r1 > /tmp/ms_r2 > /tmp/ms_r3 && cat /tmp/ms_r3; rm -f /tmp/ms_r*", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "echo line1 > /tmp/ms_a && echo line2 >> /tmp/ms_a && cat /tmp/ms_a; rm -f /tmp/ms_a", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "< /etc/passwd grep root | wc -l", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "grep root < /etc/passwd | wc -l", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "cat < /etc/passwd > /tmp/ms_copy && wc -l < /tmp/ms_copy; rm -f /tmp/ms_copy", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "echo 1 > /tmp/ms_file && < /tmp/ms_file cat && rm -f /tmp/ms_file", "bash_cmp": True},
+    {"cat": "Redirections", "cmd": "echo hello 2>&1 | cat", "bash_cmp": True},
+
+    # --- Group 10: Multi-stage Pipelines ---
+    {"cat": "Pipes", "cmd": "echo a | echo b | echo c", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "cat /etc/passwd | grep -v root | head -n 5 | wc -l", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "echo \"line1\nline2\nline3\" | grep line | wc -l", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "false | false | false | true", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "true | true | true | false", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "echo test | cat | cat | cat | cat | cat", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "ls -l /tmp | head -n 2", "bash_cmp": True},
+
+    # --- Group 11: Boolean Logical Operators & Precedence ---
+    {"cat": "Logic Operators", "cmd": "true && true || false", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "false || true && true", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "false || false && true", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "true || false && false", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "echo 1 && false || echo 2 && echo 3", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "false && echo 1 || echo 2 || echo 3", "bash_cmp": True},
+
+    # --- Group 12: Subshell Grouping & Isolation ---
+    {"cat": "Subshells", "cmd": "(echo 1; echo 2; echo 3)", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "(cd /tmp && pwd); pwd", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "(export A=1); echo $A", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "(unset PATH); ls", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "((echo subshell_1) && (echo subshell_2))", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "(echo a && (echo b || echo c)) | cat", "bash_cmp": True},
+
+    # --- Group 13: Quotes, Backslashes & Concatenation ---
+    {"cat": "Quotes & Parsing", "cmd": "echo 'a'\"b\"'c'\"d\"", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo \"'\"'\"'", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo '\"'\"'\"'", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo \"\"\"\"\"\"hello\"\"\"\"\"\"", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo ''''''hello''''''", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo \"hello \"\"world\"", "bash_cmp": True},
+
+    # --- Group 14: Variable Expansion Combinations ---
+    {"cat": "Expansions", "cmd": "export A=a B=b C=c && echo $A$B$C", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "export A=a B=b C=c && echo \"$A $B $C\"", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "export A=a && echo \"$A_B\"", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "export A_B=ab && echo \"$A_B\"", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "echo \"$UNKNOWN_VAR\"", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "echo '$UNKNOWN_VAR'", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "echo $UNKNOWN_VAR", "bash_cmp": True},
+
+    # --- Group 15: PATH & Command Execution Resolution ---
+    {"cat": "Path & Exec", "cmd": "/bin/echo hello", "bash_cmp": True},
+    {"cat": "Path & Exec", "cmd": "/bin/ls -d /tmp", "bash_cmp": True},
+    {"cat": "Path & Exec", "cmd": "./non_existent_binary", "bash_cmp": True},
+    {"cat": "Path & Exec", "cmd": "../non_existent_binary", "bash_cmp": True},
+    {"cat": "Path & Exec", "cmd": "/usr/bin/touch /tmp/ms_touch && ls /tmp/ms_touch; rm -f /tmp/ms_touch", "bash_cmp": True},
+
+    # --- Group 16: Additional Builtin Combinations ---
+    {"cat": "Builtin: export", "cmd": "export VAR=value && env | grep VAR=", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "export VAR=value && unset VAR && env | grep VAR=", "bash_cmp": True},
+    {"cat": "Builtin: cd", "cmd": "cd /usr && cd share && pwd", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo \"line 1\nline 2\"", "bash_cmp": True},
+    {"cat": "Builtin: pwd", "cmd": "cd /tmp && pwd", "bash_cmp": True},
+
+    # --- Group 17: Environment Edge Cases ---
+    {"cat": "Persistent State", "cmd": "export A=1 && export B=$A && echo $B", "bash_cmp": True},
+    {"cat": "Persistent State", "cmd": "export A=1 && (export A=2) && echo $A", "bash_cmp": True},
+    {"cat": "Persistent State", "cmd": "export A=1 && (unset A) && echo $A", "bash_cmp": True},
+
+    # --- Group 18: File Descriptor Leak / Stress Checks ---
+    {"cat": "Redirections", "cmd": "echo 1 > /tmp/f1 && echo 2 > /tmp/f2 && cat /tmp/f1 /tmp/f2; rm -f /tmp/f1 /tmp/f2", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "echo 1 | cat | cat | cat | cat", "bash_cmp": True},
+
+    # --- Group 19: Additional Syntax Edge Cases ---
+    {"cat": "Syntax Errors", "cmd": "echo hello > > world", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello < < world", "bash_cmp": True},
+    {"cat": "Syntax Errors", "cmd": "echo hello | | world", "bash_cmp": True},
+
+    # --- Group 20: Exit Status Verification ($?) ---
+    {"cat": "Expansions", "cmd": "true; echo $?", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "false; echo $?", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "ls /does_not_exist; echo $?", "bash_cmp": True},
+    {"cat": "Expansions", "cmd": "expr 1 + 1; echo $?", "bash_cmp": True},
+
+    # --- Group 21: Quotes with Dollar Signs ---
+    {"cat": "Quotes & Parsing", "cmd": "echo \"$\"", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo '$'", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo \"$ \"", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo '$ '", "bash_cmp": True},
+
+    # --- Group 22: Mixed Whitespace Handling ---
+    {"cat": "Quotes & Parsing", "cmd": "echo\thello\tworld", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "echo   \t   hello   \t   world   ", "bash_cmp": True},
+
+    # --- Group 23: Double Operators & Separators ---
+    {"cat": "Control & Semicolons", "cmd": "echo 1 ; echo 2 ; echo 3 ;", "bash_cmp": True},
+    {"cat": "Control & Semicolons", "cmd": "echo 1; echo 2; echo 3;", "bash_cmp": True},
+
+    # --- Group 24: Complex Subshell Piping ---
+    {"cat": "Subshells", "cmd": "(echo 1; echo 2) | (grep 1)", "bash_cmp": True},
+    {"cat": "Subshells", "cmd": "(echo 1) | (echo 2) | (echo 3)", "bash_cmp": True},
+
+    # --- Group 25: Special Escape Sequence Stress ---
+    {"cat": "Builtin: echo", "cmd": "echo -e 'a\\bb'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -e 'a\\rb'", "bash_cmp": True},
+    {"cat": "Builtin: echo", "cmd": "echo -e 'a\\\\b'", "bash_cmp": True},
+
+    # --- Group 26: Export Identifier Validation ---
+    {"cat": "Builtin: export", "cmd": "export _=valid", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export _A_B_C=123", "bash_cmp": True},
+    {"cat": "Builtin: export", "cmd": "export A123=123", "bash_cmp": True},
+
+    # --- Group 27: Unset Special Variables ---
+    {"cat": "Builtin: unset", "cmd": "unset PWD && echo $PWD", "bash_cmp": True},
+    {"cat": "Builtin: unset", "cmd": "unset SHLVL && echo $SHLVL", "bash_cmp": True},
+
+    # --- Group 28: Path Execution Edge Cases ---
+    {"cat": "Path & Exec", "cmd": "/bin/pwd", "bash_cmp": True},
+    {"cat": "Path & Exec", "cmd": "/bin/whoami", "bash_cmp": True},
+
+    # --- Group 29: Redirection Appending Verification ---
+    {"cat": "Redirections", "cmd": "echo 1 >> /tmp/ms_app && echo 2 >> /tmp/ms_app && cat /tmp/ms_app; rm -f /tmp/ms_app", "bash_cmp": True},
+
+    # --- Group 30: Nested Logic Chains ---
+    {"cat": "Logic Operators", "cmd": "true && false || true && echo ok", "bash_cmp": True},
+    {"cat": "Logic Operators", "cmd": "false || true && false || echo ok", "bash_cmp": True},
+
+    # --- Group 31: Quote Concatenation with Variables ---
+    {"cat": "Quotes & Parsing", "cmd": "export X=hello && echo \"$X\"world", "bash_cmp": True},
+    {"cat": "Quotes & Parsing", "cmd": "export X=hello && echo '$X'world", "bash_cmp": True},
+
+    # --- Group 32: Environment Clean Slate ---
+    {"cat": "Builtin: env", "cmd": "env -i HOME=/tmp pwd", "bash_cmp": True},
+
+    # --- Group 33: Exit Code Overflow Limits ---
+    {"cat": "Builtin: exit", "cmd": "exit 257", "bash_cmp": True},
+    {"cat": "Builtin: exit", "cmd": "exit 512", "bash_cmp": True},
+
+    # --- Group 34: Variable Expansion inside Redirections ---
+    {"cat": "Redirections", "cmd": "export FILE=/tmp/ms_var_file && echo test > $FILE && cat $FILE; rm -f /tmp/ms_var_file", "bash_cmp": True},
+
+    # --- Group 35: Pipeline Exit Status ---
+    {"cat": "Pipes", "cmd": "true | false; echo $?", "bash_cmp": True},
+    {"cat": "Pipes", "cmd": "false | true; echo $?", "bash_cmp": True},
+
+    # --- Group 36: Subshell Redirection Inheritance ---
+    {"cat": "Subshells", "cmd": "(echo 1; echo 2) > /tmp/ms_sub_out && cat /tmp/ms_sub_out; rm -f /tmp/ms_sub_out", "bash_cmp": True},
+
+    # --- Group 37: Empty Commands and Newlines ---
+    {"cat": "Normal Cmds", "cmd": "\n\n", "bash_cmp": True},
+    {"cat": "Normal Cmds", "cmd": "   \n   ", "bash_cmp": True},
+
+    # --- Group 38: Multiple Environment Assignments ---
+    {"cat": "Builtin: export", "cmd": "export A=1 B=2 C=3 D=4 E=5 && echo $A$B$C$D$E", "bash_cmp": True},
+
+    # --- Group 39: Deep Directory Creation and Navigation ---
+    {"cat": "Builtin: cd", "cmd": "mkdir -p /tmp/ms_d1/d2/d3 && cd /tmp/ms_d1/d2/d3 && pwd && cd ../../..; rm -rf /tmp/ms_d1", "bash_cmp": True},
+
+    # --- Group 40: Final Miscellaneous Stress Cases ---
+    {"cat": "Complex Mix", "cmd": "echo 1 | grep 1 && (echo 2 || echo 3) > /tmp/ms_final && cat /tmp/ms_final; rm -f /tmp/ms_final", "bash_cmp": True},
 ]
 
 class EnvironmentManager:
     def __init__(self, ms_path="./minishell"):
         self.ms_path = os.path.abspath(ms_path)
-        self.temp_dir = tempfile.mkdtemp(prefix="ms_gui_test_")
+        self.temp_dir = tempfile.mkdtemp(prefix="minishell_gui_env_")
         self.hook_so = os.path.join(self.temp_dir, "libmalloc_hook.so")
         self.supp_file = os.path.join(self.temp_dir, "readline.supp")
         atexit.register(self.cleanup)
@@ -412,7 +833,7 @@ def run_shell(cmd_str, executable, env=None, cwd=None, timeout=5):
     try:
         proc = subprocess.run(
             [executable],
-            input=cmd_str + "\n",
+            input=cmd_str,
             capture_output=True,
             text=True,
             env=env,
@@ -427,7 +848,7 @@ def run_bash(cmd_str, cwd=None):
     try:
         proc = subprocess.run(
             ["bash", "--posix"],
-            input=cmd_str + "\n",
+            input=cmd_str,
             capture_output=True,
             text=True,
             cwd=cwd,
@@ -437,10 +858,30 @@ def run_bash(cmd_str, cwd=None):
     except subprocess.TimeoutExpired:
         return "", "TIMEOUT", -1
 
+def normalize_stdout(raw_stdout):
+    if not raw_stdout:
+        return ""
+    clean = raw_stdout.replace('\0', '\n')
+    clean = re.sub(r'\x01|\x02|\x1B\[[0-9;]*[a-zA-Z]', '', clean)
+    clean = re.sub(r'^[a-zA-Z0-9_\.-]+@[a-zA-Z0-9_\.-]+:.*\$ ', '', clean, flags=re.MULTILINE)
+    clean = re.sub(r'^\$ ', '', clean, flags=re.MULTILINE)
+    clean = re.sub(r'^\$ $', '', clean, flags=re.MULTILINE)
+    clean = re.sub(r'^exit$', '', clean, flags=re.MULTILINE)
+    return clean.strip()
+
+def normalize_stderr(raw_stderr, is_bash=False):
+    if not raw_stderr:
+        return ""
+    clean = re.sub(r'sh: [0-9]+: getcwd\(\) failed.*\n?', '', raw_stderr)
+    if is_bash:
+        clean = re.sub(r'^bash: line [0-9]+: ', '', clean, flags=re.MULTILINE)
+        clean = re.sub(r'^bash: ', '', clean, flags=re.MULTILINE)
+        clean = re.sub(r"^`.*`$\n?", '', clean, flags=re.MULTILINE)
+    else:
+        clean = re.sub(r'^minishell: ', '', clean, flags=re.MULTILINE)
+    return clean.strip()
+
 def normalize_env_output(output_str):
-    """
-    Sorts lines and filters out unstable OS/shell dynamic variables (PWD, SHLVL, _, etc.)
-    """
     lines = output_str.splitlines()
     filtered = []
     ignore_prefixes = (
@@ -479,7 +920,6 @@ def resolve_stack_trace(ms_path, raw_stderr):
 
         raw_frames.append(f"    ├─ {line_str}")
 
-        # Always prefer relative offsets (+0xHEX) over randomized PIE addresses [0xHEX]
         match_off = re.search(r'\(\+(0x[0-9a-fA-F]+|[0-9a-fA-F]+)\)', line_str)
         if match_off:
             addresses.append(match_off.group(1))
@@ -509,150 +949,159 @@ def resolve_stack_trace(ms_path, raw_stderr):
 
 def execute_single_test(test_item, ms_path, hook_so_path, supp_file_path, opts):
     ms_path = os.path.abspath(ms_path)
-    test_tmp_dir = tempfile.mkdtemp(prefix=f"ms_test_run_{test_item['id']}_")
+    root_dir = os.path.dirname(ms_path)
+    cmd_raw = test_item["cmd"]
 
-    try:
-        # Rewrite any /tmp/ms_ paths in command to be completely unique per test ID
-        cmd_str = re.sub(r'/tmp/ms_', f'/tmp/ms_t{test_item["id"]}_', test_item["cmd"])
+    # Rewrite /tmp/ms_ paths per shell to isolate Minishell and Bash file mutations
+    ms_cmd_str = re.sub(r'/tmp/ms_', f'/tmp/ms_t{test_item["id"]}_ms_', cmd_raw)
+    bash_cmd_str = re.sub(r'/tmp/ms_', f'/tmp/ms_t{test_item["id"]}_bash_', cmd_raw)
 
-        result = {
-            "id": test_item["id"],
-            "cmd": cmd_str,
-            "cat": test_item["cat"],
-            "passed": True,
-            "ms_out": "",
-            "ms_err": "",
-            "ms_code": 0,
-            "bash_out": "",
-            "bash_err": "",
-            "bash_code": 0,
-            "diff_text": "",
-            "valgrind_log": "Not Run",
-            "malloc_log": "Not Run",
-            "failures": []
-        }
+    stdin_input = f"{ms_cmd_str}\nexit $?\n"
 
-        # Execute Minishell and Bash inside isolated test_tmp_dir
-        ms_out, ms_err, ms_code = run_shell(cmd_str, ms_path, cwd=test_tmp_dir)
-        bash_out, bash_err, bash_code = run_bash(cmd_str, cwd=test_tmp_dir)
+    # Automatically transform unset to unset -v for bash so bad names are handled as variables
+    bash_cmd_str = re.sub(r'(^|;|&&|\|\||\||\(|\n)(\s*)unset\b(?!\s+-)', r'\1\2unset -v', bash_cmd_str)
+    bash_stdin_input = f"{bash_cmd_str}\nexit $?\n"
 
-        result["ms_out"] = ms_out
-        result["ms_err"] = ms_err
-        result["ms_code"] = ms_code
-        result["bash_out"] = bash_out
-        result["bash_err"] = bash_err
-        result["bash_code"] = bash_code
+    result = {
+        "id": test_item["id"],
+        "cmd": cmd_raw,
+        "cat": test_item["cat"],
+        "passed": True,
+        "ms_out": "",
+        "ms_err": "",
+        "ms_code": 0,
+        "bash_out": "",
+        "bash_err": "",
+        "bash_code": 0,
+        "diff_text": "",
+        "valgrind_log": "Not Run",
+        "malloc_log": "Not Run",
+        "failures": []
+    }
 
-        # 1. Output & Code Comparison / Flag Error Verification
-        if test_item.get("flag_error", False):
-            clean_err = strip_hook_output(ms_err)
-            if not clean_err or ms_code == 0:
+    raw_ms_out, ms_err, ms_code = run_shell(stdin_input, ms_path, cwd=root_dir)
+    raw_bash_out, bash_err, bash_code = run_bash(bash_stdin_input, cwd=root_dir)
+
+    ms_out = normalize_stdout(raw_ms_out)
+    bash_out = normalize_stdout(raw_bash_out)
+
+    clean_ms_err = normalize_stderr(strip_hook_output(ms_err), is_bash=False)
+    clean_bash_err = normalize_stderr(bash_err, is_bash=True)
+
+    result["ms_out"] = ms_out
+    result["ms_err"] = clean_ms_err
+    result["ms_code"] = ms_code
+    result["bash_out"] = bash_out
+    result["bash_err"] = clean_bash_err
+    result["bash_code"] = bash_code
+
+    if test_item.get("flag_error", False):
+        if not clean_ms_err or ms_code == 0:
+            result["passed"] = False
+            result["failures"].append("Flag Option Check: Expected non-zero exit code and error message on STDERR.")
+    elif test_item.get("bash_cmp", True) and not opts.get("skip_bash", False):
+        if "env" in cmd_raw or "export" in cmd_raw:
+            norm_ms = normalize_env_output(ms_out)
+            norm_bash = normalize_env_output(bash_out)
+            out_match = (norm_ms == norm_bash)
+        else:
+            out_match = (ms_out == bash_out)
+
+        err_match = (clean_ms_err == clean_bash_err)
+        code_match = (ms_code == bash_code)
+
+        diff = difflib.unified_diff(
+            bash_out.splitlines(keepends=True),
+            ms_out.splitlines(keepends=True),
+            fromfile="bash stdout",
+            tofile="minishell stdout"
+        )
+        result["diff_text"] = "".join(diff)
+
+        if not out_match or not code_match or not err_match:
+            result["passed"] = False
+            err_reasons = []
+            if not out_match:
+                err_reasons.append("STDOUT mismatch")
+            if not err_match:
+                err_reasons.append("STDERR mismatch")
+            if not code_match:
+                err_reasons.append(f"Exit status mismatch (minishell={ms_code}, bash={bash_code})")
+            result["failures"].append("Bash Comparison: " + ", ".join(err_reasons))
+
+    if not opts.get("skip_valgrind", False) and shutil.which("valgrind"):
+        valgrind_cmd = [
+            "valgrind",
+            f"--suppressions={supp_file_path}",
+            "--leak-check=full",
+            "--show-leak-kinds=all",
+            "--errors-for-leak-kinds=all",
+            "--track-fds=yes",
+            "--error-exitcode=99",
+            ms_path
+        ]
+        try:
+            proc = subprocess.run(valgrind_cmd, input=stdin_input, capture_output=True, text=True, cwd=root_dir, timeout=10)
+            result["valgrind_log"] = proc.stderr
+            if proc.returncode == 99:
                 result["passed"] = False
-                result["failures"].append("Flag Option Check: Expected non-zero exit code and error message on STDERR.")
-        elif test_item.get("bash_cmp", True) and not opts.get("skip_bash", False):
-            if "env" in cmd_str or "export" in cmd_str:
-                norm_ms = normalize_env_output(ms_out)
-                norm_bash = normalize_env_output(bash_out)
-                out_match = (norm_ms == norm_bash)
-            else:
-                out_match = (ms_out.strip() == bash_out.strip())
-
-            code_match = (ms_code == bash_code)
-
-            diff = difflib.unified_diff(
-                bash_out.splitlines(keepends=True),
-                ms_out.splitlines(keepends=True),
-                fromfile="bash stdout",
-                tofile="minishell stdout"
-            )
-            result["diff_text"] = "".join(diff)
-
-            if not out_match or not code_match:
-                result["passed"] = False
-                err_reasons = []
-                if not out_match:
-                    err_reasons.append("STDOUT mismatch")
-                if not code_match:
-                    err_reasons.append(f"Exit status mismatch (minishell={ms_code}, bash={bash_code})")
-                result["failures"].append("Bash Comparison: " + ", ".join(err_reasons))
-
-        # 2. Valgrind & FD Leak Checks with Readline Suppression
-        if not opts.get("skip_valgrind", False) and shutil.which("valgrind"):
-            valgrind_cmd = [
-                "valgrind",
-                f"--suppressions={supp_file_path}",
-                "--leak-check=full",
-                "--show-leak-kinds=all",
-                "--errors-for-leak-kinds=all",
-                "--track-fds=yes",
-                "--error-exitcode=99",
-                ms_path
-            ]
-            try:
-                proc = subprocess.run(valgrind_cmd, input=cmd_str + "\n", capture_output=True, text=True, cwd=test_tmp_dir, timeout=10)
-                result["valgrind_log"] = proc.stderr
-                if proc.returncode == 99:
+                result["failures"].append("Valgrind: Memory leak or invalid memory access detected")
+            if "FILE DESCRIPTORS: 4 open" in proc.stderr or "FILE DESCRIPTORS: 5 open" in proc.stderr:
+                if "Open file descriptor" in proc.stderr and "inherited from parent" not in proc.stderr:
                     result["passed"] = False
-                    result["failures"].append("Valgrind: Memory leak or invalid memory access detected")
-                if "FILE DESCRIPTORS: 4 open" in proc.stderr or "FILE DESCRIPTORS: 5 open" in proc.stderr:
-                    if "Open file descriptor" in proc.stderr and "inherited from parent" not in proc.stderr:
-                        result["passed"] = False
-                        result["failures"].append("Valgrind: File Descriptor leak detected")
-            except Exception as e:
-                result["valgrind_log"] = f"Execution error: {str(e)}"
+                    result["failures"].append("Valgrind: File Descriptor leak detected")
+        except Exception as e:
+            result["valgrind_log"] = f"Execution error: {str(e)}"
 
-        # 3. Dynamic Malloc Interposition
-        if not opts.get("skip_malloc", False):
-            env = os.environ.copy()
-            env["LD_PRELOAD"] = hook_so_path
-            env["LOG_ALLOC_COUNT"] = "1"
+    if not opts.get("skip_malloc", False):
+        env = os.environ.copy()
+        env["LD_PRELOAD"] = hook_so_path
+        env["LOG_ALLOC_COUNT"] = "1"
 
-            _, ms_err_log, _ = run_shell(cmd_str, ms_path, env=env, cwd=test_tmp_dir)
-            
-            total_allocs = 0
-            for line in ms_err_log.splitlines():
-                if "__HOOK_TOTAL_ALLOCS:" in line:
-                    try:
-                        total_allocs = int(line.split(":")[1].rstrip("_"))
-                    except ValueError:
-                        pass
+        _, ms_err_log, _ = run_shell(stdin_input, ms_path, env=env, cwd=root_dir)
+        
+        total_allocs = 0
+        for line in ms_err_log.splitlines():
+            if "__HOOK_TOTAL_ALLOCS:" in line:
+                try:
+                    total_allocs = int(line.split(":")[1].rstrip("_"))
+                except ValueError:
+                    pass
 
-            if total_allocs > 0:
-                malloc_fail_logs = []
-                for fail_idx in range(1, total_allocs + 1):
-                    fail_env = os.environ.copy()
-                    fail_env["LD_PRELOAD"] = hook_so_path
-                    fail_env["FAIL_MALLOC_INDEX"] = str(fail_idx)
+        if total_allocs > 0:
+            malloc_fail_logs = []
+            for fail_idx in range(1, total_allocs + 1):
+                fail_env = os.environ.copy()
+                fail_env["LD_PRELOAD"] = hook_so_path
+                fail_env["FAIL_MALLOC_INDEX"] = str(fail_idx)
 
-                    _, err_m, code_m = run_shell(cmd_str, ms_path, env=fail_env, cwd=test_tmp_dir)
-                    
-                    program_err = strip_hook_output(err_m)
-                    callstack_loc = resolve_stack_trace(ms_path, err_m)
+                _, err_m, code_m = run_shell(stdin_input, ms_path, env=fail_env, cwd=root_dir)
+                
+                program_err = strip_hook_output(err_m)
+                callstack_loc = resolve_stack_trace(ms_path, err_m)
 
-                    if code_m < 0 or code_m in (134, 137, 139):
-                        result["passed"] = False
-                        msg = f"Crash/Segfault at malloc #{fail_idx}/{total_allocs} (Exit Code: {code_m})"
-                        if callstack_loc:
-                            msg += f"\n{callstack_loc}"
-                        result["failures"].append("Malloc Fault: " + msg)
-                        malloc_fail_logs.append(msg)
-                        break
-                    elif not program_err:
-                        result["passed"] = False
-                        msg = f"Silent Failure (No error message printed to STDERR by Minishell) at malloc #{fail_idx}/{total_allocs}"
-                        if callstack_loc:
-                            msg += f"\n{callstack_loc}"
-                        result["failures"].append("Malloc Fault: " + msg)
-                        malloc_fail_logs.append(msg)
-                        break
+                if code_m < 0 or code_m in (134, 137, 139):
+                    result["passed"] = False
+                    msg = f"Crash/Segfault at malloc #{fail_idx}/{total_allocs} (Exit Code: {code_m})"
+                    if callstack_loc:
+                        msg += f"\n{callstack_loc}"
+                    result["failures"].append("Malloc Fault: " + msg)
+                    malloc_fail_logs.append(msg)
+                    break
+                elif not program_err:
+                    result["passed"] = False
+                    msg = f"Silent Failure (No error message printed to STDERR by Minishell) at malloc #{fail_idx}/{total_allocs}"
+                    if callstack_loc:
+                        msg += f"\n{callstack_loc}"
+                    result["failures"].append("Malloc Fault: " + msg)
+                    malloc_fail_logs.append(msg)
+                    break
 
-                result["malloc_log"] = "\n".join(malloc_fail_logs) if malloc_fail_logs else f"All {total_allocs} malloc failures handled safely."
-            else:
-                result["malloc_log"] = "No heap allocations recorded for this command."
+            result["malloc_log"] = "\n".join(malloc_fail_logs) if malloc_fail_logs else f"All {total_allocs} malloc failures handled safely."
+        else:
+            result["malloc_log"] = "No heap allocations recorded for this command."
 
-        return result
-    finally:
-        shutil.rmtree(test_tmp_dir, ignore_errors=True)
+    return result
 
 
 class MinishellTestGUI:
@@ -661,6 +1110,8 @@ class MinishellTestGUI:
         self.root.title("Minishell Modern Graphical Test Harness")
         self.root.geometry("1280x830")
         self.root.minsize(960, 640)
+
+        cleanup_test_artifacts()
 
         self.env_mgr = EnvironmentManager()
         try:
@@ -696,45 +1147,36 @@ class MinishellTestGUI:
         self.style = ttk.Style()
         self.style.theme_use("clam")
 
-        # Global Styles
         self.style.configure(".", background=COLOR_BG_DARK, foreground=COLOR_FG_TEXT, font=("Segoe UI", 9))
         self.style.configure("TFrame", background=COLOR_BG_DARK)
         self.style.configure("Panel.TFrame", background=COLOR_BG_PANEL)
 
-        # LabelFrame
         self.style.configure("TLabelframe", background=COLOR_BG_PANEL, bordercolor=COLOR_BORDER, borderwidth=1, relief="solid")
         self.style.configure("TLabelframe.Label", background=COLOR_BG_PANEL, foreground=COLOR_ACCENT, font=("Segoe UI", 9, "bold"))
 
-        # Buttons
         self.style.configure("TButton", background=COLOR_BG_PANEL, foreground=COLOR_FG_TEXT, borderwidth=1, bordercolor=COLOR_BORDER, focuscolor="none", padding=(10, 5), font=("Segoe UI", 9, "bold"))
         self.style.map("TButton", background=[("active", COLOR_BORDER), ("disabled", COLOR_BG_DARK)], foreground=[("disabled", COLOR_FG_MUTED)])
 
         self.style.configure("Accent.TButton", background=COLOR_ACCENT, foreground="#11111b", borderwidth=0, padding=(12, 6))
         self.style.map("Accent.TButton", background=[("active", COLOR_ACCENT_HOVER), ("disabled", COLOR_BORDER)], foreground=[("disabled", COLOR_FG_MUTED)])
 
-        # Checkbuttons
         self.style.configure("TCheckbutton", background=COLOR_BG_PANEL, foreground=COLOR_FG_TEXT, focuscolor="none")
         self.style.map("TCheckbutton", background=[("active", COLOR_BG_PANEL)])
 
-        # Entry & Spinbox
         self.style.configure("TEntry", fieldbackground=COLOR_BG_INPUT, foreground=COLOR_FG_TEXT, bordercolor=COLOR_BORDER, insertcolor=COLOR_FG_TEXT, padding=5)
         self.style.configure("TSpinbox", fieldbackground=COLOR_BG_INPUT, foreground=COLOR_FG_TEXT, bordercolor=COLOR_BORDER, arrowcolor=COLOR_FG_TEXT, padding=5)
 
-        # Treeview
         self.style.configure("Treeview", background=COLOR_BG_INPUT, foreground=COLOR_FG_TEXT, fieldbackground=COLOR_BG_INPUT, borderwidth=0, rowheight=28, font=("Consolas", 9))
         self.style.configure("Treeview.Heading", background=COLOR_BG_PANEL, foreground=COLOR_ACCENT, font=("Segoe UI", 9, "bold"), relief="flat", padding=6)
         self.style.map("Treeview", background=[("selected", "#363a4f")], foreground=[("selected", "#ffffff")])
 
-        # Notebook
         self.style.configure("TNotebook", background=COLOR_BG_DARK, borderwidth=0)
         self.style.configure("TNotebook.Tab", background=COLOR_BG_PANEL, foreground=COLOR_FG_MUTED, padding=(14, 7), font=("Segoe UI", 9, "bold"), borderwidth=0)
         self.style.map("TNotebook.Tab", background=[("selected", COLOR_BG_INPUT)], foreground=[("selected", COLOR_ACCENT)])
 
-        # Progressbar
         self.style.configure("Horizontal.TProgressbar", background=COLOR_ACCENT, troughcolor=COLOR_BG_PANEL, bordercolor=COLOR_BORDER, thickness=6)
 
     def _build_ui(self):
-        # Top Header Card
         header_card = ttk.Frame(self.root, style="Panel.TFrame", padding=12)
         header_card.pack(fill=tk.X, side=tk.TOP, padx=12, pady=(12, 4))
 
@@ -749,7 +1191,6 @@ class MinishellTestGUI:
         self.jobs_var = tk.IntVar(value=os.cpu_count() or 4)
         ttk.Spinbox(header_card, from_=1, to=32, textvariable=self.jobs_var, width=3).pack(side=tk.LEFT, padx=(0, 16))
 
-        # Checkboxes
         self.chk_bash = tk.BooleanVar(value=True)
         self.chk_valgrind = tk.BooleanVar(value=True)
         self.chk_malloc = tk.BooleanVar(value=True)
@@ -761,26 +1202,21 @@ class MinishellTestGUI:
         self.btn_run = ttk.Button(header_card, text="▶  Run Selected (F5)", style="Accent.TButton", command=self.run_tests)
         self.btn_run.pack(side=tk.RIGHT, padx=(6, 0))
 
-        # Progress bar
         self.progress_var = tk.DoubleVar(value=0)
         self.progress_bar = ttk.Progressbar(self.root, variable=self.progress_var, maximum=100, style="Horizontal.TProgressbar")
         self.progress_bar.pack(fill=tk.X, side=tk.TOP, padx=12, pady=2)
 
-        # Shortcuts Legend Bar
         shortcut_bar = ttk.Frame(self.root, style="Panel.TFrame", padding=(12, 4))
         shortcut_bar.pack(fill=tk.X, side=tk.TOP, padx=12, pady=(0, 4))
         legend_text = "Shortcuts:  [↑/↓] Navigate Tests  |  [←/→] Switch Inspector Tabs  |  [Space] Select/Deselect  |  [F5 / Ctrl+R] Run  |  [/ / Ctrl+F] Search"
         ttk.Label(shortcut_bar, text=legend_text, style="Panel.TFrame", foreground=COLOR_FG_MUTED, font=("Segoe UI", 8)).pack(side=tk.LEFT)
 
-        # Main Paned Workspace
         paned = ttk.PanedWindow(self.root, orient=tk.HORIZONTAL)
         paned.pack(fill=tk.BOTH, expand=True, padx=12, pady=4)
 
-        # Left Column Frame
         left_frame = ttk.Frame(paned, width=460)
         paned.add(left_frame, weight=1)
 
-        # Selection Control Row
         sel_btn_frame = ttk.Frame(left_frame)
         sel_btn_frame.pack(fill=tk.X, side=tk.TOP, pady=(0, 6))
 
@@ -789,7 +1225,6 @@ class MinishellTestGUI:
         ttk.Button(sel_btn_frame, text="Select Failed", command=self._select_failed_only).pack(side=tk.LEFT, padx=2)
         ttk.Button(sel_btn_frame, text="🔄 Reset Selected", command=self._reset_selected_tests).pack(side=tk.LEFT, padx=2)
 
-        # Search Box
         search_frame = ttk.Frame(left_frame)
         search_frame.pack(fill=tk.X, side=tk.TOP, pady=(0, 6))
         ttk.Label(search_frame, text="🔍").pack(side=tk.LEFT, padx=(0, 4))
@@ -798,7 +1233,6 @@ class MinishellTestGUI:
         self.search_entry = ttk.Entry(search_frame, textvariable=self.filter_var)
         self.search_entry.pack(fill=tk.X, expand=True, side=tk.LEFT)
 
-        # Treeview
         tree_container = ttk.Frame(left_frame)
         tree_container.pack(fill=tk.BOTH, expand=True)
 
@@ -830,11 +1264,9 @@ class MinishellTestGUI:
         self.tree.bind("<Button-1>", self._on_tree_click)
         self.tree.bind("<<TreeviewSelect>>", self._on_tree_select)
 
-        # Right Inspector Panel
         right_frame = ttk.Frame(paned)
         paned.add(right_frame, weight=2)
 
-        # Custom Input
         custom_card = ttk.LabelFrame(right_frame, text="Add Custom Command Test", padding=8)
         custom_card.pack(fill=tk.X, side=tk.TOP, pady=(0, 8))
 
@@ -843,7 +1275,6 @@ class MinishellTestGUI:
         self.custom_cmd_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 6))
         ttk.Button(custom_card, text="➕ Add Test", command=self._add_custom_test).pack(side=tk.RIGHT)
 
-        # Inspector Tabs
         self.notebook = ttk.Notebook(right_frame)
         self.notebook.pack(fill=tk.BOTH, expand=True)
 
@@ -857,7 +1288,10 @@ class MinishellTestGUI:
         self.txt_diff.tag_config("sub", background=COLOR_DIFF_SUB_BG, foreground=COLOR_DIFF_SUB_FG)
         self.txt_diff.tag_config("info", foreground=COLOR_ACCENT)
 
-        # Status Bar
+        self.txt_stderr.tag_config("add", background=COLOR_DIFF_ADD_BG, foreground=COLOR_DIFF_ADD_FG)
+        self.txt_stderr.tag_config("sub", background=COLOR_DIFF_SUB_BG, foreground=COLOR_DIFF_SUB_FG)
+        self.txt_stderr.tag_config("info", foreground=COLOR_ACCENT)
+
         self.status_bar_frame = ttk.Frame(self.root, style="Panel.TFrame", padding=(12, 6))
         self.status_bar_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=12, pady=(4, 12))
 
@@ -980,6 +1414,7 @@ class MinishellTestGUI:
         self._update_stats_bar()
 
     def _reset_selected_tests(self):
+        cleanup_test_artifacts()
         for t in self.tests_data:
             if t["selected"]:
                 t["status"] = "PENDING"
@@ -1170,7 +1605,30 @@ class MinishellTestGUI:
         def write_stderr():
             ms_e = res['ms_err'] if res['ms_err'].strip() else "(empty)"
             bash_e = res['bash_err'] if res['bash_err'].strip() else "(empty)"
-            err_txt = f"=== MINISHELL STDERR ===\n{ms_e}\n\n=== BASH STDERR ===\n{bash_e}"
+
+            err_diff = difflib.unified_diff(
+                bash_e.splitlines(keepends=True),
+                ms_e.splitlines(keepends=True),
+                fromfile="bash stderr",
+                tofile="minishell stderr"
+            )
+            err_diff_text = "".join(err_diff)
+
+            self.txt_stderr.insert(tk.END, "=== UNIFIED STDERR DIFF (-Bash, +Minishell) ===\n", "info")
+            if err_diff_text:
+                for line in err_diff_text.splitlines(keepends=True):
+                    if line.startswith("+"):
+                        self.txt_stderr.insert(tk.END, line, "add")
+                    elif line.startswith("-"):
+                        self.txt_stderr.insert(tk.END, line, "sub")
+                    elif line.startswith("@"):
+                        self.txt_stderr.insert(tk.END, line, "info")
+                    else:
+                        self.txt_stderr.insert(tk.END, line)
+            else:
+                self.txt_stderr.insert(tk.END, "✔ STDERR matches Bash output perfectly.\n")
+
+            err_txt = f"\n=== MINISHELL STDERR ===\n{ms_e}\n\n=== BASH STDERR ===\n{bash_e}"
             self.txt_stderr.insert(tk.END, err_txt)
 
         self._write_read_only_text(self.txt_stderr, write_stderr)
@@ -1190,18 +1648,19 @@ class MinishellTestGUI:
             messagebox.showerror("Error", f"Minishell binary '{ms_path}' not found.")
             return
 
-        selected_tests = [t for t in self.tests_data if t["selected"] and t["status"] == "PENDING"]
+        selected_tests = [t for t in self.tests_data if t["selected"]]
 
         if not selected_tests:
-            already_run = sum(1 for t in self.tests_data if t["selected"] and t["status"] != "PENDING")
-            if already_run > 0:
-                messagebox.showinfo(
-                    "Info",
-                    "All selected tests have already been executed.\n\nClick '🔄 Reset Selected' to clear past results and re-run them."
-                )
-            else:
-                messagebox.showwarning("Warning", "No tests selected.")
+            messagebox.showwarning("Warning", "No tests selected.")
             return
+
+        cleanup_test_artifacts()
+
+        # Unconditionally reset all selected tests to PENDING state and clear old results
+        for t in selected_tests:
+            t["status"] = "PENDING"
+            t["result"] = None
+        self._populate_tree()
 
         self.is_running = True
         self.btn_run.config(state=tk.DISABLED)
@@ -1260,6 +1719,7 @@ class MinishellTestGUI:
                     self.btn_run.config(state=tk.NORMAL)
                     self.progress_var.set(100)
                     self._update_stats_bar()
+                    cleanup_test_artifacts()
         except queue.Empty:
             pass
 

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/31 15:22:20 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 13:17:21 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/05 03:24:38 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	exec_subshell(t_minishell *shell, t_ast_node *node)
 	if (pid == 0)
 	{
 		init_child_signals();
-		if (apply_redirections(node->redir))
+		if (apply_redirections(shell, node->redir))
 			exit_shell(shell, 1);
 		exit_shell(shell, exec(shell, node->left));
 	}

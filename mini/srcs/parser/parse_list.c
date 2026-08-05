@@ -6,13 +6,13 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/26 14:55:28 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/26 16:13:00 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/04 21:50:20 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static t_ast_node	*create_list_node(t_token **token,
+static t_ast_node	*create_list_node(t_minishell *shell, t_token **token,
 	t_ast_node *left, t_node_type op)
 {
 	t_ast_node	*right;
@@ -25,7 +25,7 @@ static t_ast_node	*create_list_node(t_token **token,
 			return (free_ast(left));
 		return (parent);
 	}
-	right = parse_logic(token);
+	right = parse_logic(shell, token);
 	if (!right)
 		return (free_ast(left));
 	parent = new_op_node(op, left, right);
@@ -37,18 +37,19 @@ static t_ast_node	*create_list_node(t_token **token,
 	return (parent);
 }
 
-static t_ast_node	*loop_list(t_token **token, t_ast_node *left)
+static t_ast_node	*loop_list(t_minishell *shell, t_token **token,
+	t_ast_node *left)
 {
 	t_node_type	op;
 
-	while (*token
+	while (*token && ft_strlen((*token)->value) == 1
 		&& ((*token)->type == TOKEN_SEMI || (*token)->type == TOKEN_BACKGR))
 	{
 		op = NODE_BACKGR;
 		if ((*token)->type == TOKEN_SEMI)
 			op = NODE_SEMI;
 		*token = (*token)->next;
-		left = create_list_node(token, left, op);
+		left = create_list_node(shell, token, left, op);
 		if (!left)
 			return (NULL);
 		if (!*token || (*token)->type == TOKEN_RPAREN)
@@ -57,13 +58,13 @@ static t_ast_node	*loop_list(t_token **token, t_ast_node *left)
 	return (left);
 }
 
-t_ast_node	*parse_list(t_token **token)
+t_ast_node	*parse_list(t_minishell *shell, t_token **token)
 {
 	t_ast_node	*left;
 
-	left = parse_logic(token);
+	left = parse_logic(shell, token);
 	if (!left)
 		return (NULL);
-	left = loop_list(token, left);
+	left = loop_list(shell, token, left);
 	return (left);
 }

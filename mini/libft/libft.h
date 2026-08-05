@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 14:15:11 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/17 03:23:34 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/04 23:55:05 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void	*ft_realloc(void *ptr, size_t elem_count, size_t elem_size);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_join_split_prefix(char const **s, char const *del);
 char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strjoin_3(const char *s1, const char *s2, const char *s3);
 char	*ft_join_split(char const **s, char *del);
 char	*ft_strtrim(char const *s1, char const *set);
 char	*ft_strchr(const char *s, int c);

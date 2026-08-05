@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/15 19:20:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/03 03:31:44 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/04 23:07:17 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,11 +87,11 @@ int	build_prompt(t_robin *env, char **prompt)
 	char	*hostname;
 	char	*pwd;
 
+	*prompt = NULL;
 	status = 0;
 	size = 21;
 	if (build_username(env, &username, &size)
-		|| build_hostname(env, &hostname, &size)
-		|| build_pwd(env, &pwd, &size))
+		|| build_hostname(env, &hostname, &size) || build_pwd(env, &pwd, &size))
 		status = 1;
 	*prompt = cpy_prompt(username, hostname, pwd, size);
 	free(username);
@@ -100,7 +100,10 @@ int	build_prompt(t_robin *env, char **prompt)
 	if (!*prompt)
 	{
 		*prompt = "unknown@unknown:$\n$ ";
-		return (2);
+		status = 2;
 	}
+	if (status)
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 	return (status);
 }

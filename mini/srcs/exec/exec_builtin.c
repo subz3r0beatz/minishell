@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/02 16:03:48 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 17:43:48 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/05 03:23:44 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,14 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
+static void	restore_fds(int saved_stdin, int saved_stdout)
+{
+	dup2(saved_stdin, STDIN_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdin);
+	close(saved_stdout);
+}
+
 int	exec_builtin(t_minishell *shell, t_ast_node *node, int builtin)
 {
 	int	saved_stdin;
@@ -43,19 +51,18 @@ int	exec_builtin(t_minishell *shell, t_ast_node *node, int builtin)
 
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
-	if (apply_redirections(node->redir))
+	if (apply_redirections(shell, node->redir))
 	{
-		dup2(saved_stdin, STDIN_FILENO);
-		dup2(saved_stdout, STDOUT_FILENO);
-		close(saved_stdin);
-		close(saved_stdout);
+		restore_fds(saved_stdin, saved_stdout);
 		shell->exit_status = 1;
 		return (1);
 	}
+	if (builtin == 2)
+	{
+		restore_fds(saved_stdin, saved_stdout);
+		return (shell->builtin_func_table[builtin - 1](shell, node->args));
+	}
 	status = shell->builtin_func_table[builtin - 1](shell, node->args);
-	dup2(saved_stdin, STDIN_FILENO);
-	dup2(saved_stdout, STDOUT_FILENO);
-	close(saved_stdin);
-	close(saved_stdout);
+	restore_fds(saved_stdin, saved_stdout);
 	return (status);
 }

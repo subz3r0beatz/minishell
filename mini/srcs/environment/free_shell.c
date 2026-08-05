@@ -1,32 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   new_op_node.c                                      :+:      :+:    :+:   */
+/*   free_shell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/25 15:29:26 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/04 18:19:37 by fldumas-         ###   ########.fr       */
+/*   Created: 2026/08/04 18:12:34 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/08/04 18:14:08 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast_node	*new_op_node(t_node_type type, t_ast_node *left, t_ast_node *right)
+int	free_shell(t_minishell *shell, int exit_status)
 {
-	t_ast_node	*node;
-
-	node = malloc(sizeof(t_ast_node));
-	if (!node)
-	{
-		ft_putstr_fd("minishell: malloc: "
-			"cannot allocate memory\n", STDERR_FILENO);
-		return (NULL);
-	}
-	node->type = type;
-	node->left = left;
-	node->right = right;
-	node->args = NULL;
-	node->redir = NULL;
-	return (node);
+	if (shell->pid)
+		free(shell->pid);
+	if (shell->last_pid)
+		free(shell->last_pid);
+	if (shell->exported)
+		ft_free_matrix(shell->exported,
+			ft_memlen(shell->exported, sizeof(char *)));
+	if (shell->ast)
+		free_ast(shell->ast);
+	if (shell->env)
+		robin_free(shell->env);
+	if (shell->input)
+		free(shell->input);
+	rl_clear_history();
+	return (exit_status);
 }

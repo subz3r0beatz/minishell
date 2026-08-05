@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:31:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/01 04:32:28 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/04 14:14:49 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,9 @@ static int	print_escape(char *str, char table[256])
 	char	*buffer;
 
 	buffer = malloc(sizeof(char) * (ft_strlen(str) + 1));
+	if (!buffer)
+		ft_putstr_fd("minishell: echo: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 	if (!buffer)
 		return (1);
 	i = 0;

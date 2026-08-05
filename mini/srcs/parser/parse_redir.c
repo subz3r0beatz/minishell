@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 16:15:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/07/25 17:31:09 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/05 02:24:33 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,17 @@ static t_redir	*new_redir_node(t_token_type type, char *file)
 
 	redir = malloc(sizeof(t_redir));
 	if (!redir)
+	{
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 		return (NULL);
+	}
 	redir->type = type;
 	redir->file = ft_strdup(file);
 	if (!redir->file)
 	{
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 		free(redir);
 		return (NULL);
 	}
@@ -30,7 +36,7 @@ static t_redir	*new_redir_node(t_token_type type, char *file)
 	return (redir);
 }
 
-int	parse_redir(t_token **token, t_redir **redir_head)
+int	parse_redir(t_minishell *shell, t_token **token, t_redir **redir_head)
 {
 	t_token_type	type;
 	t_redir			*new_node;
@@ -39,7 +45,10 @@ int	parse_redir(t_token **token, t_redir **redir_head)
 	type = (*token)->type;
 	*token = (*token)->next;
 	if (!*token || (*token)->type != TOKEN_WORD)
+	{
+		syntax_error(shell, *token);
 		return (1);
+	}
 	new_node = new_redir_node(type, (*token)->value);
 	if (!new_node)
 		return (1);

@@ -6,13 +6,13 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 23:22:23 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/03 03:59:01 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/05 03:41:45 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static size_t count_var_len(t_minishell *shell, char *word, size_t *i)
+static size_t	count_var_len(t_minishell *shell, char *word, size_t *i)
 {
 	size_t	key_len;
 	char	*value;
@@ -57,7 +57,8 @@ static size_t	calculate_word_len(t_minishell *shell, char *word)
 			quote_state = 0;
 		else if (word[i] == '$' && quote_state != '\'')
 		{
-			if (quote_state == '"' || (word[i + 1] != '"' && word[i + 1] != '\''))
+			if (quote_state == '"'
+				|| (word[i + 1] != '"' && word[i + 1] != '\''))
 				len += count_var_len(shell, &word[i + 1], &i);
 		}
 		else
@@ -67,7 +68,8 @@ static size_t	calculate_word_len(t_minishell *shell, char *word)
 	return (len);
 }
 
-static size_t	copy_var_value(t_minishell *shell, char *new_word, char *word, size_t *i)
+static size_t	copy_var_value(t_minishell *shell, char *new_word, char *word,
+	size_t *i)
 {
 	size_t	key_len;
 	char	*value;
@@ -113,7 +115,8 @@ static void	copy_new_word(t_minishell *shell, char *new_word, char *word)
 			quote_state = 0;
 		else if (word[i] == '$' && quote_state != '\'')
 		{
-			if (quote_state == '"' || (word[i + 1] != '"' && word[i + 1] != '\''))
+			if (quote_state == '"'
+				|| (word[i + 1] != '"' && word[i + 1] != '\''))
 				j += copy_var_value(shell, &new_word[j], &word[i + 1], &i);
 		}
 		else
@@ -128,6 +131,8 @@ char	*expand_word(t_minishell *shell, char *word)
 	char	*new_word;
 	size_t	word_len;
 
+	if (!word)
+		return (NULL);
 	word_len = calculate_word_len(shell, word);
 	new_word = malloc((word_len + 1) * sizeof(char));
 	if (!new_word)
