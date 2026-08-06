@@ -27,7 +27,7 @@ int	handle_relative(t_minishell *shell, char *argv0)
 	free(underscore);
 	if (!tmp)
 		return (1);
-	underscore = canonalize_path(buf, tmp);
+	underscore = canonalize_path(shell, buf, tmp);
 	free(tmp);
 	if (!underscore)
 		return (1);

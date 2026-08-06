@@ -27,7 +27,7 @@ int	exec_backgr(t_minishell *shell, t_ast_node *node)
 	}
 	if (pid == 0)
 	{
-		init_child_signals();
+		init_ignore_signals(0);
 		exit_shell(shell, exec(shell, node->left));
 	}
 	free(shell->last_pid);

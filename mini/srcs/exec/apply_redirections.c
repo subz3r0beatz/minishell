@@ -12,86 +12,106 @@
 
 #include "minishell.h"
 
-int	open_error(char	*file, int err)
+int	restore_fds(int in, int out)
 {
-	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	errno = err;
-	perror(file);
-	return (1);
-}
-
-int	handle_stdin(t_redir *redir, int fd)
-{
-	int	err;
-
-	if (fd < 0)
+	if (in >= 0 && in != STDIN_FILENO)
 	{
-		err = errno;
-		return (open_error(redir->file, err));
+		if (dup2(in, STDIN_FILENO) < 0)
+		{
+			perror("minishell: dup2");
+			close(in);
+			if (out >= 0)
+				close(out);
+			return (1);
+		}
+		close(in);
 	}
-	dup2(fd, STDIN_FILENO);
-	close(fd);
+	if (out >= 0 && out != STDOUT_FILENO)
+	{
+		if (dup2(out, STDOUT_FILENO) < 0)
+		{
+			perror("minishell: dup2");
+			close(out);
+			return (1);
+		}
+		close(out);
+	}
 	return (0);
 }
 
-int	handle_stdout(t_redir *redir, int fd)
+static int	update_fd(int *fd, int new_fd)
 {
-	int	err;
-
-	if (fd < 0)
-	{
-		err = errno;
-		return (open_error(redir->file, err));
-	}
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
+	if (new_fd < 0)
+		return (1);
+	if (*fd >= 0)
+		close(*fd);
+	*fd = new_fd;
 	return (0);
 }
 
-int	handle_here_string(char *file)
+int	handle_herestring(char *file)
 {
 	int	pfd[2];
 
 	if (pipe(pfd) < 0)
 	{
 		ft_putstr_fd("minishell: exec: pipe failed\n", STDERR_FILENO);
-		return (1);
+		return (-1);
 	}
 	if (file)
 		ft_putstr_fd(file, pfd[1]);
 	ft_putstr_fd("\n", pfd[1]);
 	close(pfd[1]);
-	if (dup2(pfd[0], STDIN_FILENO) < 0)
+	return (pfd[0]);
+}
+
+static int	process_redir(t_minishell *shell, t_redir *redir,
+	int *last_in, int *last_out)
+{
+	int	fd;
+	int	err;
+
+	if (redir->type == TOKEN_DLESS)
+		fd = handle_heredoc(shell, redir->file);
+	else if (redir->type == TOKEN_TLESS)
+		fd = handle_herestring(redir->file);
+	else if (redir->type == TOKEN_LESS)
+		fd = open(redir->file, O_RDONLY);
+	else if (redir->type == TOKEN_GREAT)
+		fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else if (redir->type == TOKEN_DGREAT)
+		fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (redir->type != TOKEN_DLESS && redir->type != TOKEN_TLESS && fd < 0)
 	{
-		close(pfd[0]);
+		err = errno;
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		errno = err;
+		perror(redir->file);
 		return (1);
 	}
-	close(pfd[0]);
-	return (0);
+	if (redir->type == TOKEN_GREAT || redir->type == TOKEN_DGREAT)
+		return (update_fd(last_out, fd));
+	return (update_fd(last_in, fd));
 }
 
 int	apply_redirections(t_minishell *shell, t_redir *redir)
 {
-	int	fd;
+	int	last_in;
+	int	last_out;
 
+	last_in = -1;
+	last_out = -1;
 	while (redir)
 	{
-		if (redir->type == TOKEN_LESS)
-			fd = open(redir->file, O_RDONLY);
-		else if (redir->type == TOKEN_GREAT)
-			fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		else if (redir->type == TOKEN_DGREAT)
-			fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		if (redir->type == TOKEN_DLESS && handle_heredoc(shell, redir->file))
+		if (process_redir(shell, redir, &last_in, &last_out))
+		{
+			if (last_in >= 0)
+				close(last_in);
+			if (last_out >= 0)
+				close(last_out);
 			return (1);
-		else if (redir->type == TOKEN_LESS && handle_stdin(redir, fd))
-			return (1);
-		else if ((redir->type == TOKEN_GREAT || redir->type == TOKEN_DGREAT)
-			&& handle_stdout(redir, fd))
-			return (1);
-		else if (redir->type == TOKEN_TLESS && handle_here_string(redir->file))
-			return (1);
+		}
 		redir = redir->next;
 	}
-	return (0);
+	return (restore_fds(last_in, last_out));
 }

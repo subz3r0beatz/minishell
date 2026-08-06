@@ -41,7 +41,7 @@ static char	*check_access(char *targets[4], char *path, int *no_malloc_error)
 	return (path);
 }
 
-static char	*get_path(char **exported, int *no_malloc_error, int *has_file)
+static char	*get_env_path(char **exported, int *no_malloc_error, int *has_file)
 {
 	char	*targets[4];
 	char	*path;
@@ -118,7 +118,7 @@ char	*resolve_cmd_path(char **args, char **exported,
 
 	if (ft_strchr(args[0], '/'))
 		return (ft_strdup(args[0]));
-	path = get_path(exported, no_malloc_error, &has_file);
+	path = get_env_path(exported, no_malloc_error, &has_file);
 	if (path)
 	{
 		*no_malloc_error = 0;

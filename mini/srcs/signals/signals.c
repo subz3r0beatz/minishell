@@ -47,16 +47,18 @@ static void	sig_handler_heredoc(int sig)
 	close(STDIN_FILENO);
 }
 
-void	init_child_signals(void)
+void	init_ignore_signals(int ignore)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-}
-
-void	init_ignore_signals(void)
-{
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	if (ignore)
+	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
+	}
+	else
+	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+	}
 }
 
 void	init_heredoc_signals(void)

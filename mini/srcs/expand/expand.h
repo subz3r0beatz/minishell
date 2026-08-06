@@ -16,8 +16,10 @@
 int		expand(t_minishell *shell, t_ast_node *node);
 int		expand_redirs(t_minishell *shell, t_redir *redir);
 size_t	count_special_param_len(t_minishell *shell, char param, size_t *i);
-size_t	copy_special_param(t_minishell *shell, char *new_word, char param, size_t *i);
+size_t	copy_special_param(t_minishell *shell, char *new_word, char param,
+			size_t *i);
 char	*expand_home(t_minishell *shell, char *word);
 char	*expand_word(t_minishell *shell, char *word);
+char	*get_home(void);
 
 #endif

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <linux/limits.h>
 
 static int	read_file(char *path, char *buffer, int size)
 {
@@ -57,7 +56,7 @@ static char	*search_passwd_home(uid_t uid, char *buffer)
 	return (NULL);
 }
 
-static char	*get_home(void)
+char	*get_home(void)
 {
 	struct stat	st;
 	char		*home;

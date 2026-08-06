@@ -21,10 +21,12 @@ static void	init_minishell(t_minishell *shell, char **argv, char **envp)
 	shell->ast = NULL;
 	shell->syn_err = 0;
 	shell->input = NULL;
+	shell->stash = NULL;
 	shell->argv0 = argv[0];
 	shell->pid = NULL;
 	shell->last_pid = NULL;
 	shell->exit_status = 0;
+	shell->double_root = 0;
 	if (build_env(shell, envp, argv[0]))
 	{
 		ft_putstr_fd("minishell: shell-init: malloc: "
@@ -46,6 +48,6 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	}
 	init_minishell(&shell, argv, envp);
-	main_loop(&shell);
+	loop(&shell);
 	exit_shell(&shell, shell.exit_status);
 }

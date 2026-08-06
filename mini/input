@@ -1,1 +1,0 @@
-cat << EOF\n line 1\n line 2\nEOF

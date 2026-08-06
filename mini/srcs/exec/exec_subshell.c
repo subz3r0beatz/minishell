@@ -35,7 +35,7 @@ int	exec_subshell(t_minishell *shell, t_ast_node *node)
 {
 	pid_t	pid;
 
-	init_ignore_signals();
+	init_ignore_signals(1);
 	pid = fork();
 	if (pid < 0)
 	{
@@ -45,7 +45,7 @@ int	exec_subshell(t_minishell *shell, t_ast_node *node)
 	}
 	if (pid == 0)
 	{
-		init_child_signals();
+		init_ignore_signals(0);
 		if (apply_redirections(shell, node->redir))
 			exit_shell(shell, 1);
 		exit_shell(shell, exec(shell, node->left));

@@ -44,7 +44,7 @@ size_t	count_special_param_len(t_minishell *shell, char param, size_t *i)
 static void	cpy_exit_status(t_minishell *shell, char *new_word, size_t len)
 {
 	size_t	exit_status;
-	
+
 	exit_status = shell->exit_status;
 	exit_status = (exit_status ^ (exit_status >> 31)) - (exit_status >> 31);
 	while (len > 0)

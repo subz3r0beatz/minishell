@@ -41,30 +41,56 @@ static void	clean_split(char **split)
 	}
 }
 
-char	*canonalize_path(char *pwd, char *path)
+static char	*get_raw_path(char *pwd, char *path)
+{
+	if (path[0] == '/')
+		return (ft_strdup(path));
+	if (!ft_strcmp(pwd, "/"))
+		return (ft_strjoin("/", path));
+	if (!ft_strcmp(pwd, "//"))
+		return (ft_strjoin("//", path));
+	return (ft_strjoin_3(pwd, "/", path));
+}
+
+static char	*add_slashes(t_minishell *shell, char **split, int is_double)
+{
+	char	*tmp;
+	char	*ret;
+
+	if (!split[0])
+	{
+		ft_free_matrix(split, ft_memlen(split, sizeof(char *)));
+		if (is_double)
+			return (ft_strdup("//"));
+		return (ft_strdup("/"));
+	}
+	tmp = ft_join_split_prefix((const char **)split, "/");
+	ft_free_matrix(split, ft_memlen(split, sizeof(char *)));
+	if (!tmp)
+		return (NULL);
+	if (!is_double && !shell->double_root)
+		return (tmp);
+	ret = ft_strjoin("/", tmp);
+	free(tmp);
+	return (ret);
+}
+
+char	*canonalize_path(t_minishell *shell, char *pwd, char *path)
 {
 	char	*ret;
-	char	*tmp;
 	char	**split;
+	int		is_double;
 
-	if (path[0] == '/')
-		ret = ft_strdup(path);
-	else
-	{
-		tmp = ft_strjoin(pwd, "/");
-		if (!tmp)
-			return (NULL);
-		ret = ft_strjoin(tmp, path);
-		free(tmp);
-	}
+	ret = get_raw_path(pwd, path);
 	if (!ret)
 		return (NULL);
+	is_double = 0;
+	if (ret[0] == '/' && ret[1] == '/' && ret[2] != '/')
+		is_double = 1;
 	split = ft_split(ret, '/');
 	free(ret);
 	if (!split)
 		return (NULL);
 	clean_split(split);
-	ret = ft_join_split_prefix((const char **)split, "/");
-	ft_free_matrix(split, ft_memlen(split, sizeof(char *)));
-	return (ret);
+	return (add_slashes(shell, split, is_double));
 }

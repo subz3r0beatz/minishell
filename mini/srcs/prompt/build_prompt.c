@@ -49,11 +49,13 @@ static int	build_pwd(t_robin *env, char **pwd, size_t *size)
 
 	no_malloc_error = 1;
 	*pwd = get_prompt_pwd(env, buffer, &no_malloc_error);
-	if (!*pwd && !no_malloc_error)
+	if (!pwd && !no_malloc_error)
 		return (1);
 	if (!*pwd)
 		return (0);
 	*size = *size + ft_strlen(*pwd);
+	if (!no_malloc_error)
+		return (1);
 	return (0);
 }
 

@@ -13,7 +13,7 @@
 #include "minishell.h"
 
 static int	handle_env_paths(t_minishell *shell, char *arg, char **dir,
-	int *print_path)
+	int *print_pwd)
 {
 	char	*env_value;
 
@@ -34,25 +34,12 @@ static int	handle_env_paths(t_minishell *shell, char *arg, char **dir,
 			return (1);
 		}
 		*dir = ft_strdup(env_value);
-		*print_path = 1;
+		*print_pwd = 1;
 	}
 	return (0);
 }
 
-static char	*build_full_path(char *base, char *target)
-{
-	char	*tmp;
-	char	*path;
-
-	tmp = ft_strjoin(base, "/");
-	if (!tmp)
-		return (NULL);
-	path = ft_strjoin(tmp, target);
-	free(tmp);
-	return (path);
-}
-
-static int	compare_paths(char **paths, char *arg, char **dir, int *print_path)
+static int	compare_paths(char **paths, char *arg, char **dir, int *print_pwd)
 {
 	char	*path;
 	size_t	i;
@@ -60,7 +47,7 @@ static int	compare_paths(char **paths, char *arg, char **dir, int *print_path)
 	i = 0;
 	while (paths[i])
 	{
-		path = build_full_path(paths[i], arg);
+		path = ft_strjoin_3(paths[i], "/", arg);
 		if (!path)
 		{
 			ft_putstr_fd("minishell: cd: malloc "
@@ -69,7 +56,7 @@ static int	compare_paths(char **paths, char *arg, char **dir, int *print_path)
 		}
 		if (access(path, F_OK) == 0)
 		{
-			*print_path = 1;
+			*print_pwd = 1;
 			*dir = path;
 			return (0);
 		}
@@ -80,7 +67,7 @@ static int	compare_paths(char **paths, char *arg, char **dir, int *print_path)
 }
 
 static int	parse_cdpath(t_minishell *shell, char *arg,
-	char **dir, int *print_path)
+	char **dir, int *print_pwd)
 {
 	char	*cdpath;
 	char	**paths;
@@ -100,23 +87,23 @@ static int	parse_cdpath(t_minishell *shell, char *arg,
 			"cannot allocate memory\n", STDERR_FILENO);
 		return (1);
 	}
-	ret = compare_paths(paths, arg, dir, print_path);
+	ret = compare_paths(paths, arg, dir, print_pwd);
 	ft_free_matrix(paths, ft_memlen(paths, sizeof(char *)));
 	if (!ret && !*dir)
 		*dir = ft_strdup(arg);
 	return (ret);
 }
 
-int	parse_dir(t_minishell *shell, char *arg, char **dir, int *print_path)
+int	parse_dir(t_minishell *shell, char *arg, char **dir, int *print_pwd)
 {
 	*dir = NULL;
-	*print_path = 0;
+	*print_pwd = 0;
 	if (!arg || (arg[0] == '-' && !arg[1]))
 	{
-		if (handle_env_paths(shell, arg, dir, print_path))
+		if (handle_env_paths(shell, arg, dir, print_pwd))
 			return (1);
 	}
-	else if (parse_cdpath(shell, arg, dir, print_path))
+	else if (parse_cdpath(shell, arg, dir, print_pwd))
 		return (1);
 	if (!*dir)
 	{

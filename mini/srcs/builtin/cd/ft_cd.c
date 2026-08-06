@@ -49,49 +49,11 @@ static size_t	check_flags(char **args, int *logical, int *e_flag)
 	return (i);
 }
 
-static int	malloc_error(char *ptr1, char *ptr2)
-{
-	free(ptr1);
-	free(ptr2);
-	ft_putstr_fd("minishell: cd: malloc: "
-		"cannot allocate memory\n", STDERR_FILENO);
-	return (1);
-}
-
-static int	update_vars(t_minishell *shell, char *dir)
-{
-	char			*pwd_value;
-	char			*oldpwd_value;
-
-	ft_free_matrix(shell->exported, ft_memlen(shell->exported, sizeof(char *)));
-	if (get_var_value(shell, "PWD", &pwd_value))
-	{
-		if (insert_new_node(shell, "PWD", dir, 0))
-			return (malloc_error(dir, NULL));
-		free(dir);
-		update_var_value(shell, "OLDPWD", NULL);
-	}
-	else
-	{
-		oldpwd_value = ft_strdup(pwd_value);
-		if (!oldpwd_value)
-			return (malloc_error(dir, NULL));
-		if (update_var_value(shell, "OLDPWD", oldpwd_value))
-		{
-			if (insert_new_node(shell, "OLDPWD", oldpwd_value, 0))
-				return (malloc_error(dir, oldpwd_value));
-			free(oldpwd_value);
-		}
-		update_var_value(shell, "PWD", dir);
-	}
-	return (0);
-}
-
 int	ft_cd(t_minishell *shell, char **args)
 {
 	int		logical;
 	int		e_flag;
-	int		print_path;
+	int		print_pwd;
 	size_t	i;
 	char	*dir;
 
@@ -105,13 +67,11 @@ int	ft_cd(t_minishell *shell, char **args)
 	}
 	if (args[i] && !args[i][0])
 		return (0);
-	if (parse_dir(shell, args[i], &dir, &print_path))
+	if (parse_dir(shell, args[i], &dir, &print_pwd))
 		return (1);
 	if (move_dir(shell, &dir, logical, e_flag))
 		return (1);
-	if (print_path)
+	if (print_pwd)
 		ft_putendl_fd(dir, STDOUT_FILENO);
-	if (update_vars(shell, dir))
-		return (1);
-	return (0);
+	return (update_vars(shell, dir));
 }

@@ -38,12 +38,12 @@ static char	*get_pwd(t_minishell *shell)
 	return (pwd);
 }
 
-static char	*parse_target(char *pwd, char *dir, int logical)
+static char	*parse_target(t_minishell *shell, char *pwd, char *dir, int logical)
 {
 	char	*target;
 
 	if (logical)
-		target = canonalize_path(pwd, dir);
+		target = canonalize_path(shell, pwd, dir);
 	else
 		target = ft_strdup(dir);
 	free(pwd);
@@ -134,7 +134,7 @@ int	move_dir(t_minishell *shell, char **dir, int logical, int e_flag)
 		free(*dir);
 		return (1);
 	}
-	target = parse_target(pwd, *dir, logical);
+	target = parse_target(shell, pwd, *dir, logical);
 	if (!target)
 		return (1);
 	if (do_chdir(target, *dir, &logical))

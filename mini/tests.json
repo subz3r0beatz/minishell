@@ -1,0 +1,3398 @@
+[
+  {
+    "cat": "Normal Cmds",
+    "cmd": "ls",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Normal Cmds",
+    "cmd": "ls -la",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Normal Cmds",
+    "cmd": "whoami",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Normal Cmds",
+    "cmd": "uname -s",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Normal Cmds",
+    "cmd": "cat /etc/passwd | grep -E 'root|nobody'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Normal Cmds",
+    "cmd": "head -n 5 /etc/passwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Normal Cmds",
+    "cmd": "tail -n 3 /etc/passwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Normal Cmds",
+    "cmd": "wc -l /etc/passwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Normal Cmds",
+    "cmd": "sort /etc/passwd | head -n 10",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Normal Cmds",
+    "cmd": "uniq -c /etc/passwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd .",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd ..",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /tmp",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd -L /tmp",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd -P /tmp",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd -e /tmp",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /does_not_exist",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /tmp/../tmp/../tmp",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd -",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd ~",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd //",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd ///",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /tmp/.",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /tmp/..",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /tmp/././.",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /tmp/../../..",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd -- /tmp",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "unset HOME && cd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "unset OLDPWD && cd -",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /tmp && pwd && cd - && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "export CDPATH=/tmp && cd ms_test_dir",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd ''",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd ' '",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd arg1 arg2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "pwd -L",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "pwd -P",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "pwd -LLLLPPPPLLLLPPPP",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "pwd arg1",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "pwd -L -P",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "pwd -P -L",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "export PWD=/fake/path && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "export PWD=/fake/path && pwd -L",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "export PWD=/fake/path && pwd -P",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo hello world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -n hello world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -nnnn hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -n -n -n -n hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e 'hello\\nworld\\t!'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -E 'hello\\nworld\\t!'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -ne 'test\\n'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e '\\x41\\x42\\x43'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e 'Before\\cAfter'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e '\\\\\\\\'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -n",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -n -e",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -nx hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo '-n' hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo \"-n\" hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo $USER $HOME",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo \"$USER\" '$USER'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export -p",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR_TEST=123",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR_TEST+=456",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export BAD-VAR=123",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export _VALID=1 2INVALID=2 ALSO_VALID=3",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export NULL_VAR EMPTY_VAR=",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export WEIRD_VAR=\"hello=world=test=123\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export A=1 B=2 C=3 && echo $A $B $C",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export =INVALID",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export +=INVALID",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export 123NUM=val",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR_NAME_@=val",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export MY_VAR=\"  spaces  \" && echo \"$MY_VAR\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR1=\"$USER\" && echo $VAR1",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export FOO=bar && export FOO+=baz && echo $FOO",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export NEW_VAR && env | grep NEW_VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export NEW_VAR= && env | grep NEW_VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset PATH",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset DOES_NOT_EXIST",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset BAD-NAME",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset -v PATH",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "export VAR2=val2 && unset -v VAR2 && echo $VAR2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "export A=1 B=2 C=3 && unset A B C && echo \"$A$B$C\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset PWD && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset OLDPWD && cd -",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset 123VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset =",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset VAR1 VAR2 VAR3",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -i",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -0",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -u PATH",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -C /tmp pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -a ARGV0 echo hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -S 'echo hello split string'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env --ignore-environment",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env --null",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env --chdir=/tmp pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env FOO=bar echo $FOO",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -i pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -i ls",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 0",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 42",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit -42",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 255",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 256",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 9223372036854775807",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 9223372036854775808",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit -9223372036854775808",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit -9223372036854775809",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 42 42",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 42hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit -- -42",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit +10",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit \"  42  \"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": ";;",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": ";&",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": ";;&",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo 1; ; echo 2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "| echo hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello |",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello ||",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello &&",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "&& echo hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "|| echo hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello | | echo world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello >",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello <",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello >>",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello <<",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello > < world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello > | world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "(echo hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello)",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "(echo hello)",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "()",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "( )",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo (hello)",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello (world)",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello;",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": ";",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "; ;",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello;;",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redir Alone",
+    "cmd": "> /tmp/ms_empty.txt && ls -l /tmp/ms_empty.txt; rm -f /tmp/ms_empty.txt",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redir Alone",
+    "cmd": ">> /tmp/ms_empty.txt && ls -l /tmp/ms_empty.txt; rm -f /tmp/ms_empty.txt",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redir Alone",
+    "cmd": "> /tmp/ms_empty.txt && < /tmp/ms_empty.txt; rm -f /tmp/ms_empty.txt",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redir Alone",
+    "cmd": "> /tmp/ms_out1 > /tmp/ms_out2 && ls -l /tmp/ms_out*; rm -f /tmp/ms_out*",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo hello > /tmp/ms_test_out.txt && cat /tmp/ms_test_out.txt; rm -f /tmp/ms_test_out.txt",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo hello > /tmp/ms_test_out.txt && echo append >> /tmp/ms_test_out.txt && cat /tmp/ms_test_out.txt; rm -f /tmp/ms_test_out.txt",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo hello > /tmp/ms_test_out.txt && cat < /tmp/ms_test_out.txt; rm -f /tmp/ms_test_out.txt",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "cat << EOF\nline 1\nline 2\nEOF",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "cat << 'EOF'\n$USER\nline 2\nEOF",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "cat << \"EOF\"\n$USER\nline 2\nEOF",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "cat << EOF1 << EOF2\nfirst\nEOF1\nsecond\nEOF2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo hello 2> /tmp/ms_err.txt; cat /tmp/ms_err.txt; rm -f /tmp/ms_err.txt",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "ls /does_not_exist 2> /tmp/ms_err.txt; cat /tmp/ms_err.txt; rm -f /tmp/ms_err.txt",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "ls /does_not_exist 2>> /tmp/ms_err.txt; cat /tmp/ms_err.txt; rm -f /tmp/ms_err.txt",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "echo hello | cat",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "cat /etc/hostname | grep -o a | wc -l",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "ls -la | grep srcs | wc -l",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "export TEST_PIPE=42 | echo hello; echo $TEST_PIPE",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "ls /does_not_exist | wc -l",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "echo hello | cat | cat | cat | grep h",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "echo 1 | echo 2 | echo 3",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "cat /etc/passwd | head -n 10 | tail -n 5 | wc -l",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "false | true",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "true | false",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "true && echo yes",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "false || echo no",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "false && echo no",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "true || echo no",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "echo 1 && echo 2 || echo 3",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "ls /does_not_exist && echo success || echo failed",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "false || false || echo third_time_charm",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "true && true && true && echo all_good",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "false && false && false || echo recovered",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(echo inside subshell)",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(export SUB_VAR=sub); echo $SUB_VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "( (echo nested) )",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "( ( (echo deep_nested) ) )",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(echo hello) > /tmp/ms_sub_out.txt; cat /tmp/ms_sub_out.txt; rm -f /tmp/ms_sub_out.txt",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(cd /tmp && pwd); pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(exit 42); echo $?",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(echo a && false) || echo b",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Complex Mix",
+    "cmd": "(echo a; echo b) | grep a && echo found || echo missing",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Complex Mix",
+    "cmd": "(cd /tmp && pwd) && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Complex Mix",
+    "cmd": "echo 1; (echo 2 && echo 3) | cat; echo 4",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Complex Mix",
+    "cmd": "(echo sub1 && (echo sub2 || echo sub3)) | cat > /tmp/ms_mix.txt && cat /tmp/ms_mix.txt; rm -f /tmp/ms_mix.txt",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Complex Mix",
+    "cmd": "false || (echo failed_first && echo recovering) | grep recovering",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Complex Mix",
+    "cmd": "echo background_job &",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo $USER",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "ls /does_not_exist; echo $?",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo $0",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo $$",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo $!",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo ~",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo ~/",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo '$USER' \"$USER\" $USER",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "export FOO=bar; echo $FOO",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo $NOSUCHVARIABLE_XYZ_123",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo $1 $2 $99",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo \"$USER$HOME\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo \"$USER $HOME\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo '$USER$HOME'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo \"$$USER\"",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo \"$? $? $?\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "export A=1; echo \"$A$A$A\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo $\"USER\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo $'USER'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo '' '' '   ' ''",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"\" \"   \" \"\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo   a    b      c  ",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo 'a   b   c'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"a   b   c\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"'hello'\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo '\"hello\"'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"$USER's laptop\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo 'nested \"double\" quotes'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"nested 'single' quotes\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"cat\"\"ls\"\"pwd\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo 'cat''ls''pwd'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Persistent State",
+    "cmd": "export A=10\nexport B=20\necho \"A=$A B=$B\"\nunset A\necho \"A=$A B=$B\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Persistent State",
+    "cmd": "cd /tmp\npwd\ncd ..\npwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Persistent State",
+    "cmd": "export VAR=hello\nexport VAR+=_world\necho $VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Persistent State",
+    "cmd": "export X=1\n(export X=2; echo \"subshell X=$X\")\necho \"parent X=$X\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Persistent State",
+    "cmd": "cd /tmp\n(cd /var; echo \"subshell pwd=\"; pwd)\necho \"parent pwd=\"; pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Persistent State",
+    "cmd": "export FOO=bar\nenv | grep FOO\nunset FOO\nenv | grep FOO",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Persistent State",
+    "cmd": "ls /does_not_exist\necho \"Status 1: $?\"\nls -d /tmp\necho \"Status 2: $?\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Rug Pull",
+    "cmd": "mkdir -p /tmp/ms_rugpull && cd /tmp/ms_rugpull && rm -rf /tmp/ms_rugpull && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Rug Pull",
+    "cmd": "mkdir -p /tmp/ms_rugpull && cd /tmp/ms_rugpull && rm -rf /tmp/ms_rugpull && cd .",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Rug Pull",
+    "cmd": "mkdir -p /tmp/ms_rugpull && cd /tmp/ms_rugpull && rm -rf /tmp/ms_rugpull && cd ..",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "env /tmp",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "/does_not_exist_mini_bin",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "''",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "..",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "State Corruption",
+    "cmd": "export PWD=/completely/fake/path; pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "State Corruption",
+    "cmd": "export PWD=/completely/fake/path; pwd -L",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "State Corruption",
+    "cmd": "export PWD=/completely/fake/path; pwd -P",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "cd -Z /tmp",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "pwd -Z",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "export -Z",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "unset -Z",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "env -Z",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "exit -Z",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /usr/bin/../bin/../../etc",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /var/tmp/../tmp",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd ///usr///bin///",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "export HOME=/tmp && cd && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "export HOME=/tmp/ && cd && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "export OLDPWD=/usr && cd - && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd -P /usr/bin && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd -L /usr/bin && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd -LP /usr/bin && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd -PL /usr/bin && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /dev/null",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /etc/passwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd non_existent_directory_12345",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd . . .",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "unset PWD && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "unset PWD && pwd -P",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "unset PWD && pwd -L",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "export PWD=\"\" && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "export PWD=\"/nonexistent\" && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -n -n -n",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -nnnnn -nnnn -n hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -n-n hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo --n hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -n- hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e 'a\\tb\\nc\\rd'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e 'a\\vb\\fc'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e '\\0101\\0102\\0103'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e '\\x41\\x42\\x43'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e '\\a\\b\\e'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e 'hello\\cworld'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -E 'hello\\nworld'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -nE 'hello\\nworld'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -En 'hello\\nworld'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e -n 'hello\\nworld'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export A= B= C=",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export A=1 B=2 C=3 && echo \"$A $B $C\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export _123=test && echo $_123",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR+=1 && export VAR+=2 && echo $VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR=\"line1\nline2\" && echo \"$VAR\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR=\"a b c\" && echo $VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR=\"a  b  c\" && echo \"$VAR\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export @VAR=123",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR@=123",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR#=123",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR%=123",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export EXPORT_TEST_123=456",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset \"\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset 123",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset @VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset VAR@",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset HOME && cd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset PATH && ls",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "export A=1 && unset A && echo $A",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "export A=1 B=2 && unset A B && echo \"$A$B\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset IFS && echo hello world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -i pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -i echo hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -u PATH ls",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -u HOME pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env A=1 B=2 env | grep -E 'A=|B='",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env --null",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -0",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env --ignore-environment pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -i FOO=bar printenv FOO",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 000",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 0001",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit +0",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit +42",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit -0",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 1000",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit -1000",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 9223372036854775806",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit -9223372036854775807",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit \"42\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit \"  -42  \"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello | | world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello ||| world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello &&& world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello >>> file",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello <<< word",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello <<<< word",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello > > file",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello < < file",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "(echo 1; echo 2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo 1; echo 2)",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "((echo 1)",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "(echo 1))",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo 1; ; ; echo 2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo 1 | ; echo 2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo 1 && ; echo 2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo 1 || ; echo 2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo 'unclosed single quote",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo \"unclosed double quote",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo 'unclosed double inside single\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "cat < /dev/null",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo test > /tmp/ms_r1 > /tmp/ms_r2 > /tmp/ms_r3 && cat /tmp/ms_r3; rm -f /tmp/ms_r*",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo line1 > /tmp/ms_a && echo line2 >> /tmp/ms_a && cat /tmp/ms_a; rm -f /tmp/ms_a",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "< /etc/passwd grep root | wc -l",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "grep root < /etc/passwd | wc -l",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "cat < /etc/passwd > /tmp/ms_copy && wc -l < /tmp/ms_copy; rm -f /tmp/ms_copy",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo 1 > /tmp/ms_file && < /tmp/ms_file cat && rm -f /tmp/ms_file",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo hello 2>&1 | cat",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "echo a | echo b | echo c",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "cat /etc/passwd | grep -v root | head -n 5 | wc -l",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "echo \"line1\nline2\nline3\" | grep line | wc -l",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "false | false | false | true",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "true | true | true | false",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "echo test | cat | cat | cat | cat | cat",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "ls -l /tmp | head -n 2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "true && true || false",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "false || true && true",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "false || false && true",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "true || false && false",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "echo 1 && false || echo 2 && echo 3",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "false && echo 1 || echo 2 || echo 3",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(echo 1; echo 2; echo 3)",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(cd /tmp && pwd); pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(export A=1); echo $A",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(unset PATH); ls",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "((echo subshell_1) && (echo subshell_2))",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(echo a && (echo b || echo c)) | cat",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo 'a'\"b\"'c'\"d\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"'\"'\"'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo '\"'\"'\"'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"\"\"\"\"\"hello\"\"\"\"\"\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo ''''''hello''''''",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"hello \"\"world\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "export A=a B=b C=c && echo $A$B$C",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "export A=a B=b C=c && echo \"$A $B $C\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "export A=a && echo \"$A_B\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "export A_B=ab && echo \"$A_B\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo \"$UNKNOWN_VAR\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo '$UNKNOWN_VAR'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo $UNKNOWN_VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "/bin/echo hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "/bin/ls -d /tmp",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "./non_existent_binary",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "../non_existent_binary",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "/usr/bin/touch /tmp/ms_touch && ls /tmp/ms_touch; rm -f /tmp/ms_touch",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR=value && env | grep VAR=",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "export VAR=value && unset VAR && env | grep VAR=",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /usr && cd share && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo \"line 1\nline 2\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "cd /tmp && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Persistent State",
+    "cmd": "export A=1 && export B=$A && echo $B",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Persistent State",
+    "cmd": "export A=1 && (export A=2) && echo $A",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Persistent State",
+    "cmd": "export A=1 && (unset A) && echo $A",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo 1 > /tmp/f1 && echo 2 > /tmp/f2 && cat /tmp/f1 /tmp/f2; rm -f /tmp/f1 /tmp/f2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "echo 1 | cat | cat | cat | cat",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello > > world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello < < world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "true; echo $?",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "false; echo $?",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "ls /does_not_exist; echo $?",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "expr 1 + 1; echo $?",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"$\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo '$'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"$ \"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo '$ '",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo\thello\tworld",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo   \t   hello   \t   world   ",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Control & Semicolons",
+    "cmd": "echo 1 ; echo 2 ; echo 3 ;",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Control & Semicolons",
+    "cmd": "echo 1; echo 2; echo 3;",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(echo 1; echo 2) | (grep 1)",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(echo 1) | (echo 2) | (echo 3)",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e 'a\\bb'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e 'a\\rb'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e 'a\\\\b'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export _=valid",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export _A_B_C=123",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export A123=123",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset PWD && echo $PWD",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset SHLVL && echo $SHLVL",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "/bin/pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "/bin/whoami",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo 1 >> /tmp/ms_app && echo 2 >> /tmp/ms_app && cat /tmp/ms_app; rm -f /tmp/ms_app",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "true && false || true && echo ok",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "false || true && false || echo ok",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "export X=hello && echo \"$X\"world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "export X=hello && echo '$X'world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -i HOME=/tmp pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 257",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 512",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "export FILE=/tmp/ms_var_file && echo test > $FILE && cat $FILE; rm -f /tmp/ms_var_file",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "true | false; echo $?",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "false | true; echo $?",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(echo 1; echo 2) > /tmp/ms_sub_out && cat /tmp/ms_sub_out; rm -f /tmp/ms_sub_out",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Normal Cmds",
+    "cmd": "\n\n",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Normal Cmds",
+    "cmd": "   \n   ",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export A=1 B=2 C=3 D=4 E=5 && echo $A$B$C$D$E",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "mkdir -p /tmp/ms_d1/d2/d3 && cd /tmp/ms_d1/d2/d3 && pwd && cd ../../..; rm -rf /tmp/ms_d1",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Complex Mix",
+    "cmd": "echo 1 | grep 1 && (echo 2 || echo 3) > /tmp/ms_final && cat /tmp/ms_final; rm -f /tmp/ms_final",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /var/spool",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /etc/../../tmp",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /././tmp",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd ../../../../../../../..",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /bin/ls",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /nonexistent_directory_abcd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "export HOME=/dev/null && cd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "export HOME=/tmp/ms_home_test && mkdir -p /tmp/ms_home_test && cd && pwd; rm -rf /tmp/ms_home_test",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "unset HOME && cd ~",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "pwd extra_arg1 extra_arg2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "pwd -P -L -P -L",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "export PWD=/bin && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -n -n -n -n -n -n hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -nnnnnnnnnnnn hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -n -e -n -e hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e 'line1\\nline2\\nline3'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e 'a\\tb\\tc\\td'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e '\\x48\\x65\\x6c\\x6c\\x6f'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e '123\\c456'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo \"$USER\" '$USER' \"$USER\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo '$USER' \"$USER\" '$USER'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -n \"\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo ''",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export A=1 B=2 C=3 D=4 && export -p | grep -E 'A=|B=|C=|D='",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export 1234=test",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export A-B=test",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export A.B=test",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export A?B=test",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR=\"val1 val2 val3\" && echo \"$VAR\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR=\"val1  val2  val3\" && echo $VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR+=append1 && export VAR+=append2 && echo $VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR= && echo \"empty:$VAR\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR && env | grep VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset 123_INVALID",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset INVALID-NAME",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset INVALID.NAME",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "export A=1 B=2 C=3 && unset A C && echo \"$A:$B:$C\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "unset non_existent_var_12345",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -i /bin/pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -i /bin/echo hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env -u PATH /bin/ls",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: env",
+    "cmd": "env VAR1=1 VAR2=2 env | grep -E 'VAR1|VAR2'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit +42",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit -0",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 00000000000000042",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 9223372036854775807",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit -9223372036854775808",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 9223372036854775808",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit -9223372036854775809",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit abcdef",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 123abc",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 1 2 3 4",
+    "bash_cmp": false,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello | | | cat",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello > > > out",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello < < < in",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello ; ; ;",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello && && world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello || || world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "(echo 1; echo 2; ",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo 1; echo 2; )",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo \"unclosed quote string",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo 'unclosed single quote string",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "cat < /etc/passwd > /tmp/ms_redir_out && wc -l < /tmp/ms_redir_out; rm -f /tmp/ms_redir_out",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo line1 > /tmp/ms_f && echo line2 >> /tmp/ms_f && echo line3 >> /tmp/ms_f && cat /tmp/ms_f; rm -f /tmp/ms_f",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "cat << 'LIMITER'\n$USER\n$HOME\nLIMITER",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "cat << \"LIMITER\"\n$USER\n$HOME\nLIMITER",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "cat << LIMITER\n$USER\n$HOME\nLIMITER",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "cat << EOF1 << EOF2 << EOF3\nfirst\nEOF1\nsecond\nEOF2\nthird\nEOF3",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo test > /tmp/ms_f1 > /tmp/ms_f2 > /tmp/ms_f3 && ls /tmp/ms_f*; rm -f /tmp/ms_f*",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "cat /etc/passwd | grep -v root | grep -v nobody | wc -l",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "echo 1 | echo 2 | echo 3 | echo 4 | echo 5",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "false | true | false | true",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "true | false | true | false",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "ls /does_not_exist | cat | wc -l",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "true && true && true && true",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "false || false || false || true",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "true && false || true && echo 1",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "false || true && false || echo 2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "( ( ( (echo nested_4) ) ) )",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(cd /tmp && pwd) && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(export A=100); echo \"A=$A\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "(exit 123); echo \"exit_code=$?\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"'\"'\"'\"'\"'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo '\"'\"'\"'\"'\"'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"a\"'b'\"c\"'d'\"e\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo   1   2   3   4   5   ",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "export VAR=hello && echo \"$VAR_WORLD\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "export VAR_WORLD=hello_world && echo \"$VAR_WORLD\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "echo \"$? $? $? $?\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "export A=1 B=2 C=3 && echo \"$A$B$C\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "/usr/bin/id",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "/usr/bin/env /bin/pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "./non_existent_script.sh",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "cd -X /tmp",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "pwd -X",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "export -X",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "unset -X",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "env -X",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Flag Errors",
+    "cmd": "exit -X",
+    "bash_cmp": true,
+    "flag_error": true
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /tmp/ && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /tmp// && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd ///tmp/// && pwd",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /etc/../etc/../tmp",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: cd",
+    "cmd": "cd /var/log/../spool",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -n -n -n -n -n -n -n -n hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -nnnnnnnnnnnnnnnnnnnn hello",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e '\\x41\\x42\\x43\\x44\\x45'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: echo",
+    "cmd": "echo -e 'line1\\rline2'",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export A=1 B=2 C=3 D=4 E=5 F=6 && echo $A$B$C$D$E$F",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR=\"  a  b  c  \" && echo \"$VAR\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: export",
+    "cmd": "export VAR=\"  a  b  c  \" && echo $VAR",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: unset",
+    "cmd": "export A=1 B=2 C=3 D=4 && unset A B C D && echo \"$A$B$C$D\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit 00000000000000000000",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: exit",
+    "cmd": "exit +00000000000000000042",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello | | | | | world",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Syntax Errors",
+    "cmd": "echo hello > > > > > out",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Redirections",
+    "cmd": "echo 1 > /tmp/ms_out1 && echo 2 > /tmp/ms_out2 && cat /tmp/ms_out1 /tmp/ms_out2; rm -f /tmp/ms_out*",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Pipes",
+    "cmd": "echo hello | cat | cat | cat | cat | cat | cat",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Logic Operators",
+    "cmd": "true || echo 1 && echo 2 || echo 3",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Subshells",
+    "cmd": "( (echo 1; echo 2) | cat )",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo \"\"\"\"\"\"\"\"\"\"hello\"\"\"\"\"\"\"\"\"\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Quotes & Parsing",
+    "cmd": "echo ''''''''''hello''''''''''",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Expansions",
+    "cmd": "export A=10 && echo \"$A\"\"$A\"\"$A\"",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Path & Exec",
+    "cmd": "/bin/cat /etc/passwd | /usr/bin/head -n 2",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Custom",
+    "cmd": "unset HOME && echo ~",
+    "bash_cmp": true,
+    "flag_error": false
+  }
+]

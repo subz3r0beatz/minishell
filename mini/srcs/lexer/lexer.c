@@ -34,23 +34,29 @@ static size_t	get_word_len(char *input, uint8_t table[256][256])
 	return (len);
 }
 
-static size_t	handle_rest(char *input, t_token *token,
+static size_t	handle_token_type(char *input, t_token *token,
 	uint8_t table[256][256])
 {
-	token->type
-		= (t_token_type)table[(unsigned char)input[0]][(unsigned char)input[1]];
-	if (token->type == TOKEN_WORD)
-		return (get_word_len(input, table));
-	else if (token->type == TOKEN_OR || token->type == TOKEN_AND
-		|| token->type == TOKEN_DLESS || token->type == TOKEN_DGREAT)
-		return (2);
+	if (input[0] == '<' && input[1] == '<' && input[2] == '<')
+	{
+		token->type = TOKEN_TLESS;
+		return (3);
+	}
 	else
 	{
-		if (input[0] == ';' && input[1] == '&')
+		token->type
+			= (t_token_type)table
+		[(unsigned char)input[0]][(unsigned char)input[1]];
+		if (token->type == TOKEN_WORD)
+			return (get_word_len(input, table));
+		else if (token->type == TOKEN_OR || token->type == TOKEN_AND
+			|| token->type == TOKEN_DLESS || token->type == TOKEN_DGREAT)
 			return (2);
-		if (input[0] == ';' && input[1] == ';' && input[2] == '&')
+		else if (input[0] == ';' && input[1] == '&')
+			return (2);
+		else if (input[0] == ';' && input[1] == ';' && input[2] == '&')
 			return (3);
-		if (input[0] == ';' && input[1] == ';' && input[2] != '&')
+		else if (input[0] == ';' && input[1] == ';' && input[2] != '&')
 			return (2);
 		return (1);
 	}
@@ -64,17 +70,17 @@ static t_token	*handle_token(char *input, size_t *i,
 
 	token = malloc(sizeof(t_token));
 	if (!token)
-		return (NULL);
-	if (input[0] == '<' && input[1] == '<' && input[2] == '<')
 	{
-		token->type = TOKEN_TLESS;
-		len = 3;
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
+		return (NULL);
 	}
-	else
-		len = handle_rest(input, token, table);
+	len = handle_token_type(input, token, table);
 	token->value = ft_substr(input, 0, len);
 	if (!token->value)
 	{
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 		free(token);
 		return (NULL);
 	}

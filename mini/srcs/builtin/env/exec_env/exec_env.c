@@ -102,8 +102,6 @@ int	exec_env(t_minishell *shell, char **matrices[2],
 	}
 	if (pid == 0)
 	{
-		close(3);
-		close(4);
 		free_shell(shell, 0);
 		run_child(matrices, flags, max_uints);
 	}

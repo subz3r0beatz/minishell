@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stddef.h>
 
 static int	usage_error(char c)
 {
@@ -67,6 +66,8 @@ static int	handle_logical(t_minishell *shell)
 		if (pwd_stat.st_ino == dot_stat.st_ino
 			&& pwd_stat.st_dev == dot_stat.st_dev)
 		{
+			if (shell->double_root && pwd[0] == '/' && pwd[1] != '/')
+				ft_putchar_fd('/', STDOUT_FILENO);
 			ft_putendl_fd(pwd, STDOUT_FILENO);
 			return (0);
 		}
@@ -76,8 +77,9 @@ static int	handle_logical(t_minishell *shell)
 
 int	ft_pwd(t_minishell *shell, char **args)
 {
-	int				flag;
-	char			pwd[8192];
+	int		flag;
+	char	pwd[8192];
+	char	*value;
 
 	flag = check_flags(args);
 	if (!flag)
@@ -91,6 +93,9 @@ int	ft_pwd(t_minishell *shell, char **args)
 			"getcwd: cannot access parent directories");
 		return (1);
 	}
+	get_var_value(shell, "PWD", &value);
+	if (shell->double_root)
+		ft_putchar_fd('/', STDOUT_FILENO);
 	ft_putendl_fd(pwd, STDOUT_FILENO);
 	return (0);
 }

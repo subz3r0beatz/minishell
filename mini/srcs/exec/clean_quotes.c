@@ -41,7 +41,7 @@ char	*clean_quotes(char *word)
 	size_t	i;
 	size_t	j;
 
-	new_word = ft_calloc(sizeof(char), (get_stripped_len(word) + 1));
+	new_word = malloc(sizeof(char) * (get_stripped_len(word) + 1));
 	if (new_word)
 	{
 		i = 0;
@@ -57,6 +57,7 @@ char	*clean_quotes(char *word)
 				new_word[j++] = word[i];
 			i++;
 		}
+		new_word[j] = 0;
 	}
 	return (new_word);
 }
