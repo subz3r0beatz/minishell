@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stddef.h>
-#include <stdio.h>
 
 static void	process_input(t_minishell *shell, char *input)
 {
@@ -28,68 +26,62 @@ static void	process_input(t_minishell *shell, char *input)
 	shell->ast = NULL;
 }
 
-static char	*extract_line(char **stash)
+static int	grow_buf(char **buf, size_t len, size_t *cap)
 {
-	char	*line;
-	char	*rest;
+	char	*new_buf;
 	size_t	i;
 
-	if (!stash || !*stash || !**stash)
-		return (NULL);
+	*cap *= 2;
+	new_buf = malloc(sizeof(char) * (*cap));
+	if (!new_buf)
+	{
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
+		free(*buf);
+		*buf = NULL;
+		return (0);
+	}
 	i = 0;
-	while ((*stash)[i] && (*stash)[i] != '\n')
-		i++;
-	line = ft_substr(*stash, 0, i);
-	if (!line)
-		return (NULL);
-	if ((*stash)[i] == '\n')
-		i++;
-	rest = ft_substr(*stash, i, ft_strlen(*stash) - i);
-	free(*stash);
-	*stash = rest;
-	if (*stash && !**stash)
+	while (i < len)
 	{
-		free(*stash);
-		*stash = NULL;
+		new_buf[i] = (*buf)[i];
+		i++;
 	}
-	return (line);
+	free(*buf);
+	*buf = new_buf;
+	return (1);
 }
 
-static ssize_t	read_to_stash(int fd, char **stash)
+char	*read_line_non_interactive(int fd)
 {
-	char	buf[4096];
-	char	*tmp;
-	ssize_t	bytes;
+	char	*buf;
+	char	c;
+	size_t	i;
+	size_t	cap;
+	int		b;
 
-	bytes = 1;
-	while (bytes > 0 && (!*stash || !ft_strchr(*stash, '\n')))
+	cap = 128;
+	buf = malloc(sizeof(char) * cap);
+	if (!buf)
 	{
-		bytes = read(fd, buf, 4095);
-		if (bytes < 0)
-		{
-			free(*stash);
-			*stash = NULL;
-			return (-1);
-		}
-		if (bytes == 0)
-			break ;
-		buf[bytes] = 0;
-		if (!*stash)
-			*stash = ft_strdup("");
-		tmp = ft_strjoin(*stash, buf);
-		free(*stash);
-		*stash = tmp;
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
+		return (NULL);
 	}
-	return (bytes);
-}
-
-char	*read_line_non_interactive(int fd, char **stash)
-{
-	if (fd < 0 || !stash)
+	i = 0;
+	while ((b = read(fd, &c, 1)) > 0 && c != '\n')
+	{
+		if (i + 1 >= cap && !grow_buf(&buf, i, &cap))
+			return (NULL);
+		buf[i++] = c;
+	}
+	if (i == 0 && b <= 0)
+	{
+		free(buf);
 		return (NULL);
-	if (read_to_stash(fd, stash) < 0)
-		return (NULL);
-	return (extract_line(stash));
+	}
+	buf[i] = '\0';
+	return (buf);
 }
 
 void	loop(t_minishell *shell)
@@ -108,7 +100,7 @@ void	loop(t_minishell *shell)
 				free(prompt);
 		}
 		else
-			shell->input = read_line_non_interactive(STDIN_FILENO, &shell->stash);
+			shell->input = read_line_non_interactive(STDIN_FILENO);
 		if (!shell->input && isatty(STDIN_FILENO))
 			ft_putstr_fd("exit\n", STDERR_FILENO);
 		if (!shell->input)

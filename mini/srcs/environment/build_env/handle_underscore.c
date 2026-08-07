@@ -17,48 +17,40 @@ int	handle_relative(t_minishell *shell, char *argv0)
 	char	buf[PATH_MAX];
 	char	*underscore;
 	char	*tmp;
+	int		status;
 
 	if (!getcwd(buf, PATH_MAX))
 		return (insert_new_node(shell, "_", argv0, 1));
-	underscore = ft_strjoin(buf, "/");
-	if (!underscore)
-		return (1);
-	tmp = ft_strjoin(underscore, argv0);
-	free(underscore);
+	tmp = ft_strjoin_3(buf, "/", argv0);
 	if (!tmp)
 		return (1);
 	underscore = canonalize_path(shell, buf, tmp);
 	free(tmp);
 	if (!underscore)
 		return (1);
-	if (insert_new_node(shell, "_", underscore, 1))
-	{
-		free(underscore);
-		return (1);
-	}
+	status = insert_new_node(shell, "_", underscore, 1);
 	free(underscore);
-	return (0);
+	return (status);
 }
 
 static int	handle_path(t_minishell *shell, char **split, char *argv0)
 {
 	char	*underscore;
-	char	*tmp;
 	size_t	i;
 	int		status;
 
 	i = 0;
 	while (split && split[i])
 	{
-		tmp = ft_strjoin(split[i], "/");
-		if (!tmp)
-			return (1);
-		underscore = ft_strjoin(tmp, argv0);
-		free(tmp);
+		underscore = ft_strjoin_3(split[i], "/", argv0);
 		if (!underscore)
+		{
+			ft_free_matrix(split, ft_memlen(split, sizeof(char *)));
 			return (1);
+		}
 		if (!access(underscore, X_OK))
 		{
+			ft_free_matrix(split, ft_memlen(split, sizeof(char *)));
 			status = insert_new_node(shell, "_", underscore, 1);
 			free(underscore);
 			return (status);
@@ -66,16 +58,18 @@ static int	handle_path(t_minishell *shell, char **split, char *argv0)
 		free(underscore);
 		i++;
 	}
-	return (2);
+	ft_free_matrix(split, ft_memlen(split, sizeof(char *)));
+	return (handle_relative(shell, argv0));
 }
 
-int	handle_underscore(t_minishell *shell, char *argv0)
+int	handle_underscore(t_minishell *shell)
 {
+	char	*argv0;
 	char	*value;
 	char	*path;
 	char	**split;
-	int		status;
 
+	argv0 = shell->argv0;
 	get_var_value(shell, "_", &value);
 	if (!argv0 || !argv0[0])
 	{
@@ -91,9 +85,5 @@ int	handle_underscore(t_minishell *shell, char *argv0)
 	split = ft_split(path, ':');
 	if (!split)
 		return (1);
-	status = handle_path(shell, split, argv0);
-	ft_free_matrix(split, ft_memlen(split, sizeof(char *)));
-	if (status == 2)
-		return (handle_relative(shell, argv0));
-	return (status);
+	return (handle_path(shell, split, argv0));
 }

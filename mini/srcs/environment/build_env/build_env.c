@@ -30,50 +30,26 @@ static size_t	get_capacity(char **envp)
 	return (cap);
 }
 
-static int	insert_new_var(t_minishell *shell, char *key, char *value)
-{
-	t_robin_node	robin_node;
-
-	robin_node = create_node(shell->env, key, value, 1);
-	if (!robin_node.key || !robin_node.value)
-	{
-		robin_free(shell->env);
-		shell->env = NULL;
-		return (1);
-	}
-	if (robin_insert(shell->env, robin_node))
-	{
-		shell->env->del_function(robin_node.key, robin_node.value);
-		robin_free(shell->env);
-		shell->env = NULL;
-		return (1);
-	}
-	shell->exported_count++;
-	return (0);
-}
-
 static int	parse_var(t_minishell *shell, char *str)
 {
 	size_t	i;
-	char	*key;
+	char	saved;
 	char	*value;
 
+	value = NULL;
 	i = 0;
 	while (str[i] && str[i] != '=')
 		i++;
-	key = ft_substr(str, 0, i);
-	if (!key)
-		return (1);
-	value = NULL;
-	if (str[i])
-		value = ft_strdup(str + i + 1);
-	if ((str[i] && !value))
+	if (str[i] && str[i + 1])
+		value = &str[i + 1];
+	saved = str[i];
+	str[i] = '\0';
+	if (insert_new_node(shell, str, value, 1))
 	{
-		free(key);
+		str[i] = saved;
 		return (1);
 	}
-	if (insert_new_var(shell, key, value))
-		return (1);
+	str[i] = saved;
 	return (0);
 }
 
@@ -84,7 +60,7 @@ static int	cpy_env(t_minishell *shell, char **envp)
 
 	cap = get_capacity(envp);
 	if (!cap)
-		return (1);
+		return (0);
 	shell->env = robin_init(cap, fnv1a, ft_strcmp, delete_node);
 	if (!shell->env)
 		return (1);
@@ -98,16 +74,22 @@ static int	cpy_env(t_minishell *shell, char **envp)
 	return (0);
 }
 
-int	build_env(t_minishell *shell, char **envp, char *argv0)
+int	build_env(t_minishell *shell, char **envp)
 {
 	if (cpy_env(shell, envp))
+	{
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
+		return (1);
+	}
+	if (!shell->env)
 		return (1);
 	if (handle_pwd(shell) || handle_oldpwd(shell)
-		|| handle_shlvl(shell) || handle_underscore(shell, argv0)
+		|| handle_shlvl(shell) || handle_underscore(shell)
 		|| handle_pid(shell))
 	{
-		robin_free(shell->env);
-		shell->env = NULL;
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 		return (1);
 	}
 	return (0);

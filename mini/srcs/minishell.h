@@ -61,7 +61,6 @@ typedef struct s_minishell
 	int			double_root;
 	int			exit_status;
 	char		*input;
-	char		*stash;
 	char		*argv0;
 	char		*pid;
 	char		*last_pid;

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html><head><meta charset='utf-8'><title>Minishell Test Report</title>
+<style>
+body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #1e1e2e; color: #cdd6f4; margin: 20px; }
+h1 { color: #89b4fa; }
+.summary { background-color: #252538; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+.pass { color: #a6e3a1; font-weight: bold; }
+.fail { color: #f38ba8; font-weight: bold; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { padding: 10px; text-align: left; border-bottom: 1px solid #313244; }
+th { background-color: #252538; color: #89b4fa; }
+tr:nth-child(even) { background-color: #181825; }
+pre { font-family: Consolas, monospace; font-size: 12px; background: #11111b; padding: 10px; border-radius: 5px; white-space: pre-wrap; }
+</style></head><body>
+<h1>Minishell Automated Execution Report</h1>
+<div class='summary'><b>Total Tests:</b> 566 | <span class='pass'>Passed: 0</span> | <span class='fail'>Failed: 0</span></div>
+<table><tr><th>ID</th><th>Category</th><th>Command</th><th>Status</th><th>Duration</th><th>Details</th></tr>
+<tr><td>1</td><td>Normal Cmds</td><td><code>ls</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>2</td><td>Normal Cmds</td><td><code>ls -la</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>3</td><td>Normal Cmds</td><td><code>whoami</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>4</td><td>Normal Cmds</td><td><code>uname -s</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>5</td><td>Normal Cmds</td><td><code>cat /etc/passwd | grep -E 'root|nobody'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>6</td><td>Normal Cmds</td><td><code>tail -n 3 /etc/passwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>7</td><td>Normal Cmds</td><td><code>head -n 5 /etc/passwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>8</td><td>Normal Cmds</td><td><code>wc -l /etc/passwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>9</td><td>Normal Cmds</td><td><code>sort /etc/passwd | head -n 10</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>10</td><td>Normal Cmds</td><td><code>uniq -c /etc/passwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>11</td><td>Builtin: cd</td><td><code>cd .</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>12</td><td>Builtin: cd</td><td><code>cd ..</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>13</td><td>Builtin: cd</td><td><code>cd /tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>14</td><td>Builtin: cd</td><td><code>cd -L /tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>15</td><td>Builtin: cd</td><td><code>cd -P /tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>16</td><td>Builtin: cd</td><td><code>cd -e /tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>17</td><td>Builtin: cd</td><td><code>cd /does_not_exist</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>18</td><td>Builtin: cd</td><td><code>cd /tmp/../tmp/../tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>19</td><td>Builtin: cd</td><td><code>cd -</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>20</td><td>Builtin: cd</td><td><code>cd ~</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>21</td><td>Builtin: cd</td><td><code>cd //</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>22</td><td>Builtin: cd</td><td><code>cd ///</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>23</td><td>Builtin: cd</td><td><code>cd /tmp/.</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>24</td><td>Builtin: cd</td><td><code>cd /tmp/..</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>25</td><td>Builtin: cd</td><td><code>cd /tmp/././.</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>26</td><td>Builtin: cd</td><td><code>cd /tmp/../../..</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>27</td><td>Builtin: cd</td><td><code>cd -- /tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>28</td><td>Builtin: cd</td><td><code>unset HOME && cd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>29</td><td>Builtin: cd</td><td><code>unset OLDPWD && cd -</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>30</td><td>Builtin: cd</td><td><code>cd /tmp && pwd && cd - && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>31</td><td>Builtin: cd</td><td><code>export CDPATH=/tmp && cd ms_test_dir</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>32</td><td>Builtin: cd</td><td><code>cd ''</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>33</td><td>Builtin: cd</td><td><code>cd ' '</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>34</td><td>Builtin: cd</td><td><code>cd arg1 arg2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>35</td><td>Builtin: pwd</td><td><code>pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>36</td><td>Builtin: pwd</td><td><code>pwd -L</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>37</td><td>Builtin: pwd</td><td><code>pwd -P</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>38</td><td>Builtin: pwd</td><td><code>pwd -LLLLPPPPLLLLPPPP</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>39</td><td>Builtin: pwd</td><td><code>pwd -L -P</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>40</td><td>Builtin: pwd</td><td><code>pwd -P -L</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>41</td><td>Builtin: pwd</td><td><code>pwd arg1</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>42</td><td>Builtin: pwd</td><td><code>export PWD=/fake/path && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>43</td><td>Builtin: pwd</td><td><code>export PWD=/fake/path && pwd -L</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>44</td><td>Builtin: pwd</td><td><code>export PWD=/fake/path && pwd -P</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>45</td><td>Builtin: echo</td><td><code>echo</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>46</td><td>Builtin: echo</td><td><code>echo hello world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>47</td><td>Builtin: echo</td><td><code>echo -n hello world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>48</td><td>Builtin: echo</td><td><code>echo -nnnn hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>49</td><td>Builtin: echo</td><td><code>echo -n -n -n -n hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>50</td><td>Builtin: echo</td><td><code>echo -e 'hello\nworld\t!'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>51</td><td>Builtin: echo</td><td><code>echo -E 'hello\nworld\t!'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>52</td><td>Builtin: echo</td><td><code>echo -ne 'test\n'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>53</td><td>Builtin: echo</td><td><code>echo -e '\x41\x42\x43'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>54</td><td>Builtin: echo</td><td><code>echo -e 'Before\cAfter'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>55</td><td>Builtin: echo</td><td><code>echo -e '\\\\'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>56</td><td>Builtin: echo</td><td><code>echo -n</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>57</td><td>Builtin: echo</td><td><code>echo -n -e</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>58</td><td>Builtin: echo</td><td><code>echo -nx hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>59</td><td>Builtin: echo</td><td><code>echo '-n' hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>60</td><td>Builtin: echo</td><td><code>echo "-n" hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>61</td><td>Builtin: echo</td><td><code>echo $USER $HOME</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>62</td><td>Builtin: echo</td><td><code>echo "$USER" '$USER'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>63</td><td>Builtin: export</td><td><code>export</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>64</td><td>Builtin: export</td><td><code>export -p</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>65</td><td>Builtin: export</td><td><code>export VAR_TEST=123</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>66</td><td>Builtin: export</td><td><code>export VAR_TEST+=456</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>67</td><td>Builtin: export</td><td><code>export BAD-VAR=123</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>68</td><td>Builtin: export</td><td><code>export _VALID=1 2INVALID=2 ALSO_VALID=3</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>69</td><td>Builtin: export</td><td><code>export NULL_VAR EMPTY_VAR=</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>70</td><td>Builtin: export</td><td><code>export WEIRD_VAR="hello=world=test=123"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>71</td><td>Builtin: export</td><td><code>export A=1 B=2 C=3 && echo $A $B $C</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>72</td><td>Builtin: export</td><td><code>export =INVALID</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>73</td><td>Builtin: export</td><td><code>export +=INVALID</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>74</td><td>Builtin: export</td><td><code>export 123NUM=val</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>75</td><td>Builtin: export</td><td><code>export VAR_NAME_@=val</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>76</td><td>Builtin: export</td><td><code>export MY_VAR="  spaces  " && echo "$MY_VAR"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>77</td><td>Builtin: export</td><td><code>export VAR1="$USER" && echo $VAR1</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>78</td><td>Builtin: export</td><td><code>export FOO=bar && export FOO+=baz && echo $FOO</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>79</td><td>Builtin: export</td><td><code>export NEW_VAR && env | grep NEW_VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>80</td><td>Builtin: export</td><td><code>export NEW_VAR= && env | grep NEW_VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>81</td><td>Builtin: unset</td><td><code>unset PATH</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>82</td><td>Builtin: unset</td><td><code>unset DOES_NOT_EXIST</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>83</td><td>Builtin: unset</td><td><code>unset BAD-NAME</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>84</td><td>Builtin: unset</td><td><code>unset -v PATH</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>85</td><td>Builtin: unset</td><td><code>export VAR2=val2 && unset -v VAR2 && echo $VAR2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>86</td><td>Builtin: unset</td><td><code>export A=1 B=2 C=3 && unset A B C && echo "$A$B$C"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>87</td><td>Builtin: unset</td><td><code>unset PWD && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>88</td><td>Builtin: unset</td><td><code>unset OLDPWD && cd -</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>89</td><td>Builtin: unset</td><td><code>unset 123VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>90</td><td>Builtin: unset</td><td><code>unset =</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>91</td><td>Builtin: unset</td><td><code>unset VAR1 VAR2 VAR3</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>92</td><td>Builtin: env</td><td><code>env</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>93</td><td>Builtin: env</td><td><code>env -i</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>94</td><td>Builtin: env</td><td><code>env -0</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>95</td><td>Builtin: env</td><td><code>env -u PATH</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>96</td><td>Builtin: env</td><td><code>env -C /tmp pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>97</td><td>Builtin: env</td><td><code>env -a ARGV0 echo hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>98</td><td>Builtin: env</td><td><code>env -S 'echo hello split string'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>99</td><td>Builtin: env</td><td><code>env --ignore-environment</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>100</td><td>Builtin: env</td><td><code>env --null</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>101</td><td>Builtin: env</td><td><code>env --chdir=/tmp pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>102</td><td>Builtin: env</td><td><code>env FOO=bar echo $FOO</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>103</td><td>Builtin: env</td><td><code>env -i pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>104</td><td>Builtin: env</td><td><code>env -i ls</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>105</td><td>Builtin: exit</td><td><code>exit 0</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>106</td><td>Builtin: exit</td><td><code>exit 42</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>107</td><td>Builtin: exit</td><td><code>exit -42</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>108</td><td>Builtin: exit</td><td><code>exit 255</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>109</td><td>Builtin: exit</td><td><code>exit 256</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>110</td><td>Builtin: exit</td><td><code>exit 9223372036854775807</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>111</td><td>Builtin: exit</td><td><code>exit 9223372036854775808</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>112</td><td>Builtin: exit</td><td><code>exit -9223372036854775808</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>113</td><td>Builtin: exit</td><td><code>exit -9223372036854775809</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>114</td><td>Builtin: exit</td><td><code>exit 42 42</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>115</td><td>Builtin: exit</td><td><code>exit hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>116</td><td>Builtin: exit</td><td><code>exit 42hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>117</td><td>Builtin: exit</td><td><code>exit -- -42</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>118</td><td>Builtin: exit</td><td><code>exit +10</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>119</td><td>Builtin: exit</td><td><code>exit "  42  "</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>120</td><td>Syntax Errors</td><td><code>;;</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>121</td><td>Syntax Errors</td><td><code>;&</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>122</td><td>Syntax Errors</td><td><code>;;&</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>123</td><td>Syntax Errors</td><td><code>echo 1; ; echo 2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>124</td><td>Syntax Errors</td><td><code>| echo hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>125</td><td>Syntax Errors</td><td><code>echo hello |</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>126</td><td>Syntax Errors</td><td><code>echo hello ||</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>127</td><td>Syntax Errors</td><td><code>echo hello &&</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>128</td><td>Syntax Errors</td><td><code>&& echo hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>129</td><td>Syntax Errors</td><td><code>|| echo hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>130</td><td>Syntax Errors</td><td><code>echo hello | | echo world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>131</td><td>Syntax Errors</td><td><code>echo hello ></code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>132</td><td>Syntax Errors</td><td><code>echo hello <</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>133</td><td>Syntax Errors</td><td><code>echo hello >></code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>134</td><td>Syntax Errors</td><td><code>echo hello <<</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>135</td><td>Syntax Errors</td><td><code>echo hello > < world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>136</td><td>Syntax Errors</td><td><code>echo hello > | world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>137</td><td>Syntax Errors</td><td><code>(echo hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>138</td><td>Syntax Errors</td><td><code>echo hello)</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>139</td><td>Syntax Errors</td><td><code>(echo hello)</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>140</td><td>Syntax Errors</td><td><code>()</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>141</td><td>Syntax Errors</td><td><code>( )</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>142</td><td>Syntax Errors</td><td><code>echo (hello)</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>143</td><td>Syntax Errors</td><td><code>echo hello (world)</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>144</td><td>Syntax Errors</td><td><code>echo hello;</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>145</td><td>Syntax Errors</td><td><code>;</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>146</td><td>Syntax Errors</td><td><code>; ;</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>147</td><td>Syntax Errors</td><td><code>echo hello;;</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>148</td><td>Redir Alone</td><td><code>> /tmp/ms_empty.txt && ls -l /tmp/ms_empty.txt; rm -f /tmp/ms_empty.txt</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>149</td><td>Redir Alone</td><td><code>>> /tmp/ms_empty.txt && ls -l /tmp/ms_empty.txt; rm -f /tmp/ms_empty.txt</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>150</td><td>Redir Alone</td><td><code>> /tmp/ms_empty.txt && < /tmp/ms_empty.txt; rm -f /tmp/ms_empty.txt</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>151</td><td>Redir Alone</td><td><code>> /tmp/ms_out1 > /tmp/ms_out2 && ls -l /tmp/ms_out*; rm -f /tmp/ms_out*</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>152</td><td>Redirections</td><td><code>echo hello > /tmp/ms_test_out.txt && cat /tmp/ms_test_out.txt; rm -f /tmp/ms_test_out.txt</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>153</td><td>Redirections</td><td><code>echo hello > /tmp/ms_test_out.txt && echo append >> /tmp/ms_test_out.txt && cat /tmp/ms_test_out.txt; rm -f /tmp/ms_test_out.txt</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>154</td><td>Redirections</td><td><code>echo hello > /tmp/ms_test_out.txt && cat < /tmp/ms_test_out.txt; rm -f /tmp/ms_test_out.txt</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>155</td><td>Redirections</td><td><code>cat << EOF
+line 1
+line 2
+EOF</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>156</td><td>Redirections</td><td><code>cat << 'EOF'
+$USER
+line 2
+EOF</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>157</td><td>Redirections</td><td><code>cat << "EOF"
+$USER
+line 2
+EOF</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>158</td><td>Redirections</td><td><code>cat << EOF1 << EOF2
+first
+EOF1
+second
+EOF2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>159</td><td>Redirections</td><td><code>echo hello 2> /tmp/ms_err.txt; cat /tmp/ms_err.txt; rm -f /tmp/ms_err.txt</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>160</td><td>Redirections</td><td><code>ls /does_not_exist 2> /tmp/ms_err.txt; cat /tmp/ms_err.txt; rm -f /tmp/ms_err.txt</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>161</td><td>Redirections</td><td><code>ls /does_not_exist 2>> /tmp/ms_err.txt; cat /tmp/ms_err.txt; rm -f /tmp/ms_err.txt</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>162</td><td>Pipes</td><td><code>echo hello | cat</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>163</td><td>Pipes</td><td><code>cat /etc/hostname | grep -o a | wc -l</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>164</td><td>Pipes</td><td><code>ls -la | grep srcs | wc -l</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>165</td><td>Pipes</td><td><code>export TEST_PIPE=42 | echo hello; echo $TEST_PIPE</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>166</td><td>Pipes</td><td><code>ls /does_not_exist | wc -l</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>167</td><td>Pipes</td><td><code>echo hello | cat | cat | cat | grep h</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>168</td><td>Pipes</td><td><code>echo 1 | echo 2 | echo 3</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>169</td><td>Pipes</td><td><code>cat /etc/passwd | head -n 10 | tail -n 5 | wc -l</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>170</td><td>Pipes</td><td><code>false | true</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>171</td><td>Pipes</td><td><code>true | false</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>172</td><td>Logic Operators</td><td><code>true && echo yes</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>173</td><td>Logic Operators</td><td><code>false || echo no</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>174</td><td>Logic Operators</td><td><code>false && echo no</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>175</td><td>Logic Operators</td><td><code>true || echo no</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>176</td><td>Logic Operators</td><td><code>echo 1 && echo 2 || echo 3</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>177</td><td>Logic Operators</td><td><code>ls /does_not_exist && echo success || echo failed</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>178</td><td>Logic Operators</td><td><code>false || false || echo third_time_charm</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>179</td><td>Logic Operators</td><td><code>true && true && true && echo all_good</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>180</td><td>Logic Operators</td><td><code>false && false && false || echo recovered</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>181</td><td>Subshells</td><td><code>(echo inside subshell)</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>182</td><td>Subshells</td><td><code>(export SUB_VAR=sub); echo $SUB_VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>183</td><td>Subshells</td><td><code>( (echo nested) )</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>184</td><td>Subshells</td><td><code>( ( (echo deep_nested) ) )</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>185</td><td>Subshells</td><td><code>(echo hello) > /tmp/ms_sub_out.txt; cat /tmp/ms_sub_out.txt; rm -f /tmp/ms_sub_out.txt</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>186</td><td>Subshells</td><td><code>(cd /tmp && pwd); pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>187</td><td>Subshells</td><td><code>(exit 42); echo $?</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>188</td><td>Subshells</td><td><code>(echo a && false) || echo b</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>189</td><td>Complex Mix</td><td><code>(echo a; echo b) | grep a && echo found || echo missing</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>190</td><td>Complex Mix</td><td><code>(cd /tmp && pwd) && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>191</td><td>Complex Mix</td><td><code>echo 1; (echo 2 && echo 3) | cat; echo 4</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>192</td><td>Complex Mix</td><td><code>(echo sub1 && (echo sub2 || echo sub3)) | cat > /tmp/ms_mix.txt && cat /tmp/ms_mix.txt; rm -f /tmp/ms_mix.txt</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>193</td><td>Complex Mix</td><td><code>false || (echo failed_first && echo recovering) | grep recovering</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>194</td><td>Complex Mix</td><td><code>echo background_job &</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>195</td><td>Expansions</td><td><code>echo $USER</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>196</td><td>Expansions</td><td><code>ls /does_not_exist; echo $?</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>197</td><td>Expansions</td><td><code>echo $0</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>198</td><td>Expansions</td><td><code>echo $$</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>199</td><td>Expansions</td><td><code>echo $!</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>200</td><td>Expansions</td><td><code>echo ~</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>201</td><td>Expansions</td><td><code>echo ~/</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>202</td><td>Expansions</td><td><code>echo '$USER' "$USER" $USER</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>203</td><td>Expansions</td><td><code>export FOO=bar; echo $FOO</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>204</td><td>Expansions</td><td><code>echo $NOSUCHVARIABLE_XYZ_123</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>205</td><td>Expansions</td><td><code>echo $1 $2 $99</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>206</td><td>Expansions</td><td><code>echo "$USER$HOME"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>207</td><td>Expansions</td><td><code>echo "$USER $HOME"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>208</td><td>Expansions</td><td><code>echo '$USER$HOME'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>209</td><td>Expansions</td><td><code>echo "$$USER"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>210</td><td>Expansions</td><td><code>echo "$? $? $?"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>211</td><td>Expansions</td><td><code>export A=1; echo "$A$A$A"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>212</td><td>Expansions</td><td><code>echo $"USER"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>213</td><td>Expansions</td><td><code>echo $'USER'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>214</td><td>Quotes & Parsing</td><td><code>echo '' '' '   ' ''</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>215</td><td>Quotes & Parsing</td><td><code>echo "" "   " ""</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>216</td><td>Quotes & Parsing</td><td><code>echo   a    b      c  </code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>217</td><td>Quotes & Parsing</td><td><code>echo 'a   b   c'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>218</td><td>Quotes & Parsing</td><td><code>echo "a   b   c"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>219</td><td>Quotes & Parsing</td><td><code>echo "'hello'"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>220</td><td>Quotes & Parsing</td><td><code>echo '"hello"'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>221</td><td>Quotes & Parsing</td><td><code>echo "$USER's laptop"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>222</td><td>Quotes & Parsing</td><td><code>echo 'nested "double" quotes'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>223</td><td>Quotes & Parsing</td><td><code>echo "nested 'single' quotes"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>224</td><td>Quotes & Parsing</td><td><code>echo "cat""ls""pwd"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>225</td><td>Quotes & Parsing</td><td><code>echo 'cat''ls''pwd'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>226</td><td>Persistent State</td><td><code>export A=10
+export B=20
+echo "A=$A B=$B"
+unset A
+echo "A=$A B=$B"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>227</td><td>Persistent State</td><td><code>cd /tmp
+pwd
+cd ..
+pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>228</td><td>Persistent State</td><td><code>export VAR=hello
+export VAR+=_world
+echo $VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>229</td><td>Persistent State</td><td><code>export X=1
+(export X=2; echo "subshell X=$X")
+echo "parent X=$X"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>230</td><td>Persistent State</td><td><code>cd /tmp
+(cd /var; echo "subshell pwd="; pwd)
+echo "parent pwd="; pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>231</td><td>Persistent State</td><td><code>export FOO=bar
+env | grep FOO
+unset FOO
+env | grep FOO</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>232</td><td>Persistent State</td><td><code>ls /does_not_exist
+echo "Status 1: $?"
+ls -d /tmp
+echo "Status 2: $?"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>233</td><td>Rug Pull</td><td><code>mkdir -p /tmp/ms_rugpull && cd /tmp/ms_rugpull && rm -rf /tmp/ms_rugpull && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>234</td><td>Rug Pull</td><td><code>mkdir -p /tmp/ms_rugpull && cd /tmp/ms_rugpull && rm -rf /tmp/ms_rugpull && cd .</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>235</td><td>Rug Pull</td><td><code>mkdir -p /tmp/ms_rugpull && cd /tmp/ms_rugpull && rm -rf /tmp/ms_rugpull && cd ..</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>236</td><td>Path & Exec</td><td><code>env /tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>237</td><td>Path & Exec</td><td><code>/does_not_exist_mini_bin</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>238</td><td>Path & Exec</td><td><code>''</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>239</td><td>Path & Exec</td><td><code>..</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>240</td><td>State Corruption</td><td><code>export PWD=/completely/fake/path; pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>241</td><td>State Corruption</td><td><code>export PWD=/completely/fake/path; pwd -L</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>242</td><td>State Corruption</td><td><code>export PWD=/completely/fake/path; pwd -P</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>243</td><td>Flag Errors</td><td><code>cd -Z /tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>244</td><td>Flag Errors</td><td><code>pwd -Z</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>245</td><td>Flag Errors</td><td><code>export -Z</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>246</td><td>Flag Errors</td><td><code>unset -Z</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>247</td><td>Flag Errors</td><td><code>env -Z</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>248</td><td>Flag Errors</td><td><code>exit -Z</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>249</td><td>Builtin: cd</td><td><code>cd /usr/bin/../bin/../../etc</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>250</td><td>Builtin: cd</td><td><code>cd /var/tmp/../tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>251</td><td>Builtin: cd</td><td><code>cd ///usr///bin///</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>252</td><td>Builtin: cd</td><td><code>export HOME=/tmp && cd && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>253</td><td>Builtin: cd</td><td><code>export HOME=/tmp/ && cd && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>254</td><td>Builtin: cd</td><td><code>export OLDPWD=/usr && cd - && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>255</td><td>Builtin: cd</td><td><code>cd -P /usr/bin && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>256</td><td>Builtin: cd</td><td><code>cd -L /usr/bin && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>257</td><td>Builtin: cd</td><td><code>cd -LP /usr/bin && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>258</td><td>Builtin: cd</td><td><code>cd -PL /usr/bin && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>259</td><td>Builtin: cd</td><td><code>cd /dev/null</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>260</td><td>Builtin: cd</td><td><code>cd /etc/passwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>261</td><td>Builtin: cd</td><td><code>cd non_existent_directory_12345</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>262</td><td>Builtin: cd</td><td><code>cd . . .</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>263</td><td>Builtin: pwd</td><td><code>unset PWD && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>264</td><td>Builtin: pwd</td><td><code>unset PWD && pwd -P</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>265</td><td>Builtin: pwd</td><td><code>unset PWD && pwd -L</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>266</td><td>Builtin: pwd</td><td><code>export PWD="" && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>267</td><td>Builtin: pwd</td><td><code>export PWD="/nonexistent" && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>268</td><td>Builtin: echo</td><td><code>echo -n -n -n</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>269</td><td>Builtin: echo</td><td><code>echo -nnnnn -nnnn -n hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>270</td><td>Builtin: echo</td><td><code>echo -n-n hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>271</td><td>Builtin: echo</td><td><code>echo --n hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>272</td><td>Builtin: echo</td><td><code>echo -n- hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>273</td><td>Builtin: echo</td><td><code>echo -e 'a\tb\nc\rd'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>274</td><td>Builtin: echo</td><td><code>echo -e 'a\vb\fc'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>275</td><td>Builtin: echo</td><td><code>echo -e '\0101\0102\0103'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>276</td><td>Builtin: echo</td><td><code>echo -e '\x41\x42\x43'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>277</td><td>Builtin: echo</td><td><code>echo -e '\a\b\e'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>278</td><td>Builtin: echo</td><td><code>echo -e 'hello\cworld'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>279</td><td>Builtin: echo</td><td><code>echo -E 'hello\nworld'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>280</td><td>Builtin: echo</td><td><code>echo -nE 'hello\nworld'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>281</td><td>Builtin: echo</td><td><code>echo -En 'hello\nworld'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>282</td><td>Builtin: echo</td><td><code>echo -e -n 'hello\nworld'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>283</td><td>Builtin: export</td><td><code>export A= B= C=</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>284</td><td>Builtin: export</td><td><code>export A=1 B=2 C=3 && echo "$A $B $C"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>285</td><td>Builtin: export</td><td><code>export _123=test && echo $_123</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>286</td><td>Builtin: export</td><td><code>export VAR+=1 && export VAR+=2 && echo $VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>287</td><td>Builtin: export</td><td><code>export VAR="line1
+line2" && echo "$VAR"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>288</td><td>Builtin: export</td><td><code>export VAR="a b c" && echo $VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>289</td><td>Builtin: export</td><td><code>export VAR="a  b  c" && echo "$VAR"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>290</td><td>Builtin: export</td><td><code>export @VAR=123</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>291</td><td>Builtin: export</td><td><code>export VAR@=123</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>292</td><td>Builtin: export</td><td><code>export VAR#=123</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>293</td><td>Builtin: export</td><td><code>export VAR%=123</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>294</td><td>Builtin: export</td><td><code>export EXPORT_TEST_123=456</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>295</td><td>Builtin: unset</td><td><code>unset</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>296</td><td>Builtin: unset</td><td><code>unset ""</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>297</td><td>Builtin: unset</td><td><code>unset 123</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>298</td><td>Builtin: unset</td><td><code>unset @VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>299</td><td>Builtin: unset</td><td><code>unset VAR@</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>300</td><td>Builtin: unset</td><td><code>unset HOME && cd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>301</td><td>Builtin: unset</td><td><code>unset PATH && ls</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>302</td><td>Builtin: unset</td><td><code>export A=1 && unset A && echo $A</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>303</td><td>Builtin: unset</td><td><code>export A=1 B=2 && unset A B && echo "$A$B"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>304</td><td>Builtin: unset</td><td><code>unset IFS && echo hello world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>305</td><td>Builtin: env</td><td><code>env -i pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>306</td><td>Builtin: env</td><td><code>env -i echo hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>307</td><td>Builtin: env</td><td><code>env -u PATH ls</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>308</td><td>Builtin: env</td><td><code>env -u HOME pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>309</td><td>Builtin: env</td><td><code>env A=1 B=2 env | grep -E 'A=|B='</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>310</td><td>Builtin: env</td><td><code>env --null</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>311</td><td>Builtin: env</td><td><code>env -0</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>312</td><td>Builtin: env</td><td><code>env --ignore-environment pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>313</td><td>Builtin: env</td><td><code>env -i FOO=bar printenv FOO</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>314</td><td>Builtin: exit</td><td><code>exit 000</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>315</td><td>Builtin: exit</td><td><code>exit 0001</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>316</td><td>Builtin: exit</td><td><code>exit +0</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>317</td><td>Builtin: exit</td><td><code>exit +42</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>318</td><td>Builtin: exit</td><td><code>exit -0</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>319</td><td>Builtin: exit</td><td><code>exit 1000</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>320</td><td>Builtin: exit</td><td><code>exit -1000</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>321</td><td>Builtin: exit</td><td><code>exit 9223372036854775806</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>322</td><td>Builtin: exit</td><td><code>exit -9223372036854775807</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>323</td><td>Builtin: exit</td><td><code>exit "42"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>324</td><td>Builtin: exit</td><td><code>exit "  -42  "</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>325</td><td>Syntax Errors</td><td><code>echo hello | | world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>326</td><td>Syntax Errors</td><td><code>echo hello ||| world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>327</td><td>Syntax Errors</td><td><code>echo hello &&& world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>328</td><td>Syntax Errors</td><td><code>echo hello >>> file</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>329</td><td>Syntax Errors</td><td><code>echo hello <<< word</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>330</td><td>Syntax Errors</td><td><code>echo hello <<<< word</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>331</td><td>Syntax Errors</td><td><code>echo hello > > file</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>332</td><td>Syntax Errors</td><td><code>echo hello < < file</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>333</td><td>Syntax Errors</td><td><code>(echo 1; echo 2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>334</td><td>Syntax Errors</td><td><code>echo 1; echo 2)</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>335</td><td>Syntax Errors</td><td><code>((echo 1)</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>336</td><td>Syntax Errors</td><td><code>(echo 1))</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>337</td><td>Syntax Errors</td><td><code>echo 1; ; ; echo 2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>338</td><td>Syntax Errors</td><td><code>echo 1 | ; echo 2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>339</td><td>Syntax Errors</td><td><code>echo 1 && ; echo 2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>340</td><td>Syntax Errors</td><td><code>echo 1 || ; echo 2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>341</td><td>Syntax Errors</td><td><code>echo 'unclosed single quote</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>342</td><td>Syntax Errors</td><td><code>echo "unclosed double quote</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>343</td><td>Syntax Errors</td><td><code>echo 'unclosed double inside single"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>344</td><td>Redirections</td><td><code>cat < /dev/null</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>345</td><td>Redirections</td><td><code>echo test > /tmp/ms_r1 > /tmp/ms_r2 > /tmp/ms_r3 && cat /tmp/ms_r3; rm -f /tmp/ms_r*</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>346</td><td>Redirections</td><td><code>echo line1 > /tmp/ms_a && echo line2 >> /tmp/ms_a && cat /tmp/ms_a; rm -f /tmp/ms_a</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>347</td><td>Redirections</td><td><code>< /etc/passwd grep root | wc -l</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>348</td><td>Redirections</td><td><code>grep root < /etc/passwd | wc -l</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>349</td><td>Redirections</td><td><code>cat < /etc/passwd > /tmp/ms_copy && wc -l < /tmp/ms_copy; rm -f /tmp/ms_copy</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>350</td><td>Redirections</td><td><code>echo 1 > /tmp/ms_file && < /tmp/ms_file cat && rm -f /tmp/ms_file</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>351</td><td>Redirections</td><td><code>echo hello 2>&1 | cat</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>352</td><td>Pipes</td><td><code>echo a | echo b | echo c</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>353</td><td>Pipes</td><td><code>cat /etc/passwd | grep -v root | head -n 5 | wc -l</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>354</td><td>Pipes</td><td><code>echo "line1
+line2
+line3" | grep line | wc -l</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>355</td><td>Pipes</td><td><code>false | false | false | true</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>356</td><td>Pipes</td><td><code>true | true | true | false</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>357</td><td>Pipes</td><td><code>echo test | cat | cat | cat | cat | cat</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>358</td><td>Pipes</td><td><code>ls -l /tmp | head -n 2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>359</td><td>Logic Operators</td><td><code>true && true || false</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>360</td><td>Logic Operators</td><td><code>false || true && true</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>361</td><td>Logic Operators</td><td><code>false || false && true</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>362</td><td>Logic Operators</td><td><code>true || false && false</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>363</td><td>Logic Operators</td><td><code>echo 1 && false || echo 2 && echo 3</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>364</td><td>Logic Operators</td><td><code>false && echo 1 || echo 2 || echo 3</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>365</td><td>Subshells</td><td><code>(echo 1; echo 2; echo 3)</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>366</td><td>Subshells</td><td><code>(cd /tmp && pwd); pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>367</td><td>Subshells</td><td><code>(export A=1); echo $A</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>368</td><td>Subshells</td><td><code>(unset PATH); ls</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>369</td><td>Subshells</td><td><code>((echo subshell_1) && (echo subshell_2))</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>370</td><td>Subshells</td><td><code>(echo a && (echo b || echo c)) | cat</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>371</td><td>Quotes & Parsing</td><td><code>echo 'a'"b"'c'"d"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>372</td><td>Quotes & Parsing</td><td><code>echo "'"'"'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>373</td><td>Quotes & Parsing</td><td><code>echo '"'"'"'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>374</td><td>Quotes & Parsing</td><td><code>echo """"""hello""""""</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>375</td><td>Quotes & Parsing</td><td><code>echo ''''''hello''''''</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>376</td><td>Quotes & Parsing</td><td><code>echo "hello ""world"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>377</td><td>Expansions</td><td><code>export A=a B=b C=c && echo $A$B$C</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>378</td><td>Expansions</td><td><code>export A=a B=b C=c && echo "$A $B $C"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>379</td><td>Expansions</td><td><code>export A=a && echo "$A_B"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>380</td><td>Expansions</td><td><code>export A_B=ab && echo "$A_B"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>381</td><td>Expansions</td><td><code>echo "$UNKNOWN_VAR"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>382</td><td>Expansions</td><td><code>echo '$UNKNOWN_VAR'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>383</td><td>Expansions</td><td><code>echo $UNKNOWN_VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>384</td><td>Path & Exec</td><td><code>/bin/echo hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>385</td><td>Path & Exec</td><td><code>/bin/ls -d /tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>386</td><td>Path & Exec</td><td><code>./non_existent_binary</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>387</td><td>Path & Exec</td><td><code>../non_existent_binary</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>388</td><td>Path & Exec</td><td><code>/usr/bin/touch /tmp/ms_touch && ls /tmp/ms_touch; rm -f /tmp/ms_touch</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>389</td><td>Builtin: export</td><td><code>export VAR=value && env | grep VAR=</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>390</td><td>Builtin: unset</td><td><code>export VAR=value && unset VAR && env | grep VAR=</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>391</td><td>Builtin: cd</td><td><code>cd /usr && cd share && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>392</td><td>Builtin: echo</td><td><code>echo "line 1
+line 2"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>393</td><td>Builtin: pwd</td><td><code>cd /tmp && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>394</td><td>Persistent State</td><td><code>export A=1 && export B=$A && echo $B</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>395</td><td>Persistent State</td><td><code>export A=1 && (export A=2) && echo $A</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>396</td><td>Persistent State</td><td><code>export A=1 && (unset A) && echo $A</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>397</td><td>Redirections</td><td><code>echo 1 > /tmp/f1 && echo 2 > /tmp/f2 && cat /tmp/f1 /tmp/f2; rm -f /tmp/f1 /tmp/f2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>398</td><td>Pipes</td><td><code>echo 1 | cat | cat | cat | cat</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>399</td><td>Syntax Errors</td><td><code>echo hello > > world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>400</td><td>Syntax Errors</td><td><code>echo hello < < world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>401</td><td>Expansions</td><td><code>true; echo $?</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>402</td><td>Expansions</td><td><code>false; echo $?</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>403</td><td>Expansions</td><td><code>ls /does_not_exist; echo $?</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>404</td><td>Expansions</td><td><code>expr 1 + 1; echo $?</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>405</td><td>Quotes & Parsing</td><td><code>echo "$"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>406</td><td>Quotes & Parsing</td><td><code>echo '$'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>407</td><td>Quotes & Parsing</td><td><code>echo "$ "</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>408</td><td>Quotes & Parsing</td><td><code>echo '$ '</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>409</td><td>Quotes & Parsing</td><td><code>echo	hello	world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>410</td><td>Quotes & Parsing</td><td><code>echo   	   hello   	   world   </code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>411</td><td>Control & Semicolons</td><td><code>echo 1 ; echo 2 ; echo 3 ;</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>412</td><td>Control & Semicolons</td><td><code>echo 1; echo 2; echo 3;</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>413</td><td>Subshells</td><td><code>(echo 1; echo 2) | (grep 1)</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>414</td><td>Subshells</td><td><code>(echo 1) | (echo 2) | (echo 3)</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>415</td><td>Builtin: echo</td><td><code>echo -e 'a\bb'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>416</td><td>Builtin: echo</td><td><code>echo -e 'a\rb'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>417</td><td>Builtin: echo</td><td><code>echo -e 'a\\b'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>418</td><td>Builtin: export</td><td><code>export _=valid</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>419</td><td>Builtin: export</td><td><code>export _A_B_C=123</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>420</td><td>Builtin: export</td><td><code>export A123=123</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>421</td><td>Builtin: unset</td><td><code>unset PWD && echo $PWD</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>422</td><td>Builtin: unset</td><td><code>unset SHLVL && echo $SHLVL</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>423</td><td>Path & Exec</td><td><code>/bin/pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>424</td><td>Path & Exec</td><td><code>/bin/whoami</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>425</td><td>Redirections</td><td><code>echo 1 >> /tmp/ms_app && echo 2 >> /tmp/ms_app && cat /tmp/ms_app; rm -f /tmp/ms_app</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>426</td><td>Logic Operators</td><td><code>true && false || true && echo ok</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>427</td><td>Logic Operators</td><td><code>false || true && false || echo ok</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>428</td><td>Quotes & Parsing</td><td><code>export X=hello && echo "$X"world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>429</td><td>Quotes & Parsing</td><td><code>export X=hello && echo '$X'world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>430</td><td>Builtin: env</td><td><code>env -i HOME=/tmp pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>431</td><td>Builtin: exit</td><td><code>exit 257</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>432</td><td>Builtin: exit</td><td><code>exit 512</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>433</td><td>Redirections</td><td><code>export FILE=/tmp/ms_var_file && echo test > $FILE && cat $FILE; rm -f /tmp/ms_var_file</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>434</td><td>Pipes</td><td><code>true | false; echo $?</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>435</td><td>Pipes</td><td><code>false | true; echo $?</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>436</td><td>Subshells</td><td><code>(echo 1; echo 2) > /tmp/ms_sub_out && cat /tmp/ms_sub_out; rm -f /tmp/ms_sub_out</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>437</td><td>Normal Cmds</td><td><code>
+
+</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>438</td><td>Normal Cmds</td><td><code>   
+   </code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>439</td><td>Builtin: export</td><td><code>export A=1 B=2 C=3 D=4 E=5 && echo $A$B$C$D$E</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>440</td><td>Builtin: cd</td><td><code>mkdir -p /tmp/ms_d1/d2/d3 && cd /tmp/ms_d1/d2/d3 && pwd && cd ../../..; rm -rf /tmp/ms_d1</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>441</td><td>Complex Mix</td><td><code>echo 1 | grep 1 && (echo 2 || echo 3) > /tmp/ms_final && cat /tmp/ms_final; rm -f /tmp/ms_final</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>442</td><td>Builtin: cd</td><td><code>cd /var/spool</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>443</td><td>Builtin: cd</td><td><code>cd /etc/../../tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>444</td><td>Builtin: cd</td><td><code>cd /././tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>445</td><td>Builtin: cd</td><td><code>cd ../../../../../../../..</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>446</td><td>Builtin: cd</td><td><code>cd /bin/ls</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>447</td><td>Builtin: cd</td><td><code>cd /nonexistent_directory_abcd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>448</td><td>Builtin: cd</td><td><code>export HOME=/dev/null && cd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>449</td><td>Builtin: cd</td><td><code>export HOME=/tmp/ms_home_test && mkdir -p /tmp/ms_home_test && cd && pwd; rm -rf /tmp/ms_home_test</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>450</td><td>Builtin: cd</td><td><code>unset HOME && cd ~</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>451</td><td>Builtin: pwd</td><td><code>pwd extra_arg1 extra_arg2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>452</td><td>Builtin: pwd</td><td><code>pwd -P -L -P -L</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>453</td><td>Builtin: pwd</td><td><code>export PWD=/bin && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>454</td><td>Builtin: echo</td><td><code>echo -n -n -n -n -n -n hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>455</td><td>Builtin: echo</td><td><code>echo -nnnnnnnnnnnn hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>456</td><td>Builtin: echo</td><td><code>echo -n -e -n -e hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>457</td><td>Builtin: echo</td><td><code>echo -e 'line1\nline2\nline3'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>458</td><td>Builtin: echo</td><td><code>echo -e 'a\tb\tc\td'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>459</td><td>Builtin: echo</td><td><code>echo -e '\x48\x65\x6c\x6c\x6f'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>460</td><td>Builtin: echo</td><td><code>echo -e '123\c456'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>461</td><td>Builtin: echo</td><td><code>echo "$USER" '$USER' "$USER"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>462</td><td>Builtin: echo</td><td><code>echo '$USER' "$USER" '$USER'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>463</td><td>Builtin: echo</td><td><code>echo -n ""</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>464</td><td>Builtin: echo</td><td><code>echo ''</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>465</td><td>Builtin: export</td><td><code>export A=1 B=2 C=3 D=4 && export -p | grep -E 'A=|B=|C=|D='</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>466</td><td>Builtin: export</td><td><code>export 1234=test</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>467</td><td>Builtin: export</td><td><code>export A-B=test</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>468</td><td>Builtin: export</td><td><code>export A.B=test</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>469</td><td>Builtin: export</td><td><code>export A?B=test</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>470</td><td>Builtin: export</td><td><code>export VAR="val1 val2 val3" && echo "$VAR"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>471</td><td>Builtin: export</td><td><code>export VAR="val1  val2  val3" && echo $VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>472</td><td>Builtin: export</td><td><code>export VAR+=append1 && export VAR+=append2 && echo $VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>473</td><td>Builtin: export</td><td><code>export VAR= && echo "empty:$VAR"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>474</td><td>Builtin: export</td><td><code>export VAR && env | grep VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>475</td><td>Builtin: unset</td><td><code>unset 123_INVALID</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>476</td><td>Builtin: unset</td><td><code>unset INVALID-NAME</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>477</td><td>Builtin: unset</td><td><code>unset INVALID.NAME</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>478</td><td>Builtin: unset</td><td><code>export A=1 B=2 C=3 && unset A C && echo "$A:$B:$C"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>479</td><td>Builtin: unset</td><td><code>unset non_existent_var_12345</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>480</td><td>Builtin: env</td><td><code>env -i /bin/pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>481</td><td>Builtin: env</td><td><code>env -i /bin/echo hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>482</td><td>Builtin: env</td><td><code>env -u PATH /bin/ls</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>483</td><td>Builtin: env</td><td><code>env VAR1=1 VAR2=2 env | grep -E 'VAR1|VAR2'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>484</td><td>Builtin: exit</td><td><code>exit +42</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>485</td><td>Builtin: exit</td><td><code>exit -0</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>486</td><td>Builtin: exit</td><td><code>exit 00000000000000042</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>487</td><td>Builtin: exit</td><td><code>exit 9223372036854775807</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>488</td><td>Builtin: exit</td><td><code>exit -9223372036854775808</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>489</td><td>Builtin: exit</td><td><code>exit 9223372036854775808</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>490</td><td>Builtin: exit</td><td><code>exit -9223372036854775809</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>491</td><td>Builtin: exit</td><td><code>exit abcdef</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>492</td><td>Builtin: exit</td><td><code>exit 123abc</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>493</td><td>Builtin: exit</td><td><code>exit 1 2 3 4</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>494</td><td>Syntax Errors</td><td><code>echo hello | | | cat</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>495</td><td>Syntax Errors</td><td><code>echo hello > > > out</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>496</td><td>Syntax Errors</td><td><code>echo hello < < < in</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>497</td><td>Syntax Errors</td><td><code>echo hello ; ; ;</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>498</td><td>Syntax Errors</td><td><code>echo hello && && world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>499</td><td>Syntax Errors</td><td><code>echo hello || || world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>500</td><td>Syntax Errors</td><td><code>(echo 1; echo 2; </code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>501</td><td>Syntax Errors</td><td><code>echo 1; echo 2; )</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>502</td><td>Syntax Errors</td><td><code>echo "unclosed quote string</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>503</td><td>Syntax Errors</td><td><code>echo 'unclosed single quote string</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>504</td><td>Redirections</td><td><code>cat < /etc/passwd > /tmp/ms_redir_out && wc -l < /tmp/ms_redir_out; rm -f /tmp/ms_redir_out</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>505</td><td>Redirections</td><td><code>echo line1 > /tmp/ms_f && echo line2 >> /tmp/ms_f && echo line3 >> /tmp/ms_f && cat /tmp/ms_f; rm -f /tmp/ms_f</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>506</td><td>Redirections</td><td><code>cat << 'LIMITER'
+$USER
+$HOME
+LIMITER</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>507</td><td>Redirections</td><td><code>cat << "LIMITER"
+$USER
+$HOME
+LIMITER</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>508</td><td>Redirections</td><td><code>cat << LIMITER
+$USER
+$HOME
+LIMITER</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>509</td><td>Redirections</td><td><code>cat << EOF1 << EOF2 << EOF3
+first
+EOF1
+second
+EOF2
+third
+EOF3</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>510</td><td>Redirections</td><td><code>echo test > /tmp/ms_f1 > /tmp/ms_f2 > /tmp/ms_f3 && ls /tmp/ms_f*; rm -f /tmp/ms_f*</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>511</td><td>Pipes</td><td><code>cat /etc/passwd | grep -v root | grep -v nobody | wc -l</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>512</td><td>Pipes</td><td><code>echo 1 | echo 2 | echo 3 | echo 4 | echo 5</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>513</td><td>Pipes</td><td><code>false | true | false | true</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>514</td><td>Pipes</td><td><code>true | false | true | false</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>515</td><td>Pipes</td><td><code>ls /does_not_exist | cat | wc -l</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>516</td><td>Logic Operators</td><td><code>true && true && true && true</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>517</td><td>Logic Operators</td><td><code>false || false || false || true</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>518</td><td>Logic Operators</td><td><code>true && false || true && echo 1</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>519</td><td>Logic Operators</td><td><code>false || true && false || echo 2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>520</td><td>Subshells</td><td><code>( ( ( (echo nested_4) ) ) )</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>521</td><td>Subshells</td><td><code>(cd /tmp && pwd) && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>522</td><td>Subshells</td><td><code>(export A=100); echo "A=$A"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>523</td><td>Subshells</td><td><code>(exit 123); echo "exit_code=$?"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>524</td><td>Quotes & Parsing</td><td><code>echo "'"'"'"'"'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>525</td><td>Quotes & Parsing</td><td><code>echo '"'"'"'"'"'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>526</td><td>Quotes & Parsing</td><td><code>echo "a"'b'"c"'d'"e"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>527</td><td>Quotes & Parsing</td><td><code>echo   1   2   3   4   5   </code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>528</td><td>Expansions</td><td><code>export VAR=hello && echo "$VAR_WORLD"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>529</td><td>Expansions</td><td><code>export VAR_WORLD=hello_world && echo "$VAR_WORLD"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>530</td><td>Expansions</td><td><code>echo "$? $? $? $?"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>531</td><td>Expansions</td><td><code>export A=1 B=2 C=3 && echo "$A$B$C"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>532</td><td>Path & Exec</td><td><code>/usr/bin/id</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>533</td><td>Path & Exec</td><td><code>/usr/bin/env /bin/pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>534</td><td>Path & Exec</td><td><code>./non_existent_script.sh</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>535</td><td>Flag Errors</td><td><code>cd -X /tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>536</td><td>Flag Errors</td><td><code>pwd -X</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>537</td><td>Flag Errors</td><td><code>export -X</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>538</td><td>Flag Errors</td><td><code>unset -X</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>539</td><td>Flag Errors</td><td><code>env -X</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>540</td><td>Flag Errors</td><td><code>exit -X</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>541</td><td>Builtin: cd</td><td><code>cd /tmp/ && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>542</td><td>Builtin: cd</td><td><code>cd /tmp// && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>543</td><td>Builtin: cd</td><td><code>cd ///tmp/// && pwd</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>544</td><td>Builtin: cd</td><td><code>cd /etc/../etc/../tmp</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>545</td><td>Builtin: cd</td><td><code>cd /var/log/../spool</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>546</td><td>Builtin: echo</td><td><code>echo -n -n -n -n -n -n -n -n hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>547</td><td>Builtin: echo</td><td><code>echo -nnnnnnnnnnnnnnnnnnnn hello</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>548</td><td>Builtin: echo</td><td><code>echo -e '\x41\x42\x43\x44\x45'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>549</td><td>Builtin: echo</td><td><code>echo -e 'line1\rline2'</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>550</td><td>Builtin: export</td><td><code>export A=1 B=2 C=3 D=4 E=5 F=6 && echo $A$B$C$D$E$F</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>551</td><td>Builtin: export</td><td><code>export VAR="  a  b  c  " && echo "$VAR"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>552</td><td>Builtin: export</td><td><code>export VAR="  a  b  c  " && echo $VAR</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>553</td><td>Builtin: unset</td><td><code>export A=1 B=2 C=3 D=4 && unset A B C D && echo "$A$B$C$D"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>554</td><td>Builtin: exit</td><td><code>exit 00000000000000000000</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>555</td><td>Builtin: exit</td><td><code>exit +00000000000000000042</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>556</td><td>Syntax Errors</td><td><code>echo hello | | | | | world</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>557</td><td>Syntax Errors</td><td><code>echo hello > > > > > out</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>558</td><td>Redirections</td><td><code>echo 1 > /tmp/ms_out1 && echo 2 > /tmp/ms_out2 && cat /tmp/ms_out1 /tmp/ms_out2; rm -f /tmp/ms_out*</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>559</td><td>Pipes</td><td><code>echo hello | cat | cat | cat | cat | cat | cat</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>560</td><td>Logic Operators</td><td><code>true || echo 1 && echo 2 || echo 3</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>561</td><td>Subshells</td><td><code>( (echo 1; echo 2) | cat )</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>562</td><td>Quotes & Parsing</td><td><code>echo """"""""""hello""""""""""</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>563</td><td>Quotes & Parsing</td><td><code>echo ''''''''''hello''''''''''</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>564</td><td>Expansions</td><td><code>export A=10 && echo "$A""$A""$A"</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>565</td><td>Path & Exec</td><td><code>/bin/cat /etc/passwd | /usr/bin/head -n 2</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+<tr><td>566</td><td>Custom</td><td><code>unset HOME && echo ~</code></td><td class=''>PENDING</td><td>N/A</td><td>None</td></tr>
+</table></body></html>

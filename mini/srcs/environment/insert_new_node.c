@@ -20,11 +20,12 @@ int	insert_new_node(t_minishell *shell, char *key,
 	char			*value_dup;
 
 	key_dup = ft_strdup(key);
+	if (!key_dup)
+		return (1);
 	value_dup = ft_strdup(value);
-	if (!key_dup || (value && !value_dup))
+	if ((value && !value_dup))
 	{
 		free(key_dup);
-		free(value_dup);
 		return (1);
 	}
 	node = create_node(shell->env, key_dup, value_dup, is_exported);
@@ -34,10 +35,8 @@ int	insert_new_node(t_minishell *shell, char *key,
 		shell->exported_count++;
 	else if ((!value || !is_exported) && check_exported(shell, key))
 		shell->exported_count--;
-	if (robin_insert(shell->env, node))
-	{
-		shell->env->del_function(node.key, node.value);
-		return (1);
-	}
-	return (0);
+	if (robin_insert(shell->env, node) == 0)
+		return (0);
+	shell->env->del_function(node.key, node.value);
+	return (1);
 }

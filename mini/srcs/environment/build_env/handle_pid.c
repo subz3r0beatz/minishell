@@ -35,18 +35,15 @@ int	handle_pid(t_minishell *shell)
 	if (read_file("/proc/self/stat", buffer, 16) <= 0)
 	{
 		shell->pid = ft_strdup("");
-		if (!shell->pid)
-			return (1);
-		return (0);
+		return (shell->pid == 0);
 	}
 	i = 0;
 	while (buffer[i] && buffer[i] != ' ')
 		i++;
-	shell->pid = ft_substr(buffer, 0, i);
+	buffer[i] = '\0';
+	shell->pid = ft_strdup(buffer);
 	if (!shell->pid)
 		return (1);
 	shell->last_pid = ft_strdup("");
-	if (!shell->last_pid)
-		return (1);
-	return (0);
+	return (shell->last_pid == 0);
 }

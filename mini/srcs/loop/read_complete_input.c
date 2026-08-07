@@ -48,7 +48,7 @@ char	*read_complete_input(t_minishell *shell, char *raw_input)
 		if (isatty(STDIN_FILENO))
 			next = readline("> ");
 		else
-			next = read_line_non_interactive(STDIN_FILENO, &shell->stash);
+			next = read_line_non_interactive(STDIN_FILENO);
 		if (!next)
 			return (quote_state_error(shell, input, quote));
 		tmp = ft_strjoin_3(input, "\n", next);

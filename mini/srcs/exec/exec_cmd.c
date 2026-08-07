@@ -30,10 +30,10 @@ static int	handle_empty(t_minishell *shell, t_ast_node *node)
 	int	saved_stdin;
 	int	saved_stdout;
 
-	if (init_saved_std(shell, node->redir, &saved_stdin, &saved_stdout)
-		|| apply_redirections(shell, node->redir))
+	if ((init_saved_std(shell, node->redir, &saved_stdin, &saved_stdout)
+		|| apply_redirections(shell, node->redir)) && shell->exit_status != 130)
 		shell->exit_status = 1;
-	else
+	else if (shell->exit_status != 0)
 		shell->exit_status = 0;
 	restore_fds(saved_stdin, saved_stdout);
 	return (shell->exit_status);

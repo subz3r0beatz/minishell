@@ -15,11 +15,11 @@
 
 typedef struct s_minishell	t_minishell;
 
-int	build_env(t_minishell *shell, char **envp, char *argv0);
+int	build_env(t_minishell *shell, char **envp);
 int	handle_oldpwd(t_minishell *shell);
 int	handle_pwd(t_minishell *shell);
 int	handle_shlvl(t_minishell *shell);
-int	handle_underscore(t_minishell *shell, char *argv0);
+int	handle_underscore(t_minishell *shell);
 int	handle_pid(t_minishell *shell);
 
 #endif

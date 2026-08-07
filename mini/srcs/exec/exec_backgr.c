@@ -30,6 +30,7 @@ int	exec_backgr(t_minishell *shell, t_ast_node *node)
 		init_ignore_signals(0);
 		exit_shell(shell, exec(shell, node->left));
 	}
+	waitpid(pid, NULL, WNOHANG);
 	free(shell->last_pid);
 	shell->last_pid = ft_itoa(pid);
 	if (!shell->last_pid)

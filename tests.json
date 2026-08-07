@@ -31,13 +31,13 @@
   },
   {
     "cat": "Normal Cmds",
-    "cmd": "head -n 5 /etc/passwd",
+    "cmd": "tail -n 3 /etc/passwd",
     "bash_cmp": true,
     "flag_error": false
   },
   {
     "cat": "Normal Cmds",
-    "cmd": "tail -n 3 /etc/passwd",
+    "cmd": "head -n 5 /etc/passwd",
     "bash_cmp": true,
     "flag_error": false
   },
@@ -229,12 +229,6 @@
   },
   {
     "cat": "Builtin: pwd",
-    "cmd": "pwd arg1",
-    "bash_cmp": true,
-    "flag_error": false
-  },
-  {
-    "cat": "Builtin: pwd",
     "cmd": "pwd -L -P",
     "bash_cmp": true,
     "flag_error": false
@@ -242,6 +236,12 @@
   {
     "cat": "Builtin: pwd",
     "cmd": "pwd -P -L",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
+    "cat": "Builtin: pwd",
+    "cmd": "pwd arg1",
     "bash_cmp": true,
     "flag_error": false
   },

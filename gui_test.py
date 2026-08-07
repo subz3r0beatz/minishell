@@ -3,9 +3,11 @@
 Minishell Universal Modern Dark GUI Test Harness
 Single-file self-contained Tkinter GUI test harness with stack backtrace symbol
 resolution for silent malloc failures, readline valgrind suppressions, isolated multi-pass
-execution (Base Command, CWD Probe, Env Probe, Malloc Faults, Valgrind, and Comprehensive Signal Phase),
-customizable Bash executable selector with dynamic STDERR normalization, external JSON test suite persistence,
-recompile/reset controls, file-isolated execution, automatic artifact cleanup, and dark UI theme.
+execution (Base Command, CWD Probe, Env Probe, Malloc Faults, Valgrind, Signal Phase,
+Env -i Pass, Non-Interactive Pipe Pass, and Forbidden Functions Audit), Norminette integration,
+HTML test report exporter, direct terminal debug launcher with auto-command execution, dynamic thread adjustment,
+keyboard reordering, external JSON test suite persistence, recompile controls, path configuration persistence,
+automatic Makefile directory traversal, and headless CLI mode support.
 """
 
 import os
@@ -49,6 +51,20 @@ COLOR_DIFF_SUB_BG   = "#3f2229"  # Red diff line background
 COLOR_DIFF_SUB_FG   = "#f38ba8"
 
 TESTS_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tests.json")
+CONFIG_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+
+# --- 42 Curriculum Whitelisted Functions ---
+ALLOWED_42_FUNCTIONS = {
+    "readline", "rl_clear_history", "rl_on_new_line", "rl_replace_line",
+    "rl_redisplay", "add_history", "printf", "malloc", "free", "write",
+    "access", "open", "read", "close", "fork", "wait", "waitpid",
+    "wait3", "wait4", "signal", "sigaction", "sigemptyset", "sigaddset",
+    "kill", "exit", "getcwd", "chdir", "stat", "lstat", "fstat",
+    "unlink", "execve", "dup", "dup2", "pipe", "opendir", "readdir",
+    "closedir", "strerror", "perror", "isatty", "ttyname", "ttyslot",
+    "ioctl", "getenv", "tcsetattr", "tcgetattr", "tgetent", "tgetflag",
+    "tgetnum", "tgetstr", "tgoto", "tputs"
+}
 
 # --- Embedded Readline Suppression File Content ---
 READLINE_SUPP_CONTENT = r"""
@@ -66,7 +82,7 @@ READLINE_SUPP_CONTENT = r"""
 }
 """
 
-# --- Embedded C Hook Source Code ---
+#--- Embedded C Hook Source Code ---
 MALLOC_HOOK_SRC = r"""
 #define _GNU_SOURCE
 #include <stdio.h>
@@ -85,8 +101,40 @@ static void *(*real_realloc)(void *, size_t) = NULL;
 static atomic_long g_alloc_count = 0;
 static long g_fail_index = -1;
 static int g_in_init = 0;
+static atomic_int g_in_main = 0;
 static char g_dummy_buf[65536];
 static size_t g_dummy_pos = 0;
+
+typedef int (*main_t)(int, char **, char **);
+static main_t real_user_main = NULL;
+
+static int wrapped_main(int argc, char **argv, char **envp)
+{
+    g_in_main = 1;
+    return real_user_main(argc, argv, envp);
+}
+
+int __libc_start_main(
+    main_t main_func,
+    int argc,
+    char **argv,
+    void (*init)(void),
+    void (*fini)(void),
+    void (*rtld_fini)(void),
+    void *stack_end)
+{
+    int (*real_start)(main_t, int, char **, void (*)(void), void (*)(void), void (*)(void), void *)
+        = dlsym(RTLD_NEXT, "__libc_start_main");
+
+    if (!real_start)
+    {
+        const char *err = "Error locating real __libc_start_main\n";
+        write(STDERR_FILENO, err, strlen(err));
+        exit(1);
+    }
+    real_user_main = main_func;
+    return real_start(wrapped_main, argc, argv, init, fini, rtld_fini, stack_end);
+}
 
 static void init_hooks(void)
 {
@@ -105,6 +153,9 @@ static void init_hooks(void)
 
 static int is_minishell_caller(void *caller)
 {
+    if (!g_in_main)
+        return 0;
+
     Dl_info info;
     if (dladdr(caller, &info) && info.dli_fname)
     {
@@ -115,7 +166,8 @@ static int is_minishell_caller(void *caller)
                 if (strstr(info.dli_sname, "tsearch") ||
                     strstr(info.dli_sname, "environ") ||
                     strstr(info.dli_sname, "readline") ||
-                    strstr(info.dli_sname, "rl_"))
+                    strstr(info.dli_sname, "rl_") ||
+                    strstr(info.dli_sname, "add_history"))
                     return 0;
             }
             return 1;
@@ -242,8 +294,27 @@ DEFAULT_TESTS = [
     {"cat": "Logic Operators", "cmd": "true && echo yes", "bash_cmp": True},
     {"cat": "Logic Operators", "cmd": "false || echo no", "bash_cmp": True},
     {"cat": "Subshells", "cmd": "(echo inside subshell)", "bash_cmp": True},
+    {"cat": "Edge Cases", "cmd": "cat < nonexistent_file_xyz", "bash_cmp": True},
+    {"cat": "Edge Cases", "cmd": "| ls", "bash_cmp": True},
+    {"cat": "Edge Cases", "cmd": "echo \"unclosed string", "bash_cmp": True},
     {"cat": "Flag Errors", "cmd": "cd -Z /tmp", "flag_error": True}
 ]
+
+def load_app_config():
+    if os.path.exists(CONFIG_FILE_PATH):
+        try:
+            with open(CONFIG_FILE_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
+
+def save_app_config(cfg):
+    try:
+        with open(CONFIG_FILE_PATH, "w", encoding="utf-8") as f:
+            json.dump(cfg, f, indent=2)
+    except Exception:
+        pass
 
 def load_tests_from_file():
     if os.path.exists(TESTS_FILE_PATH):
@@ -283,6 +354,87 @@ def cleanup_test_artifacts():
                     os.remove(path)
             except Exception:
                 pass
+
+def find_makefile_dir(start_dir):
+    if not os.path.exists(start_dir):
+        return start_dir
+
+    start_dir = os.path.abspath(start_dir)
+
+    if os.path.exists(os.path.join(start_dir, "Makefile")) or os.path.exists(os.path.join(start_dir, "makefile")):
+        return start_dir
+
+    parent_dir = os.path.dirname(start_dir)
+    if os.path.exists(os.path.join(parent_dir, "Makefile")) or os.path.exists(os.path.join(parent_dir, "makefile")):
+        return parent_dir
+
+    for root, dirs, files in os.walk(parent_dir if parent_dir else start_dir):
+        rel_depth = root.count(os.sep) - (parent_dir if parent_dir else start_dir).count(os.sep)
+        if rel_depth > 3:
+            dirs.clear()
+            continue
+        if "Makefile" in files or "makefile" in files:
+            return root
+
+    return start_dir
+
+def check_forbidden_functions(ms_path):
+    if not os.path.exists(ms_path) or not shutil.which("nm"):
+        return ["`nm` utility not found or binary missing."]
+
+    try:
+        proc = subprocess.run(["nm", "-u", ms_path], capture_output=True, text=True, timeout=3)
+        if proc.returncode != 0:
+            return [f"Failed to run `nm -u`: {proc.stderr}"]
+
+        forbidden = []
+        ignore_syms = {
+            "faulty_malloc", "malloc_hook", "init_hooks", "is_minishell_caller",
+            "log_callstack", "cleanup_hook", "g_alloc_count", "g_fail_index"
+        }
+        for line in proc.stdout.splitlines():
+            line_str = line.strip()
+            if not line_str:
+                continue
+            parts = line_str.split()
+            sym = parts[-1] if parts else ""
+            sym_clean = sym.split("@")[0]
+
+            if not sym_clean or sym_clean.startswith("__") or sym_clean.startswith("_"):
+                continue
+
+            if any(ign in sym_clean for ign in ignore_syms) or "faulty_malloc" in sym_clean:
+                continue
+
+            if sym_clean not in ALLOWED_42_FUNCTIONS:
+                forbidden.append(sym_clean)
+
+        return sorted(list(set(forbidden)))
+    except Exception as e:
+        return [f"Audit error: {str(e)}"]
+
+def run_norminette_check(ms_dir):
+    norm_bin = shutil.which("norminette")
+    if not norm_bin:
+        return "norminette command not found in PATH."
+
+    c_files = []
+    ignore_files = {"faulty_malloc.c", "faulty_malloc.h", "malloc_hook.c", "malloc_hook.h"}
+    for root, _, files in os.walk(ms_dir):
+        for file in files:
+            if file.endswith((".c", ".h")):
+                if file in ignore_files or "faulty_malloc" in file or "malloc_hook" in file:
+                    continue
+                c_files.append(os.path.relpath(os.path.join(root, file), ms_dir))
+
+    if not c_files:
+        return "No C/H source files found to check with Norminette (ignoring faulty_malloc files)."
+
+    try:
+        proc = subprocess.run([norm_bin] + c_files, cwd=ms_dir, capture_output=True, text=True, timeout=15)
+        return proc.stdout if proc.stdout else "Norminette finished with no output."
+    except Exception as e:
+        return f"Error executing Norminette: {str(e)}"
 
 class EnvironmentManager:
     def __init__(self, ms_path="./minishell"):
@@ -460,7 +612,7 @@ def execute_pty_signal_tests(ms_path, root_dir):
         os.close(slave)
         return master, proc
 
-    def read_all(master, timeout=0.4):
+    def read_all(master, timeout=0.3):
         out = b""
         while True:
             r, _, _ = select.select([master], [], [], timeout)
@@ -478,13 +630,17 @@ def execute_pty_signal_tests(ms_path, root_dir):
     # Pass 1: Main Loop
     try:
         m, p = spawn_ms()
-        read_all(m, 0.3)
+        read_all(m, 0.2)
         os.write(m, b"\x03")
-        read_all(m, 0.3)
+        read_all(m, 0.2)
         os.write(m, b"echo $?\n")
-        out2 = read_all(m, 0.3)
+        out2 = read_all(m, 0.2)
         os.write(m, b"exit\n")
-        p.wait(timeout=1)
+        try:
+            p.wait(timeout=1)
+        except subprocess.TimeoutExpired:
+            p.kill()
+            p.wait()
         os.close(m)
 
         if "130" in out2 or p.returncode == 0:
@@ -498,17 +654,21 @@ def execute_pty_signal_tests(ms_path, root_dir):
     # Pass 2: Heredoc Loop
     try:
         m, p = spawn_ms()
-        read_all(m, 0.3)
+        read_all(m, 0.2)
         os.write(m, b"cat << EOF\n")
-        read_all(m, 0.3)
+        read_all(m, 0.2)
         os.write(m, b"line 1\n")
         read_all(m, 0.2)
         os.write(m, b"\x03")
-        out = read_all(m, 0.4)
+        out = read_all(m, 0.3)
         os.write(m, b"echo $?\n")
-        out2 = read_all(m, 0.3)
+        out2 = read_all(m, 0.2)
         os.write(m, b"exit\n")
-        p.wait(timeout=1)
+        try:
+            p.wait(timeout=1)
+        except subprocess.TimeoutExpired:
+            p.kill()
+            p.wait()
         os.close(m)
 
         if ("130" in out2 or "130" in out) and p.returncode == 0:
@@ -522,15 +682,19 @@ def execute_pty_signal_tests(ms_path, root_dir):
     # Pass 3: Child Binary Execution
     try:
         m, p = spawn_ms()
-        read_all(m, 0.3)
+        read_all(m, 0.2)
         os.write(m, b"sleep 5\n")
-        time.sleep(0.2)
+        time.sleep(0.1)
         os.write(m, b"\x03")
-        out = read_all(m, 0.4)
+        out = read_all(m, 0.3)
         os.write(m, b"echo $?\n")
-        out2 = read_all(m, 0.3)
+        out2 = read_all(m, 0.2)
         os.write(m, b"exit\n")
-        p.wait(timeout=1)
+        try:
+            p.wait(timeout=1)
+        except subprocess.TimeoutExpired:
+            p.kill()
+            p.wait()
         os.close(m)
 
         if "130" in out2 or p.returncode == 0:
@@ -543,7 +707,14 @@ def execute_pty_signal_tests(ms_path, root_dir):
 
     return logs, failures
 
-def execute_single_test(test_item, ms_path, bash_path, hook_so_path, supp_file_path, opts):
+def execute_single_test(test_item, ms_path, bash_path, hook_so_path, supp_file_path, opts, check_cancel=None):
+    def is_cancelled():
+        return check_cancel is not None and check_cancel()
+
+    if is_cancelled():
+        return None
+
+    start_perf = time.perf_counter()
     ms_path = os.path.abspath(ms_path)
     root_dir = os.path.dirname(ms_path)
     cmd_raw = test_item["cmd"]
@@ -572,15 +743,27 @@ def execute_single_test(test_item, ms_path, bash_path, hook_so_path, supp_file_p
         "valgrind_log": "Not Run",
         "malloc_log": "Not Run",
         "signal_log": "Not Run",
+        "duration_ms": 0.0,
+        "pass1_duration_ms": 0.0,
+        "pass2_duration_ms": 0.0,
+        "pass3_duration_ms": 0.0,
+        "valgrind_duration_ms": 0.0,
+        "malloc_duration_ms": 0.0,
+        "signals_duration_ms": 0.0,
         "failures": []
     }
 
     # Pass 1: Base Command
+    t0 = time.perf_counter()
     stdin_base = f"{ms_cmd_str}\nexit $?\n"
     bash_stdin_base = f"{bash_cmd_str}\nexit $?\n"
 
     raw_ms_out, ms_err, ms_code = run_shell(stdin_base, ms_path, cwd=root_dir)
+    if is_cancelled(): return None
     raw_bash_out, bash_err, bash_code = run_bash(bash_stdin_base, bash_executable=bash_path, cwd=root_dir)
+    if is_cancelled(): return None
+
+    result["pass1_duration_ms"] = round((time.perf_counter() - t0) * 1000, 2)
 
     ms_out = normalize_stdout(raw_ms_out)
     bash_out = normalize_stdout(raw_bash_out)
@@ -628,15 +811,26 @@ def execute_single_test(test_item, ms_path, bash_path, hook_so_path, supp_file_p
             result["failures"].append("Bash Comparison: " + ", ".join(err_reasons))
 
     # Pass 2: CWD Probe
-    stdin_cwd = f"{ms_cmd_str}\npwd -P\nexit $?\n"
-    bash_stdin_cwd = f"{bash_cmd_str}\npwd -P\nexit $?\n"
+    if is_cancelled(): return None
+    t0 = time.perf_counter()
+    stdin_cwd = f"{ms_cmd_str}\necho '\n__CWD_START__'\npwd -P\necho '__CWD_END__'exit $?\n"
+    bash_stdin_cwd = f"{bash_cmd_str}\necho '\n__CWD_START__'\npwd -P\necho '__CWD_END__'exit $?\n"
 
     ms_cwd_raw, _, _ = run_shell(stdin_cwd, ms_path, cwd=root_dir)
+    if is_cancelled(): return None
+    if "__CWD_START__" in ms_cwd_raw and "__CWD_END__" in ms_cwd_raw:
+        ms_cwd = ms_cwd_raw.split("__CWD_START__")[1].split("__CWD_END__")[0].strip()
+    else:
+        ms_cwd = None
+
     bash_cwd_raw, _, _ = run_bash(bash_stdin_cwd, bash_executable=bash_path, cwd=root_dir)
+    if is_cancelled(): return None
+    if "__CWD_START__" in bash_cwd_raw and "__CWD_END__" in bash_cwd_raw:
+        bash_cwd = bash_cwd_raw.split("__CWD_START__")[1].split("__CWD_END__")[0].strip()
+    else:
+        bash_cwd = None
 
-    ms_cwd = ms_cwd_raw.strip().splitlines()[-1] if ms_cwd_raw.strip() else None
-    bash_cwd = bash_cwd_raw.strip().splitlines()[-1] if bash_cwd_raw.strip() else None
-
+    result["pass2_duration_ms"] = round((time.perf_counter() - t0) * 1000, 2)
     result["ms_cwd"] = ms_cwd
     result["bash_cwd"] = bash_cwd
 
@@ -645,16 +839,30 @@ def execute_single_test(test_item, ms_path, bash_path, hook_so_path, supp_file_p
         result["failures"].append(f"CWD Mismatch: Minishell in '{ms_cwd}', expected '{bash_cwd}'")
 
     # Pass 3: Environment Variables Probe
-    stdin_env = f"{ms_cmd_str}\nenv\nexit $?\n"
-    bash_stdin_env = f"{bash_cmd_str}\nenv\nexit $?\n"
+    if is_cancelled(): return None
+    t0 = time.perf_counter()
+    stdin_env = f"{ms_cmd_str}\necho '\n__ENV_START__'\nenv\necho '__ENV_END__'exit $?\n"
+    bash_stdin_env = f"{bash_cmd_str}\necho '\n__ENV_START__'\nenv\necho '__ENV_END__'exit $?\n"
 
     ms_env_raw, _, _ = run_shell(stdin_env, ms_path, cwd=root_dir)
+    if is_cancelled(): return None
+    if "__ENV_START__" in ms_env_raw and "__ENV_END__" in ms_env_raw:
+        ms_env = ms_env_raw.split("__ENV_START__")[1].split("__ENV_END__")[0].strip()
+    else:
+        ms_env = None
+
     bash_env_raw, _, _ = run_bash(bash_stdin_env, bash_executable=bash_path, cwd=root_dir)
+    if is_cancelled(): return None
+    if "__ENV_START__" in bash_env_raw and "__ENV_END__" in bash_env_raw:
+        bash_env = bash_env_raw.split("__ENV_START__")[1].split("__ENV_END__")[0].strip()
+    else:
+        bash_env = None
 
-    result["ms_env"] = ms_env_raw
-    result["bash_env"] = bash_env_raw
+    result["pass3_duration_ms"] = round((time.perf_counter() - t0) * 1000, 2)
+    result["ms_env"] = ms_env
+    result["bash_env"] = bash_env
 
-    if ms_env_raw and bash_env_raw and test_item.get("bash_cmp", True) and not opts.get("skip_bash", False):
+    if ms_env and bash_env and test_item.get("bash_cmp", True) and not opts.get("skip_bash", False):
         norm_ms_env = normalize_env_output(ms_env_raw)
         norm_bash_env = normalize_env_output(bash_env_raw)
 
@@ -670,8 +878,30 @@ def execute_single_test(test_item, ms_path, bash_path, hook_so_path, supp_file_p
             result["passed"] = False
             result["failures"].append("ENV Mismatch: Final environment variables do not match Bash output")
 
-    # Pass 4: Valgrind
+    # Pass 4: Stripped Env Pass (env -i)
+    if opts.get("run_env_i", False):
+        if is_cancelled(): return None
+        _, _, ms_code_i = run_shell(stdin_base, ms_path, env={}, cwd=root_dir)
+        if ms_code_i < 0 or ms_code_i in (134, 137, 139):
+            result["passed"] = False
+            result["failures"].append(f"Env -i Pass: Minishell crashed/segfaulted under empty environment (Code {ms_code_i})")
+
+    # Pass 5: Non-Interactive Pipe Pass
+    if opts.get("run_non_interactive", False):
+        if is_cancelled(): return None
+        try:
+            p_pipe = subprocess.run([ms_path], input=f"{ms_cmd_str}\n", capture_output=True, text=True, cwd=root_dir, timeout=3)
+            if is_cancelled(): return None
+            if p_pipe.returncode < 0 or p_pipe.returncode in (134, 137, 139):
+                result["passed"] = False
+                result["failures"].append(f"Non-Interactive Pipe: Crash detected when command piped via STDIN (Code {p_pipe.returncode})")
+        except Exception:
+            pass
+
+    # Pass 6: Valgrind
     if not opts.get("skip_valgrind", False) and shutil.which("valgrind"):
+        if is_cancelled(): return None
+        t0 = time.perf_counter()
         valgrind_cmd = [
             "valgrind",
             f"--suppressions={supp_file_path}",
@@ -683,7 +913,9 @@ def execute_single_test(test_item, ms_path, bash_path, hook_so_path, supp_file_p
             ms_path
         ]
         try:
-            proc = subprocess.run(valgrind_cmd, input=stdin_base, capture_output=True, text=True, cwd=root_dir, timeout=10)
+            proc = subprocess.run(valgrind_cmd, input=stdin_base, capture_output=True, text=True, cwd=root_dir, timeout=8)
+            if is_cancelled(): return None
+            result["valgrind_duration_ms"] = round((time.perf_counter() - t0) * 1000, 2)
             result["valgrind_log"] = proc.stderr
             if proc.returncode == 99:
                 result["passed"] = False
@@ -695,13 +927,16 @@ def execute_single_test(test_item, ms_path, bash_path, hook_so_path, supp_file_p
         except Exception as e:
             result["valgrind_log"] = f"Execution error: {str(e)}"
 
-    # Pass 5: Malloc Fault Injection
+    # Pass 7: Malloc Fault Injection
     if not opts.get("skip_malloc", False):
+        if is_cancelled(): return None
+        t0 = time.perf_counter()
         env = os.environ.copy()
         env["LD_PRELOAD"] = hook_so_path
         env["LOG_ALLOC_COUNT"] = "1"
 
-        _, ms_err_log, _ = run_shell(stdin_base, ms_path, env=env, cwd=root_dir)
+        _, ms_err_log, _ = run_shell(stdin_base, ms_path, env=env, cwd=root_dir, timeout=1.5)
+        if is_cancelled(): return None
 
         total_allocs = 0
         for line in ms_err_log.splitlines():
@@ -714,11 +949,13 @@ def execute_single_test(test_item, ms_path, bash_path, hook_so_path, supp_file_p
         if total_allocs > 0:
             malloc_fail_logs = []
             for fail_idx in range(1, total_allocs + 1):
+                if is_cancelled(): return None
                 fail_env = os.environ.copy()
                 fail_env["LD_PRELOAD"] = hook_so_path
                 fail_env["FAIL_MALLOC_INDEX"] = str(fail_idx)
 
-                _, err_m, code_m = run_shell(stdin_base, ms_path, env=fail_env, cwd=root_dir)
+                _, err_m, code_m = run_shell(stdin_base, ms_path, env=fail_env, cwd=root_dir, timeout=1.2)
+                if is_cancelled(): return None
 
                 program_err = strip_hook_output(err_m)
                 callstack_loc = resolve_stack_trace(ms_path, err_m)
@@ -744,15 +981,22 @@ def execute_single_test(test_item, ms_path, bash_path, hook_so_path, supp_file_p
         else:
             result["malloc_log"] = "No heap allocations recorded for this command."
 
-    # Pass 6: Interactive Signal Phase
+        result["malloc_duration_ms"] = round((time.perf_counter() - t0) * 1000, 2)
+
+    # Pass 8: Interactive Signal Phase
     if not opts.get("skip_signals", False):
+        if is_cancelled(): return None
+        t0 = time.perf_counter()
         sig_logs, sig_failures = execute_pty_signal_tests(ms_path, root_dir)
+        if is_cancelled(): return None
+        result["signals_duration_ms"] = round((time.perf_counter() - t0) * 1000, 2)
         result["signal_log"] = "\n".join(sig_logs)
         if sig_failures:
             result["passed"] = False
             for sf in sig_failures:
                 result["failures"].append(sf)
 
+    result["duration_ms"] = round((time.perf_counter() - start_perf) * 1000, 2)
     return result
 
 
@@ -771,10 +1015,23 @@ class MinishellTestGUI:
         except Exception as e:
             messagebox.showerror("Hook Compilation Error", str(e))
 
+        cfg = load_app_config()
+        default_ms = cfg.get("ms_path", "./minishell")
+        default_bash = cfg.get("bash_path", "/home/subz3r0/Downloads/bash-5.1.16/bash" if os.path.exists("/home/subz3r0/Downloads/bash-5.1.16/bash") else (shutil.which("bash") or "/bin/bash"))
+
+        self.ms_path_var = tk.StringVar(value=default_ms)
+        self.bash_path_var = tk.StringVar(value=default_bash)
+
+        self.ms_path_var.trace_add("write", lambda *args: self._save_app_config())
+        self.bash_path_var.trace_add("write", lambda *args: self._save_app_config())
+
+        self._uid_counter = 0
         raw_tests = load_tests_from_file()
         self.tests_data = []
         for idx, item in enumerate(raw_tests):
+            self._uid_counter += 1
             self.tests_data.append({
+                "_uid": self._uid_counter,
                 "id": idx + 1,
                 "cat": item.get("cat", "Custom"),
                 "cmd": item.get("cmd", ""),
@@ -785,8 +1042,14 @@ class MinishellTestGUI:
                 "result": None
             })
 
+        self.tests_lock = threading.RLock()
         self.msg_queue = queue.Queue()
+        self.worker_thread = None
+        self.current_run_id = 0
         self.is_running = False
+        self.is_paused = False
+        self.stop_requested = False
+        self.pause_requested = False
 
         self._setup_dark_theme()
         self._build_ui()
@@ -794,6 +1057,16 @@ class MinishellTestGUI:
         self._populate_tree()
         self._update_stats_bar()
         self.root.after(100, self._poll_queue)
+
+    def _save_app_config(self):
+        save_app_config({
+            "ms_path": self.ms_path_var.get().strip(),
+            "bash_path": self.bash_path_var.get().strip()
+        })
+
+    def _reindex_tests_locked(self):
+        for idx, t in enumerate(self.tests_data):
+            t["id"] = idx + 1
 
     def _setup_dark_theme(self):
         self.root.configure(bg=COLOR_BG_DARK)
@@ -807,10 +1080,10 @@ class MinishellTestGUI:
         self.style.configure("TLabelframe", background=COLOR_BG_PANEL, bordercolor=COLOR_BORDER, borderwidth=1, relief="solid")
         self.style.configure("TLabelframe.Label", background=COLOR_BG_PANEL, foreground=COLOR_ACCENT, font=("Segoe UI", 9, "bold"))
 
-        self.style.configure("TButton", background=COLOR_BG_PANEL, foreground=COLOR_FG_TEXT, borderwidth=1, bordercolor=COLOR_BORDER, focuscolor="none", padding=(10, 5), font=("Segoe UI", 9, "bold"))
+        self.style.configure("TButton", background=COLOR_BG_PANEL, foreground=COLOR_FG_TEXT, borderwidth=1, bordercolor=COLOR_BORDER, focuscolor="none", padding=(8, 4), font=("Segoe UI", 9, "bold"))
         self.style.map("TButton", background=[("active", COLOR_BORDER), ("disabled", COLOR_BG_DARK)], foreground=[("disabled", COLOR_FG_MUTED)])
 
-        self.style.configure("Accent.TButton", background=COLOR_ACCENT, foreground="#11111b", borderwidth=0, padding=(12, 6))
+        self.style.configure("Accent.TButton", background=COLOR_ACCENT, foreground="#11111b", borderwidth=0, padding=(10, 5))
         self.style.map("Accent.TButton", background=[("active", COLOR_ACCENT_HOVER), ("disabled", COLOR_BORDER)], foreground=[("disabled", COLOR_FG_MUTED)])
 
         self.style.configure("TCheckbutton", background=COLOR_BG_PANEL, foreground=COLOR_FG_TEXT, focuscolor="none")
@@ -824,7 +1097,7 @@ class MinishellTestGUI:
         self.style.map("Treeview", background=[("selected", "#363a4f")], foreground=[("selected", "#ffffff")])
 
         self.style.configure("TNotebook", background=COLOR_BG_DARK, borderwidth=0)
-        self.style.configure("TNotebook.Tab", background=COLOR_BG_PANEL, foreground=COLOR_FG_MUTED, padding=(14, 7), font=("Segoe UI", 9, "bold"), borderwidth=0)
+        self.style.configure("TNotebook.Tab", background=COLOR_BG_PANEL, foreground=COLOR_FG_MUTED, padding=(12, 6), font=("Segoe UI", 9, "bold"), borderwidth=0)
         self.style.map("TNotebook.Tab", background=[("selected", COLOR_BG_INPUT)], foreground=[("selected", COLOR_ACCENT)])
 
         self.style.configure("Horizontal.TProgressbar", background=COLOR_ACCENT, troughcolor=COLOR_BG_PANEL, bordercolor=COLOR_BORDER, thickness=6)
@@ -838,38 +1111,49 @@ class MinishellTestGUI:
         r1.pack(fill=tk.X, side=tk.TOP, pady=(0, 6))
 
         ttk.Label(r1, text="Minishell Executable:", style="Panel.TFrame").pack(side=tk.LEFT, padx=(0, 6))
-        self.ms_path_var = tk.StringVar(value="./minishell")
         ttk.Entry(r1, textvariable=self.ms_path_var, width=18).pack(side=tk.LEFT, padx=(0, 4))
         ttk.Button(r1, text="Browse", command=self._browse_binary).pack(side=tk.LEFT, padx=(0, 10))
 
-        default_bash = "/home/subz3r0/Downloads/bash-5.1.16/bash" if os.path.exists("/home/subz3r0/Downloads/bash-5.1.16/bash") else (shutil.which("bash") or "/bin/bash")
         ttk.Label(r1, text="Bash Executable:", style="Panel.TFrame").pack(side=tk.LEFT, padx=(0, 6))
-        self.bash_path_var = tk.StringVar(value=default_bash)
-        ttk.Entry(r1, textvariable=self.bash_path_var, width=32).pack(side=tk.LEFT, padx=(0, 4))
+        ttk.Entry(r1, textvariable=self.bash_path_var, width=30).pack(side=tk.LEFT, padx=(0, 4))
         ttk.Button(r1, text="Browse", command=self._browse_bash_binary).pack(side=tk.LEFT, padx=(0, 10))
 
-        ttk.Button(r1, text="🔨 Recompile", command=self._recompile_minishell).pack(side=tk.LEFT)
+        ttk.Button(r1, text="🔨 Recompile", command=self._recompile_minishell).pack(side=tk.LEFT, padx=(0, 4))
+        ttk.Button(r1, text="📋 Audit / Norm", command=self._run_compliance_audit).pack(side=tk.LEFT, padx=(0, 4))
+        ttk.Button(r1, text="📊 Export HTML", command=self._export_html_report).pack(side=tk.LEFT)
 
-        # Row 2: Controls, Checkboxes, Run
+        # Row 2: Controls, Checkboxes, Run/Pause/Stop
         r2 = ttk.Frame(header_card, style="Panel.TFrame")
         r2.pack(fill=tk.X, side=tk.TOP)
 
         ttk.Label(r2, text="Threads:", style="Panel.TFrame").pack(side=tk.LEFT, padx=(0, 6))
         self.jobs_var = tk.IntVar(value=os.cpu_count() or 4)
-        ttk.Spinbox(r2, from_=1, to=32, textvariable=self.jobs_var, width=3).pack(side=tk.LEFT, padx=(0, 16))
+        self.jobs_spinbox = ttk.Spinbox(r2, from_=1, to=32, textvariable=self.jobs_var, width=3)
+        self.jobs_spinbox.pack(side=tk.LEFT, padx=(0, 12))
+        self.jobs_spinbox.bind("<Left>", self._spinbox_decrement)
+        self.jobs_spinbox.bind("<Right>", self._spinbox_increment)
+        self.jobs_spinbox.bind("<Up>", self._navigate_tree)
+        self.jobs_spinbox.bind("<Down>", self._navigate_tree)
 
         self.chk_bash = tk.BooleanVar(value=True)
         self.chk_valgrind = tk.BooleanVar(value=True)
         self.chk_malloc = tk.BooleanVar(value=True)
         self.chk_signals = tk.BooleanVar(value=True)
+        self.chk_env_i = tk.BooleanVar(value=False)
+        self.chk_non_interactive = tk.BooleanVar(value=False)
 
-        ttk.Checkbutton(r2, text="Bash Compare", variable=self.chk_bash, style="TCheckbutton").pack(side=tk.LEFT, padx=4)
-        ttk.Checkbutton(r2, text="Valgrind / FDs", variable=self.chk_valgrind, style="TCheckbutton").pack(side=tk.LEFT, padx=4)
-        ttk.Checkbutton(r2, text="Malloc Faults", variable=self.chk_malloc, style="TCheckbutton").pack(side=tk.LEFT, padx=4)
-        ttk.Checkbutton(r2, text="Signal Phase", variable=self.chk_signals, style="TCheckbutton").pack(side=tk.LEFT, padx=4)
+        ttk.Checkbutton(r2, text="Bash Compare", variable=self.chk_bash, style="TCheckbutton").pack(side=tk.LEFT, padx=3)
+        ttk.Checkbutton(r2, text="Valgrind / FDs", variable=self.chk_valgrind, style="TCheckbutton").pack(side=tk.LEFT, padx=3)
+        ttk.Checkbutton(r2, text="Malloc Faults", variable=self.chk_malloc, style="TCheckbutton").pack(side=tk.LEFT, padx=3)
+        ttk.Checkbutton(r2, text="Signal Phase", variable=self.chk_signals, style="TCheckbutton").pack(side=tk.LEFT, padx=3)
+        ttk.Checkbutton(r2, text="Env -i Pass", variable=self.chk_env_i, style="TCheckbutton").pack(side=tk.LEFT, padx=3)
+        ttk.Checkbutton(r2, text="Pipe STDIN Pass", variable=self.chk_non_interactive, style="TCheckbutton").pack(side=tk.LEFT, padx=3)
 
         self.btn_run = ttk.Button(r2, text="▶  Run Selected (F5)", style="Accent.TButton", command=self.run_tests)
-        self.btn_run.pack(side=tk.RIGHT, padx=(6, 0))
+        self.btn_run.pack(side=tk.RIGHT, padx=(4, 0))
+
+        self.btn_pause = ttk.Button(r2, text="⏸  Pause (Ctrl+P)", command=self.toggle_pause, state=tk.DISABLED)
+        self.btn_pause.pack(side=tk.RIGHT, padx=(4, 0))
 
         self.progress_var = tk.DoubleVar(value=0)
         self.progress_bar = ttk.Progressbar(self.root, variable=self.progress_var, maximum=100, style="Horizontal.TProgressbar")
@@ -877,7 +1161,7 @@ class MinishellTestGUI:
 
         shortcut_bar = ttk.Frame(self.root, style="Panel.TFrame", padding=(12, 4))
         shortcut_bar.pack(fill=tk.X, side=tk.TOP, padx=12, pady=(0, 4))
-        legend_text = "Shortcuts:  [↑/↓] Navigate Tests  |  [←/→] Switch Inspector Tabs  |  [Space] Select/Deselect  |  [F5 / Ctrl+R] Run  |  [/ / Ctrl+F] Search"
+        legend_text = "Shortcuts:  [↑/↓] Navigate Tests  |  [Ctrl+↑/↓] Move Test  |  [←/→] Switch Tabs  |  [Space] Select  |  [F5 / Ctrl+R] Run/Stop  |  [Ctrl+P] Pause  |  [/ / Ctrl+F] Search"
         ttk.Label(shortcut_bar, text=legend_text, style="Panel.TFrame", foreground=COLOR_FG_MUTED, font=("Segoe UI", 8)).pack(side=tk.LEFT)
 
         paned = ttk.PanedWindow(self.root, orient=tk.HORIZONTAL)
@@ -889,13 +1173,20 @@ class MinishellTestGUI:
         sel_btn_frame = ttk.Frame(left_frame)
         sel_btn_frame.pack(fill=tk.X, side=tk.TOP, pady=(0, 6))
 
-        ttk.Button(sel_btn_frame, text="Select All", command=lambda: self._set_all_selected(True)).pack(side=tk.LEFT, padx=(0, 2))
-        ttk.Button(sel_btn_frame, text="Deselect All", command=lambda: self._set_all_selected(False)).pack(side=tk.LEFT, padx=2)
-        ttk.Button(sel_btn_frame, text="Select Failed", command=self._select_failed_only).pack(side=tk.LEFT, padx=2)
-        ttk.Button(sel_btn_frame, text="🔄 Reset Selected", command=self._reset_selected_tests).pack(side=tk.LEFT, padx=2)
+        s1 = ttk.Frame(sel_btn_frame)
+        s1.pack(fill=tk.X, side=tk.TOP, pady=(0, 2))
+        ttk.Button(s1, text="Select All", command=lambda: self._set_all_selected(True)).pack(side=tk.LEFT, padx=(0, 2))
+        ttk.Button(s1, text="Deselect All", command=lambda: self._set_all_selected(False)).pack(side=tk.LEFT, padx=2)
+        ttk.Button(s1, text="Passed", command=self._select_passed_only).pack(side=tk.LEFT, padx=2)
+        ttk.Button(s1, text="Failed", command=self._select_failed_only).pack(side=tk.LEFT, padx=2)
+        ttk.Button(s1, text="Pending", command=self._select_pending_only).pack(side=tk.LEFT, padx=2)
+
+        s2 = ttk.Frame(sel_btn_frame)
+        s2.pack(fill=tk.X, side=tk.TOP)
+        ttk.Button(s2, text="🔄 Reset Selected", command=self._reset_selected_tests).pack(side=tk.LEFT)
 
         search_frame = ttk.Frame(left_frame)
-        search_frame.pack(fill=tk.X, side=tk.TOP, pady=(0, 6))
+        search_frame.pack(fill=tk.X, side=tk.TOP, pady=(0, 4))
         ttk.Label(search_frame, text="🔍").pack(side=tk.LEFT, padx=(0, 4))
         self.filter_var = tk.StringVar()
         self.filter_var.trace_add("write", lambda *args: self._populate_tree())
@@ -913,11 +1204,11 @@ class MinishellTestGUI:
         self.tree.heading("cat", text="Category")
         self.tree.heading("cmd", text="Command")
 
-        self.tree.column("sel", width=42, anchor="center")
-        self.tree.column("id", width=42, anchor="center")
-        self.tree.column("status", width=90, anchor="center")
-        self.tree.column("cat", width=125, anchor="w")
-        self.tree.column("cmd", width=160, anchor="w")
+        self.tree.column("sel", width=20, anchor="center")
+        self.tree.column("id", width=20, anchor="center")
+        self.tree.column("status", width=40, anchor="center")
+        self.tree.column("cat", width=100, anchor="center")
+        self.tree.column("cmd", width=300, anchor="w")
 
         tree_scroll = ttk.Scrollbar(tree_container, orient=tk.VERTICAL, command=self.tree.yview)
         self.tree.configure(yscrollcommand=tree_scroll.set)
@@ -959,6 +1250,7 @@ class MinishellTestGUI:
         ttk.Checkbutton(ec_r2, text="Bash Compare", variable=self.edit_bash_cmp_var, style="TCheckbutton").pack(side=tk.LEFT, padx=(0, 10))
         ttk.Checkbutton(ec_r2, text="Flag Error", variable=self.edit_flag_err_var, style="TCheckbutton").pack(side=tk.LEFT, padx=(0, 10))
 
+        ttk.Button(ec_r2, text="🐛 Debug in Terminal", command=self._debug_in_terminal).pack(side=tk.LEFT, padx=(0, 10))
         ttk.Button(ec_r2, text="➕ Add as New", command=self._add_test_item).pack(side=tk.RIGHT, padx=(2, 0))
         ttk.Button(ec_r2, text="💾 Update Selected", command=self._update_test_item).pack(side=tk.RIGHT, padx=2)
         ttk.Button(ec_r2, text="🗑 Delete Selected", command=self._delete_test_item).pack(side=tk.RIGHT, padx=2)
@@ -973,6 +1265,7 @@ class MinishellTestGUI:
         self.txt_valgrind = self._create_dark_text_tab("Valgrind / FDs", self.notebook, mono=True)
         self.txt_malloc = self._create_dark_text_tab("Malloc Faults", self.notebook, mono=True)
         self.txt_signals = self._create_dark_text_tab("Signal Handling", self.notebook, mono=True)
+        self.txt_audit = self._create_dark_text_tab("Compliance & Norm", self.notebook, mono=True)
 
         self.txt_diff.tag_config("add", background=COLOR_DIFF_ADD_BG, foreground=COLOR_DIFF_ADD_FG)
         self.txt_diff.tag_config("sub", background=COLOR_DIFF_SUB_BG, foreground=COLOR_DIFF_SUB_FG)
@@ -995,13 +1288,36 @@ class MinishellTestGUI:
         self.lbl_metrics = ttk.Label(self.status_bar_frame, text="", style="Panel.TFrame", foreground=COLOR_FG_MUTED)
         self.lbl_metrics.pack(side=tk.RIGHT)
 
+    def _spinbox_decrement(self, event=None):
+        try:
+            val = max(1, self.jobs_var.get() - 1)
+            self.jobs_var.set(val)
+        except Exception:
+            pass
+        return "break"
+
+    def _spinbox_increment(self, event=None):
+        try:
+            val = min(32, self.jobs_var.get() + 1)
+            self.jobs_var.set(val)
+        except Exception:
+            pass
+        return "break"
+
     def _bind_shortcuts(self):
         self.root.bind("<F5>", lambda e: self.run_tests())
         self.root.bind("<Control-r>", lambda e: self.run_tests())
+        self.root.bind("<Control-p>", lambda e: self.toggle_pause())
         self.root.bind("<Control-f>", self._focus_search)
         self.root.bind("<slash>", self._focus_search)
 
-        self.search_entry.bind("<Down>", lambda e: self._focus_tree())
+        self.root.bind("<Up>", self._navigate_tree)
+        self.root.bind("<Down>", self._navigate_tree)
+
+        self.root.bind("<Control-Up>", self._move_test_up)
+        self.root.bind("<Control-Down>", self._move_test_down)
+        self.tree.bind("<Control-Up>", self._move_test_up)
+        self.tree.bind("<Control-Down>", self._move_test_down)
 
         self.root.bind("<Left>", self._handle_tab_navigation)
         self.root.bind("<Right>", self._handle_tab_navigation)
@@ -1009,9 +1325,243 @@ class MinishellTestGUI:
         self.search_entry.bind("<Escape>", self._focus_tree)
         self.tree.bind("<space>", self._on_space_key)
 
+    def _debug_in_terminal(self):
+        sel = self.tree.selection()
+        if not sel:
+            return
+        try:
+            t_id = int(self.tree.item(sel[0])["values"][1])
+        except (IndexError, ValueError):
+            return
+        with self.tests_lock:
+            test_item = next((t for t in self.tests_data if t["id"] == t_id), None)
+        if not test_item:
+            return
+
+        ms_path = os.path.abspath(self.ms_path_var.get())
+        if not os.path.exists(ms_path):
+            messagebox.showerror("Error", f"Minishell executable '{ms_path}' not found.")
+            return
+
+        term = shutil.which("xterm") or shutil.which("gnome-terminal") or shutil.which("kitty") or shutil.which("alacritty") or shutil.which("x-terminal-emulator")
+        if not term:
+            messagebox.showerror("Error", "No supported terminal emulator found (xterm, gnome-terminal, kitty, alacritty).")
+            return
+
+        cmd_raw = test_item['cmd']
+        try:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(cmd_raw)
+            self.root.update()
+        except Exception:
+            pass
+
+        ms_dir = os.path.dirname(ms_path)
+        cmd_escaped = cmd_raw.replace("'", "'\\''")
+        cmd_display = cmd_raw.replace('"', '\\"')
+
+        run_script = (
+            f'echo "=== DEBUG SESSION ==="; '
+            f'echo "Executing: {cmd_display}"; '
+            f'echo "(Command copied to system clipboard)"; '
+            f'echo "----------------------------------------"; '
+            f'cd "{ms_dir}"; '
+            f'(printf \'%s\\n\' \'{cmd_escaped}\'; cat) | {ms_path}; '
+            f'exec bash'
+        )
+
+        try:
+            if "gnome-terminal" in term:
+                subprocess.Popen([term, "--", "bash", "-c", run_script])
+            else:
+                subprocess.Popen([term, "-e", "bash", "-c", run_script])
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to launch terminal debug session: {e}")
+
+    def _run_compliance_audit(self):
+        ms_path = os.path.abspath(self.ms_path_var.get())
+        ms_dir = os.path.dirname(ms_path) if os.path.exists(ms_path) else "."
+
+        self.lbl_status.config(text="Status: Auditing Functions & Norminette...", foreground=COLOR_WARN)
+        self.root.update_idletasks()
+
+        forbidden_list = check_forbidden_functions(ms_path)
+        norm_output = run_norminette_check(ms_dir)
+
+        def write_audit():
+            self.txt_audit.insert(tk.END, "=== 1. FORBIDDEN FUNCTIONS AUDIT (`nm -u`) ===\n\n")
+            if not forbidden_list:
+                self.txt_audit.insert(tk.END, "✔ Perfect! All linked external symbols are whitelisted by the 42 curriculum.\n\n")
+            elif "Audit error" in forbidden_list[0] or "`nm` utility" in forbidden_list[0]:
+                self.txt_audit.insert(tk.END, f"⚠ Audit Warning: {forbidden_list[0]}\n\n")
+            else:
+                self.txt_audit.insert(tk.END, f"✖ Forbidden/Non-Whitelisted Symbols Detected ({len(forbidden_list)}):\n")
+                for fn in forbidden_list:
+                    self.txt_audit.insert(tk.END, f"  • {fn}\n")
+                self.txt_audit.insert(tk.END, "\n")
+
+            self.txt_audit.insert(tk.END, "=== 2. NORMINETTE CODE STYLE AUDIT ===\n\n")
+            self.txt_audit.insert(tk.END, norm_output)
+
+        self._write_read_only_text(self.txt_audit, write_audit)
+        self.notebook.select(self.txt_audit.master)
+        self.lbl_status.config(text="Status: Compliance Audit Completed", foreground=COLOR_PASS)
+        self._update_stats_bar()
+
+    def _export_html_report(self):
+        with self.tests_lock:
+            data_copy = [dict(t) for t in self.tests_data]
+
+        total = len(data_copy)
+        passed = sum(1 for t in data_copy if t["status"] == "PASS")
+        failed = sum(1 for t in data_copy if t["status"] == "FAIL")
+
+        html = [
+            "<!DOCTYPE html>",
+            "<html><head><meta charset='utf-8'><title>Minishell Test Report</title>",
+            "<style>",
+            "body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #1e1e2e; color: #cdd6f4; margin: 20px; }",
+            "h1 { color: #89b4fa; }",
+            ".summary { background-color: #252538; padding: 15px; border-radius: 8px; margin-bottom: 20px; }",
+            ".pass { color: #a6e3a1; font-weight: bold; }",
+            ".fail { color: #f38ba8; font-weight: bold; }",
+            "table { width: 100%; border-collapse: collapse; margin-top: 10px; }",
+            "th, td { padding: 10px; text-align: left; border-bottom: 1px solid #313244; }",
+            "th { background-color: #252538; color: #89b4fa; }",
+            "tr:nth-child(even) { background-color: #181825; }",
+            "pre { font-family: Consolas, monospace; font-size: 12px; background: #11111b; padding: 10px; border-radius: 5px; white-space: pre-wrap; }",
+            "</style></head><body>",
+            "<h1>Minishell Automated Execution Report</h1>",
+            f"<div class='summary'><b>Total Tests:</b> {total} | <span class='pass'>Passed: {passed}</span> | <span class='fail'>Failed: {failed}</span></div>",
+            "<table><tr><th>ID</th><th>Category</th><th>Command</th><th>Status</th><th>Duration</th><th>Details</th></tr>"
+        ]
+
+        for t in data_copy:
+            status_cls = "pass" if t["status"] == "PASS" else ("fail" if t["status"] == "FAIL" else "")
+            res = t.get("result") or {}
+            dur = f"{res.get('duration_ms', 0)} ms" if res else "N/A"
+            fails = "<br>".join(res.get("failures", [])) if res.get("failures") else "None"
+
+            html.append(
+                f"<tr><td>{t['id']}</td><td>{t['cat']}</td><td><code>{t['cmd']}</code></td>"
+                f"<td class='{status_cls}'>{t['status']}</td><td>{dur}</td><td>{fails}</td></tr>"
+            )
+
+        html.append("</table></body></html>")
+
+        report_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "minishell_test_report.html")
+        try:
+            with open(report_path, "w", encoding="utf-8") as f:
+                f.write("\n".join(html))
+            messagebox.showinfo("Report Exported", f"HTML Report saved successfully to:\n{report_path}")
+        except Exception as e:
+            messagebox.showerror("Export Error", f"Failed to save HTML report: {e}")
+
+    def _move_test_up(self, event=None):
+        sel = self.tree.selection()
+        if not sel:
+            return "break"
+
+        try:
+            t_id = int(self.tree.item(sel[0])["values"][1])
+        except (IndexError, ValueError):
+            return "break"
+
+        target_uid = None
+        with self.tests_lock:
+            idx = next((i for i, t in enumerate(self.tests_data) if t["id"] == t_id), None)
+            if idx is None or idx == 0:
+                return "break"
+
+            target_uid = self.tests_data[idx]["_uid"]
+            self.tests_data[idx], self.tests_data[idx - 1] = self.tests_data[idx - 1], self.tests_data[idx]
+            self._reindex_tests_locked()
+            save_tests_to_file(self.tests_data)
+
+        self._populate_tree()
+
+        if target_uid is not None:
+            for item in self.tree.get_children():
+                try:
+                    row_id = int(self.tree.item(item)["values"][1])
+                except (IndexError, ValueError):
+                    continue
+                with self.tests_lock:
+                    matched = next((t for t in self.tests_data if t["id"] == row_id), None)
+                if matched and matched["_uid"] == target_uid:
+                    self.tree.selection_set(item)
+                    self.tree.focus(item)
+                    self.tree.see(item)
+                    break
+
+        return "break"
+
+    def _move_test_down(self, event=None):
+        sel = self.tree.selection()
+        if not sel:
+            return "break"
+
+        try:
+            t_id = int(self.tree.item(sel[0])["values"][1])
+        except (IndexError, ValueError):
+            return "break"
+
+        target_uid = None
+        with self.tests_lock:
+            idx = next((i for i, t in enumerate(self.tests_data) if t["id"] == t_id), None)
+            if idx is None or idx >= len(self.tests_data) - 1:
+                return "break"
+
+            target_uid = self.tests_data[idx]["_uid"]
+            self.tests_data[idx], self.tests_data[idx + 1] = self.tests_data[idx + 1], self.tests_data[idx]
+            self._reindex_tests_locked()
+            save_tests_to_file(self.tests_data)
+
+        self._populate_tree()
+
+        if target_uid is not None:
+            for item in self.tree.get_children():
+                try:
+                    row_id = int(self.tree.item(item)["values"][1])
+                except (IndexError, ValueError):
+                    continue
+                with self.tests_lock:
+                    matched = next((t for t in self.tests_data if t["id"] == row_id), None)
+                if matched and matched["_uid"] == target_uid:
+                    self.tree.selection_set(item)
+                    self.tree.focus(item)
+                    self.tree.see(item)
+                    break
+
+        return "break"
+
+    def _navigate_tree(self, event):
+        children = self.tree.get_children()
+        if not children:
+            return "break"
+
+        direction = -1 if event.keysym == "Up" else 1
+
+        selection = self.tree.selection()
+        if not selection:
+            target = children[0]
+        elif self._is_input_focused():
+            current_idx = children.index(selection[0])
+            new_idx = max(0, min(len(children) - 1, current_idx + direction))
+            target = children[new_idx]
+        else:
+            target = selection
+
+        self.tree.focus_set()
+        self.tree.selection_set(target)
+        self.tree.focus(target)
+        self.tree.see(target)
+
+        return "break"
+
     def _is_input_focused(self):
         focus = self.root.focus_get()
-        return isinstance(focus, (ttk.Entry, tk.Entry))
+        return isinstance(focus, (ttk.Entry, tk.Entry, ttk.Spinbox, tk.Spinbox))
 
     def _focus_search(self, event=None):
         self.search_entry.focus_set()
@@ -1040,12 +1590,22 @@ class MinishellTestGUI:
     def _on_space_key(self, event):
         sel = self.tree.selection()
         if sel:
-            t_id = self.tree.item(sel[0])["values"][1]
-            for t in self.tests_data:
-                if t["id"] == t_id:
-                    t["selected"] = not t["selected"]
-                    self._update_tree_row(sel[0], t)
-                    break
+            try:
+                t_id = int(self.tree.item(sel[0])["values"][1])
+            except (IndexError, ValueError):
+                return "break"
+
+            with self.tests_lock:
+                for t in self.tests_data:
+                    if t["id"] == t_id:
+                        t["selected"] = not t["selected"]
+                        if not t["selected"] and t["status"] in ("RUNNING", "QUEUED"):
+                            t["status"] = "PENDING"
+                            t["result"] = None
+                        self._update_tree_row(sel[0], t)
+                        if t["selected"] and t["status"] == "PENDING" and self.is_running and not self.is_paused:
+                            self._ensure_worker_running()
+                        break
         return "break"
 
     def _create_dark_text_tab(self, title, notebook, mono=False):
@@ -1093,18 +1653,19 @@ class MinishellTestGUI:
 
     def _recompile_minishell(self):
         ms_path = os.path.abspath(self.ms_path_var.get())
-        ms_dir = os.path.dirname(ms_path) if os.path.exists(ms_path) else "."
+        start_dir = os.path.dirname(ms_path) if os.path.exists(ms_path) else os.getcwd()
+        make_dir = find_makefile_dir(start_dir)
 
-        self.lbl_status.config(text="Status: Recompiling (make)...", foreground=COLOR_WARN)
+        self.lbl_status.config(text=f"Status: Recompiling in {make_dir} (make)...", foreground=COLOR_WARN)
         self.root.update_idletasks()
 
         try:
-            res = subprocess.run(["make"], cwd=ms_dir, capture_output=True, text=True)
+            res = subprocess.run(["make"], cwd=make_dir, capture_output=True, text=True)
             if res.returncode == 0:
-                messagebox.showinfo("Recompile Success", "Build succeeded! 'make' returned 0.\n\n" + (res.stdout[-600:] if res.stdout else "No output."))
+                messagebox.showinfo("Recompile Success", f"Build succeeded in '{make_dir}'! 'make' returned 0.\n\n" + (res.stdout[-600:] if res.stdout else "No output."))
                 self.lbl_status.config(text="Status: Recompile Successful", foreground=COLOR_PASS)
             else:
-                messagebox.showerror("Recompile Failed", "Build failed!\n\n" + (res.stderr[-1000:] if res.stderr else "Compilation error."))
+                messagebox.showerror("Recompile Failed", f"Build failed in '{make_dir}'!\n\n" + (res.stderr[-1000:] if res.stderr else "Compilation error."))
                 self.lbl_status.config(text="Status: Recompile Failed", foreground=COLOR_FAIL)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to run make: {str(e)}")
@@ -1114,30 +1675,43 @@ class MinishellTestGUI:
 
     def _reset_selected_tests(self):
         cleanup_test_artifacts()
-        for t in self.tests_data:
-            if t["selected"]:
-                t["status"] = "PENDING"
-                t["result"] = None
+        with self.tests_lock:
+            for t in self.tests_data:
+                if t["selected"]:
+                    t["status"] = "PENDING"
+                    t["result"] = None
         self._populate_tree()
 
         sel = self.tree.selection()
         if sel:
-            t_id = self.tree.item(sel[0])["values"][1]
-            t_item = next((t for t in self.tests_data if t["id"] == t_id), None)
-            if t_item:
-                self._update_inspector(t_item)
+            try:
+                t_id = int(self.tree.item(sel[0])["values"][1])
+                t_item = next((t for t in self.tests_data if t["id"] == t_id), None)
+                if t_item:
+                    self._update_inspector(t_item)
+            except (IndexError, ValueError):
+                pass
+
+        if self.is_running and not self.is_paused:
+            self._ensure_worker_running()
 
     def _populate_tree(self):
         filter_str = self.filter_var.get().lower()
         selected_id = None
         sel = self.tree.selection()
         if sel:
-            selected_id = self.tree.item(sel[0])["values"][1]
+            try:
+                selected_id = int(self.tree.item(sel[0])["values"][1])
+            except (IndexError, ValueError):
+                selected_id = None
 
         for item in self.tree.get_children():
             self.tree.delete(item)
 
-        for item in self.tests_data:
+        with self.tests_lock:
+            data_copy = [dict(item) for item in self.tests_data]
+
+        for item in data_copy:
             if filter_str and filter_str not in item["cmd"].lower() and filter_str not in item["cat"].lower():
                 continue
 
@@ -1151,7 +1725,7 @@ class MinishellTestGUI:
             elif item["status"] == "FAIL":
                 status_text = "✖ FAIL"
                 tag = "FAIL"
-            elif item["status"] == "RUNNING":
+            elif item["status"] in ("RUNNING", "QUEUED"):
                 status_text = "⏳ RUNNING"
                 tag = "RUNNING"
 
@@ -1172,7 +1746,7 @@ class MinishellTestGUI:
         elif item["status"] == "FAIL":
             status_text = "✖ FAIL"
             tag = "FAIL"
-        elif item["status"] == "RUNNING":
+        elif item["status"] in ("RUNNING", "QUEUED"):
             status_text = "⏳ RUNNING"
             tag = "RUNNING"
 
@@ -1180,13 +1754,17 @@ class MinishellTestGUI:
         self._update_stats_bar()
 
     def _update_stats_bar(self):
-        total = len(self.tests_data)
-        selected = sum(1 for t in self.tests_data if t["selected"])
-        passed = sum(1 for t in self.tests_data if t["status"] == "PASS")
-        failed = sum(1 for t in self.tests_data if t["status"] == "FAIL")
+        with self.tests_lock:
+            total = len(self.tests_data)
+            selected = sum(1 for t in self.tests_data if t["selected"])
+            passed = sum(1 for t in self.tests_data if t["status"] == "PASS")
+            failed = sum(1 for t in self.tests_data if t["status"] == "FAIL")
 
         if self.is_running:
-            self.lbl_status.config(text="Status: Executing Tests...", foreground=COLOR_WARN)
+            if self.is_paused:
+                self.lbl_status.config(text="Status: Paused", foreground=COLOR_WARN)
+            else:
+                self.lbl_status.config(text="Status: Executing Tests...", foreground=COLOR_WARN)
         else:
             self.lbl_status.config(text="Status: Ready", foreground=COLOR_ACCENT)
 
@@ -1202,19 +1780,32 @@ class MinishellTestGUI:
                 item_id = self.tree.identify_row(event.y)
                 if item_id:
                     vals = self.tree.item(item_id)["values"]
-                    t_id = vals[1]
-                    for t in self.tests_data:
-                        if t["id"] == t_id:
-                            t["selected"] = not t["selected"]
-                            self._update_tree_row(item_id, t)
-                            break
+                    try:
+                        t_id = int(vals[1])
+                    except (IndexError, ValueError):
+                        return
+                    with self.tests_lock:
+                        for t in self.tests_data:
+                            if t["id"] == t_id:
+                                t["selected"] = not t["selected"]
+                                if not t["selected"] and t["status"] in ("RUNNING", "QUEUED"):
+                                    t["status"] = "PENDING"
+                                    t["result"] = None
+                                self._update_tree_row(item_id, t)
+                                if t["selected"] and t["status"] == "PENDING" and self.is_running and not self.is_paused:
+                                    self._ensure_worker_running()
+                                break
 
     def _on_tree_select(self, event):
         sel = self.tree.selection()
         if not sel:
             return
-        t_id = self.tree.item(sel[0])["values"][1]
-        test_item = next((t for t in self.tests_data if t["id"] == t_id), None)
+        try:
+            t_id = int(self.tree.item(sel[0])["values"][1])
+        except (IndexError, ValueError):
+            return
+        with self.tests_lock:
+            test_item = next((t for t in self.tests_data if t["id"] == t_id), None)
         if test_item:
             self.edit_cat_var.set(test_item["cat"])
             self.edit_cmd_var.set(test_item["cmd"])
@@ -1223,13 +1814,32 @@ class MinishellTestGUI:
             self._update_inspector(test_item)
 
     def _set_all_selected(self, val):
-        for t in self.tests_data:
-            t["selected"] = val
+        with self.tests_lock:
+            for t in self.tests_data:
+                t["selected"] = val
+                if not val and t["status"] in ("RUNNING", "QUEUED"):
+                    t["status"] = "PENDING"
+                    t["result"] = None
         self._populate_tree()
+        if val and self.is_running and not self.is_paused:
+            self._ensure_worker_running()
 
     def _select_failed_only(self):
-        for t in self.tests_data:
-            t["selected"] = (t["status"] == "FAIL")
+        with self.tests_lock:
+            for t in self.tests_data:
+                t["selected"] = (t["status"] == "FAIL")
+        self._populate_tree()
+
+    def _select_passed_only(self):
+        with self.tests_lock:
+            for t in self.tests_data:
+                t["selected"] = (t["status"] == "PASS")
+        self._populate_tree()
+
+    def _select_pending_only(self):
+        with self.tests_lock:
+            for t in self.tests_data:
+                t["selected"] = (t["status"] == "PENDING")
         self._populate_tree()
 
     def _add_test_item(self):
@@ -1237,53 +1847,69 @@ class MinishellTestGUI:
         cat = self.edit_cat_var.get().strip() or "Custom"
         if not cmd:
             return
-        new_id = len(self.tests_data) + 1
-        new_test = {
-            "id": new_id,
-            "cat": cat,
-            "cmd": cmd,
-            "bash_cmp": self.edit_bash_cmp_var.get(),
-            "flag_error": self.edit_flag_err_var.get(),
-            "selected": True,
-            "status": "PENDING",
-            "result": None
-        }
-        self.tests_data.append(new_test)
-        save_tests_to_file(self.tests_data)
+        with self.tests_lock:
+            self._uid_counter += 1
+            new_test = {
+                "_uid": self._uid_counter,
+                "id": len(self.tests_data) + 1,
+                "cat": cat,
+                "cmd": cmd,
+                "bash_cmp": self.edit_bash_cmp_var.get(),
+                "flag_error": self.edit_flag_err_var.get(),
+                "selected": True,
+                "status": "PENDING",
+                "result": None
+            }
+            self.tests_data.append(new_test)
+            self._reindex_tests_locked()
+            save_tests_to_file(self.tests_data)
         self._populate_tree()
+        if self.is_running and not self.is_paused:
+            self._ensure_worker_running()
 
     def _update_test_item(self):
         sel = self.tree.selection()
         if not sel:
             return
-        t_id = self.tree.item(sel[0])["values"][1]
-        test_item = next((t for t in self.tests_data if t["id"] == t_id), None)
+        try:
+            t_id = int(self.tree.item(sel[0])["values"][1])
+        except (IndexError, ValueError):
+            return
+        test_item = None
+        with self.tests_lock:
+            test_item = next((t for t in self.tests_data if t["id"] == t_id), None)
+            if test_item:
+                test_item["cat"] = self.edit_cat_var.get().strip() or "Custom"
+                test_item["cmd"] = self.edit_cmd_var.get().strip()
+                test_item["bash_cmp"] = self.edit_bash_cmp_var.get()
+                test_item["flag_error"] = self.edit_flag_err_var.get()
+                test_item["status"] = "PENDING"
+                test_item["result"] = None
+                save_tests_to_file(self.tests_data)
+        self._populate_tree()
         if test_item:
-            test_item["cat"] = self.edit_cat_var.get().strip() or "Custom"
-            test_item["cmd"] = self.edit_cmd_var.get().strip()
-            test_item["bash_cmp"] = self.edit_bash_cmp_var.get()
-            test_item["flag_error"] = self.edit_flag_err_var.get()
-            test_item["status"] = "PENDING"
-            test_item["result"] = None
-            save_tests_to_file(self.tests_data)
-            self._populate_tree()
             self._update_inspector(test_item)
+        if self.is_running and not self.is_paused:
+            self._ensure_worker_running()
 
     def _delete_test_item(self):
         sel = self.tree.selection()
         if not sel:
             return
-        t_id = self.tree.item(sel[0])["values"][1]
-        self.tests_data = [t for t in self.tests_data if t["id"] != t_id]
-        for idx, t in enumerate(self.tests_data):
-            t["id"] = idx + 1
-        save_tests_to_file(self.tests_data)
+        try:
+            t_id = int(self.tree.item(sel[0])["values"][1])
+        except (IndexError, ValueError):
+            return
+        with self.tests_lock:
+            self.tests_data = [t for t in self.tests_data if t["id"] != t_id]
+            self._reindex_tests_locked()
+            save_tests_to_file(self.tests_data)
         self._populate_tree()
 
     def _update_inspector(self, test_item):
         res = test_item["result"]
 
-        if not res:
+        if not res or not isinstance(res, dict):
             self._write_read_only_text(
                 self.txt_overview,
                 lambda: self.txt_overview.insert(tk.END, f"Command: {test_item['cmd']}\nStatus: {test_item['status']}\n\nRun test to inspect output.")
@@ -1298,6 +1924,7 @@ class MinishellTestGUI:
                 f"Command:  {res['cmd']}",
                 f"Category: {res['cat']}",
                 f"Result:   {'PASS' if res['passed'] else 'FAIL'}",
+                f"Total Duration: {res.get('duration_ms', 0)} ms",
                 f"\nExit Statuses:",
                 f"  Minishell: {res['ms_code']}",
                 f"  Bash:      {res['bash_code']}",
@@ -1315,6 +1942,7 @@ class MinishellTestGUI:
 
         # 2. STDOUT Tab
         def write_diff():
+            self.txt_diff.insert(tk.END, f"Execution Duration (Base Pass): {res.get('pass1_duration_ms', 0)} ms\n", "info")
             self.txt_diff.insert(tk.END, "=== UNIFIED DIFF (-Bash, +Minishell) ===\n", "info")
             if res["diff_text"]:
                 for line in res["diff_text"].splitlines(keepends=True):
@@ -1350,6 +1978,7 @@ class MinishellTestGUI:
             )
             err_diff_text = "".join(err_diff)
 
+            self.txt_stderr.insert(tk.END, f"Execution Duration (Base Pass): {res.get('pass1_duration_ms', 0)} ms\n", "info")
             self.txt_stderr.insert(tk.END, "=== UNIFIED STDERR DIFF (-Bash, +Minishell) ===\n", "info")
             if err_diff_text:
                 for line in err_diff_text.splitlines(keepends=True):
@@ -1374,6 +2003,7 @@ class MinishellTestGUI:
             ms_env_norm = normalize_env_output(res['ms_env']) if res['ms_env'] else "(empty)"
             bash_env_norm = normalize_env_output(res['bash_env']) if res['bash_env'] else "(empty)"
 
+            self.txt_env.insert(tk.END, f"Execution Duration (Env Pass): {res.get('pass3_duration_ms', 0)} ms\n", "info")
             self.txt_env.insert(tk.END, "=== UNIFIED ENVIRONMENT DIFF (-Bash, +Minishell) ===\n", "info")
             if res["env_diff_text"]:
                 for line in res["env_diff_text"].splitlines(keepends=True):
@@ -1397,110 +2027,389 @@ class MinishellTestGUI:
         self._write_read_only_text(self.txt_env, write_env)
 
         # 5. Valgrind Tab
-        self._write_read_only_text(self.txt_valgrind, lambda: self.txt_valgrind.insert(tk.END, res["valgrind_log"]))
+        self._write_read_only_text(
+            self.txt_valgrind,
+            lambda: self.txt_valgrind.insert(tk.END, f"Execution Duration (Valgrind Pass): {res.get('valgrind_duration_ms', 0)} ms\n\n" + res["valgrind_log"])
+        )
 
         # 6. Malloc Tab
-        self._write_read_only_text(self.txt_malloc, lambda: self.txt_malloc.insert(tk.END, res["malloc_log"]))
+        self._write_read_only_text(
+            self.txt_malloc,
+            lambda: self.txt_malloc.insert(tk.END, f"Execution Duration (Malloc Pass): {res.get('malloc_duration_ms', 0)} ms\n\n" + res["malloc_log"])
+        )
 
         # 7. Signal Handling Tab
-        self._write_read_only_text(self.txt_signals, lambda: self.txt_signals.insert(tk.END, res["signal_log"]))
+        self._write_read_only_text(
+            self.txt_signals,
+            lambda: self.txt_signals.insert(tk.END, f"Execution Duration (Signal Pass): {res.get('signals_duration_ms', 0)} ms\n\n" + res["signal_log"])
+        )
+
+    def stop_tests(self):
+        if not self.is_running and not self.is_paused:
+            return
+        self.stop_requested = True
+        self.pause_requested = False
+        self.is_paused = False
+        self.current_run_id += 1
+        self.lbl_status.config(text="Status: Stopped", foreground=COLOR_WARN)
+        self._finish_run()
+
+    def toggle_pause(self):
+        if not self.is_running and not self.is_paused:
+            return
+
+        if not self.is_paused:
+            self.pause_requested = True
+            self.is_paused = True
+            self.btn_pause.config(text="▶  Resume (Ctrl+P)")
+            self.lbl_status.config(text="Status: Paused", foreground=COLOR_WARN)
+
+            with self.tests_lock:
+                for t in self.tests_data:
+                    if t["status"] in ("RUNNING", "QUEUED"):
+                        t["status"] = "PENDING"
+                        t["result"] = None
+            self._populate_tree()
+        else:
+            self.is_paused = False
+            self.pause_requested = False
+            self.btn_pause.config(text="⏸  Pause (Ctrl+P)")
+            self.lbl_status.config(text="Status: Executing Tests...", foreground=COLOR_WARN)
+
+            has_pending = False
+            with self.tests_lock:
+                has_pending = any(t["selected"] and t["status"] == "PENDING" for t in self.tests_data)
+
+            if not has_pending:
+                self._finish_run()
+            else:
+                self._ensure_worker_running()
 
     def run_tests(self):
-        if self.is_running:
+        if self.is_running or self.is_paused:
+            self.stop_tests()
             return
 
         ms_path = os.path.abspath(self.ms_path_var.get())
-        if not os.path.exists(ms_path):
+        if not os.path.isfile(ms_path):
             messagebox.showerror("Error", f"Minishell binary '{ms_path}' not found.")
             return
 
         bash_path = self.bash_path_var.get().strip()
-        if self.chk_bash.get() and not os.path.exists(bash_path) and not shutil.which(bash_path):
+        if self.chk_bash.get() and not os.path.isfile(bash_path) and not shutil.which(bash_path):
             messagebox.showerror("Error", f"Bash executable '{bash_path}' not found.")
-            return
-
-        selected_tests = [t for t in self.tests_data if t["selected"]]
-
-        if not selected_tests:
-            messagebox.showwarning("Warning", "No tests selected.")
             return
 
         cleanup_test_artifacts()
 
-        for t in selected_tests:
-            t["status"] = "PENDING"
-            t["result"] = None
+        with self.tests_lock:
+            for t in self.tests_data:
+                if t["selected"]:
+                    t["status"] = "PENDING"
+                    t["result"] = None
+
+        self.current_run_id += 1
+        self.stop_requested = False
+        self.pause_requested = False
+        self.is_paused = False
+        self.is_running = True
+
+        self.btn_run.config(text="⏹  Stop Tests (F5)", style="Accent.TButton")
+        self.btn_pause.config(text="⏸  Pause (Ctrl+P)", state=tk.NORMAL)
+        self.progress_var.set(0)
         self._populate_tree()
 
-        self.is_running = True
-        self.btn_run.config(state=tk.DISABLED)
-        self.progress_var.set(0)
+        self._ensure_worker_running()
 
-        opts = {
-            "skip_bash": not self.chk_bash.get(),
-            "skip_valgrind": not self.chk_valgrind.get(),
-            "skip_malloc": not self.chk_malloc.get(),
-            "skip_signals": not self.chk_signals.get()
-        }
+    def _ensure_worker_running(self):
+        if not self.is_running or self.is_paused or self.stop_requested:
+            return
 
-        threading.Thread(
-            target=self._worker_thread,
-            args=(selected_tests, ms_path, bash_path, self.env_mgr.hook_so, self.env_mgr.supp_file, opts, self.jobs_var.get()),
-            daemon=True
-        ).start()
+        ms_path = os.path.abspath(self.ms_path_var.get())
+        if not os.path.isfile(ms_path):
+            messagebox.showerror("Error", f"Minishell binary '{ms_path}' not found.")
+            self.stop_tests()
+            return
 
-    def _worker_thread(self, tests, ms_path, bash_path, hook_so_path, supp_file_path, opts, num_threads):
-        total = len(tests)
-        completed = 0
+        bash_path = self.bash_path_var.get().strip()
+        if self.chk_bash.get() and not os.path.isfile(bash_path) and not shutil.which(bash_path):
+            messagebox.showerror("Error", f"Bash executable '{bash_path}' not found.")
+            self.stop_tests()
+            return
 
-        with ThreadPoolExecutor(max_workers=num_threads) as executor:
-            future_to_test = {
-                executor.submit(execute_single_test, t, ms_path, bash_path, hook_so_path, supp_file_path, opts): t
-                for t in tests
+        if self.worker_thread is None or not self.worker_thread.is_alive() or getattr(self.worker_thread, "run_id", None) != self.current_run_id:
+            opts = {
+                "skip_bash": not self.chk_bash.get(),
+                "skip_valgrind": not self.chk_valgrind.get(),
+                "skip_malloc": not self.chk_malloc.get(),
+                "skip_signals": not self.chk_signals.get(),
+                "run_env_i": self.chk_env_i.get(),
+                "run_non_interactive": self.chk_non_interactive.get()
             }
-            for future in as_completed(future_to_test):
-                test_item = future_to_test[future]
-                res = future.result()
-                completed += 1
-                self.msg_queue.put(("RESULT", test_item["id"], res, (completed / total) * 100))
+            t = threading.Thread(
+                target=self._worker_thread,
+                args=(self.current_run_id, ms_path, bash_path, self.env_mgr.hook_so, self.env_mgr.supp_file, opts),
+                daemon=True
+            )
+            t.run_id = self.current_run_id
+            self.worker_thread = t
+            t.start()
 
-        self.msg_queue.put(("DONE", None, None, 100))
+    def _execute_test_wrapper(self, run_id, test_item, ms_path, bash_path, hook_so_path, supp_file_path, opts):
+        def cancel_check():
+            if not self.is_running or self.current_run_id != run_id or self.stop_requested or self.pause_requested:
+                return True
+            with self.tests_lock:
+                existing = next((t for t in self.tests_data if t["_uid"] == test_item["_uid"]), None)
+                if not existing or not existing["selected"]:
+                    return True
+            return False
+
+        if cancel_check():
+            return None
+
+        self.msg_queue.put(("STARTING", run_id, test_item["_uid"], None))
+
+        res = execute_single_test(
+            test_item, ms_path, bash_path, hook_so_path, supp_file_path, opts, check_cancel=cancel_check
+        )
+        return res
+
+    def _worker_thread(self, run_id, ms_path, bash_path, hook_so_path, supp_file_path, opts):
+        with ThreadPoolExecutor(max_workers=32) as executor:
+            active_futures = {}
+
+            while self.is_running and self.current_run_id == run_id and not self.stop_requested and not self.pause_requested:
+                done_futures = [f for f in list(active_futures.keys()) if f.done()]
+                for f in done_futures:
+                    t_uid = active_futures.pop(f)
+                    try:
+                        res = f.result()
+                        if res is not None and isinstance(res, dict) and self.is_running and self.current_run_id == run_id and not self.stop_requested and not self.pause_requested:
+                            self.msg_queue.put(("RESULT", run_id, t_uid, res))
+                        else:
+                            self.msg_queue.put(("RESET_TEST", run_id, t_uid, None))
+                    except Exception:
+                        self.msg_queue.put(("RESET_TEST", run_id, t_uid, None))
+
+                try:
+                    num_threads = max(1, min(32, self.jobs_var.get()))
+                except Exception:
+                    num_threads = 4
+
+                if len(active_futures) < num_threads and self.is_running and self.current_run_id == run_id and not self.pause_requested and not self.stop_requested:
+                    next_test = None
+                    with self.tests_lock:
+                        for t in self.tests_data:
+                            if t["selected"] and t["status"] == "PENDING":
+                                t["status"] = "QUEUED"
+                                next_test = dict(t)
+                                break
+
+                    if next_test:
+                        f = executor.submit(
+                            self._execute_test_wrapper, run_id, next_test, ms_path, bash_path, hook_so_path, supp_file_path, opts
+                        )
+                        active_futures[f] = next_test["_uid"]
+                        continue
+
+                if not active_futures:
+                    has_pending = False
+                    with self.tests_lock:
+                        has_pending = any(t["selected"] and t["status"] == "PENDING" for t in self.tests_data)
+                    if not has_pending:
+                        break
+
+                time.sleep(0.02)
+
+            for f in list(active_futures.keys()):
+                f.cancel()
+
+        self.msg_queue.put(("BATCH_DONE", run_id, None, None))
+
+    def _finish_run(self):
+        self.is_running = False
+        self.is_paused = False
+        self.stop_requested = False
+        self.pause_requested = False
+        self.btn_run.config(text="▶  Run Selected (F5)", style="Accent.TButton")
+        self.btn_pause.config(text="⏸  Pause (Ctrl+P)", state=tk.DISABLED)
+
+        with self.tests_lock:
+            for t in self.tests_data:
+                if t["status"] in ("RUNNING", "QUEUED"):
+                    t["status"] = "PENDING"
+                    t["result"] = None
+
+        self._populate_tree()
+        self._update_stats_bar()
+        cleanup_test_artifacts()
+
+    def _update_overall_progress(self):
+        with self.tests_lock:
+            selected_tests = [t for t in self.tests_data if t["selected"]]
+            if selected_tests:
+                completed_count = sum(1 for t in selected_tests if t["status"] in ("PASS", "FAIL"))
+                prog = (completed_count / len(selected_tests)) * 100
+                self.progress_var.set(prog)
 
     def _poll_queue(self):
         try:
             while True:
-                msg_type, t_id, res, prog = self.msg_queue.get_nowait()
-                if msg_type == "RESULT":
-                    for t in self.tests_data:
-                        if t["id"] == t_id:
-                            t["result"] = res
-                            t["status"] = "PASS" if res["passed"] else "FAIL"
-                            break
-                    self.progress_var.set(prog)
+                msg_type, run_id, t_uid, res = self.msg_queue.get_nowait()
+                if run_id != self.current_run_id:
+                    continue
+
+                if msg_type == "STARTING":
+                    if not self.stop_requested and not self.pause_requested:
+                        with self.tests_lock:
+                            for t in self.tests_data:
+                                if t["_uid"] == t_uid and t["status"] == "QUEUED":
+                                    t["status"] = "RUNNING"
+                                    break
+                        self._populate_tree()
+
+                elif msg_type == "RESULT":
+                    if not self.stop_requested and not self.pause_requested and isinstance(res, dict):
+                        with self.tests_lock:
+                            for t in self.tests_data:
+                                if t["_uid"] == t_uid:
+                                    t["result"] = res
+                                    t["status"] = "PASS" if res.get("passed", False) else "FAIL"
+                                    break
+                        self._update_overall_progress()
+                        self._populate_tree()
+
+                        sel = self.tree.selection()
+                        if sel:
+                            try:
+                                sel_id = int(self.tree.item(sel[0])["values"][1])
+                                with self.tests_lock:
+                                    t_item = next((t for t in self.tests_data if t["id"] == sel_id), None)
+                                if t_item and t_item["_uid"] == t_uid:
+                                    self._update_inspector(t_item)
+                            except (IndexError, ValueError):
+                                pass
+
+                elif msg_type == "RESET_TEST":
+                    with self.tests_lock:
+                        for t in self.tests_data:
+                            if t["_uid"] == t_uid and t["status"] in ("RUNNING", "QUEUED"):
+                                t["status"] = "PENDING"
+                                t["result"] = None
                     self._populate_tree()
 
-                    sel = self.tree.selection()
-                    if sel and self.tree.item(sel[0])["values"][1] == t_id:
-                        t_item = next((t for t in self.tests_data if t["id"] == t_id), None)
-                        if t_item:
-                            self._update_inspector(t_item)
-
-                elif msg_type == "DONE":
-                    self.is_running = False
-                    self.btn_run.config(state=tk.NORMAL)
-                    self.progress_var.set(100)
-                    self._update_stats_bar()
-                    cleanup_test_artifacts()
+                elif msg_type == "BATCH_DONE":
+                    if self.is_paused:
+                        self.lbl_status.config(text="Status: Paused", foreground=COLOR_WARN)
+                        self._update_stats_bar()
+                    else:
+                        has_pending = False
+                        with self.tests_lock:
+                            has_pending = any(t["selected"] and t["status"] == "PENDING" for t in self.tests_data)
+                        if has_pending and self.is_running and not self.stop_requested:
+                            self._ensure_worker_running()
+                        else:
+                            self._finish_run()
         except queue.Empty:
+            pass
+        except Exception:
             pass
 
         self.root.after(100, self._poll_queue)
 
 
+def main_cli(args):
+    cfg = load_app_config()
+    ms_setting = args.ms or cfg.get("ms_path") or "./minishell"
+    bash_setting = args.bash or cfg.get("bash_path") or (shutil.which("bash") or "/bin/bash")
+
+    ms_path = os.path.abspath(ms_setting)
+    bash_path = os.path.abspath(bash_setting) if not shutil.which(bash_setting) and os.path.exists(bash_setting) else (shutil.which(bash_setting) or bash_setting)
+
+    if not os.path.isfile(ms_path):
+        print(f"Error: Minishell executable '{ms_path}' not found.")
+        sys.exit(1)
+
+    print("=== Minishell Automated CLI Test Runner ===")
+    print(f"Target Binary: {ms_path}")
+    print(f"Bash Compare: {bash_path}")
+
+    env_mgr = EnvironmentManager()
+    try:
+        env_mgr.build_hook()
+    except Exception as e:
+        print(f"Error compiling allocation hook: {e}")
+        sys.exit(1)
+
+    raw_tests = load_tests_from_file()
+    tests_data = []
+    for idx, item in enumerate(raw_tests):
+        tests_data.append({
+            "id": idx + 1,
+            "cat": item.get("cat", "Custom"),
+            "cmd": item.get("cmd", ""),
+            "bash_cmp": item.get("bash_cmp", True),
+            "flag_error": item.get("flag_error", False)
+        })
+
+    opts = {
+        "skip_bash": False,
+        "skip_valgrind": False,
+        "skip_malloc": False,
+        "skip_signals": False,
+        "run_env_i": True,
+        "run_non_interactive": True
+    }
+
+    passed_count = 0
+    failed_count = 0
+
+    print(f"\nExecuting {len(tests_data)} test cases...\n")
+
+    with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor:
+        futures = {
+            executor.submit(execute_single_test, t, ms_path, bash_path, env_mgr.hook_so, env_mgr.supp_file, opts): t
+            for t in tests_data
+        }
+        for future in as_completed(futures):
+            t_item = futures[future]
+            res = future.result()
+            if res and res["passed"]:
+                passed_count += 1
+                print(f"  ✔ [PASS] #{t_item['id']} ({t_item['cat']}): {t_item['cmd']} ({res['duration_ms']} ms)")
+            else:
+                failed_count += 1
+                print(f"  ✖ [FAIL] #{t_item['id']} ({t_item['cat']}): {t_item['cmd']}")
+                if res and res["failures"]:
+                    for f in res["failures"]:
+                        print(f"      ├─ {f}")
+
+    print("\n=== Compliance Audit Summary ===")
+    forbidden = check_forbidden_functions(ms_path)
+    if not forbidden:
+        print("  ✔ External functions audit: Passed (All symbols whitelisted)")
+    else:
+        print(f"  ✖ Forbidden symbols detected: {', '.join(forbidden)}")
+
+    print(f"\nResults: {passed_count} Passed, {failed_count} Failed.")
+    cleanup_test_artifacts()
+    sys.exit(0 if failed_count == 0 else 1)
+
+
 def main():
-    root = tk.Tk()
-    app = MinishellTestGUI(root)
-    root.mainloop()
+    parser = argparse.ArgumentParser(description="Minishell Test Harness GUI / CLI")
+    parser.add_argument("--cli", action="store_true", help="Run test suite headlessly in CLI terminal mode")
+    parser.add_argument("--ms", default=None, help="Path to minishell binary (for CLI mode)")
+    parser.add_argument("--bash", default=None, help="Path to bash binary (for CLI mode)")
+    args = parser.parse_args()
+
+    if args.cli:
+        main_cli(args)
+    else:
+        root = tk.Tk()
+        app = MinishellTestGUI(root)
+        root.mainloop()
 
 if __name__ == "__main__":
     main()

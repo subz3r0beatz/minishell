@@ -14,11 +14,11 @@
 
 int	handle_pwd(t_minishell *shell)
 {
-	char	pwd_buf[8192];
+	char	pwd_buf[PATH_MAX];
 	int		get_cwd_fail;
 
 	get_cwd_fail = 0;
-	if (!getcwd(pwd_buf, 8192))
+	if (!getcwd(pwd_buf, PATH_MAX))
 	{
 		perror("minishell: shell-init: error retrieving current directory: "
 			"getcwd: cannot access parent directories");
@@ -28,7 +28,5 @@ int	handle_pwd(t_minishell *shell)
 		return (0);
 	if (get_cwd_fail)
 		return (0);
-	if (insert_new_node(shell, "PWD", pwd_buf, 1))
-		return (1);
-	return (0);
+	return (insert_new_node(shell, "PWD", pwd_buf, 1));
 }
