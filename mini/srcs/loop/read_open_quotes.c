@@ -73,7 +73,6 @@ char	*read_open_quotes(t_minishell *shell, char *raw_input, char *buffer)
 
 	if (!raw_input || !handle_quotes(raw_input, &quote))
 		return (raw_input);
-	init_interactive_signals(1);
 	input = raw_input;
 	while (input && handle_quotes(input, &quote))
 	{

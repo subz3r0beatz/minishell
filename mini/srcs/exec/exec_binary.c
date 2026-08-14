@@ -6,7 +6,7 @@ static int	wait_exec(t_minishell *shell, pid_t pid)
 	int	status;
 
 	waitpid(pid, &status, 0);
-	init_interactive_signals(1);
+	init_interactive_signals();
 	if (WIFEXITED(status))
 		shell->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
@@ -93,7 +93,7 @@ int	exec_binary(t_minishell *shell, t_ast_node *node)
 	pid = fork();
 	if (pid < 0)
 	{
-		init_interactive_signals(1);
+		init_interactive_signals();
 		ft_putstr_fd("minishell: exec: fork failed\n", STDERR_FILENO);
 		shell->exit_status = 1;
 		return (1);

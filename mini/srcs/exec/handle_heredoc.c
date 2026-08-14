@@ -11,17 +11,23 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdio.h>
 
 static char	*get_next(char *limiter, char *buffer)
 {
 	char	*line;
 
+	rl_event_hook = rl_signal_check;
 	if (isatty(STDIN_FILENO))
 		line = readline("> ");
 	else
 		line = ft_gnl(STDIN_FILENO, buffer, 128, NULL);
-	if (!line && g_signal_status != 130)
+	rl_event_hook = NULL;
+	if (g_signal_status == 130)
+	{
+		free(line);
+		return (NULL);
+	}
+	if (!line)
 	{
 		ft_putstr_fd("minishell: warning: here-document delimited by "
 			"end-of-file (wanted `", STDERR_FILENO);
@@ -76,7 +82,7 @@ int	handle_heredoc(t_minishell *shell, char *file)
 	char	*clean;
 	int		expand;
 
-	init_interactive_signals(2);
+	init_interactive_signals();
 	if (pipe(pfd) < 0)
 	{
 		ft_putstr_fd("minishell: pipe failed\n", STDERR_FILENO);
@@ -89,7 +95,7 @@ int	handle_heredoc(t_minishell *shell, char *file)
 	heredoc_read_loop(shell, pfd, clean, expand);
 	free(clean);
 	close(pfd[1]);
-	init_interactive_signals(1);
+	init_interactive_signals();
 	if (g_signal_status == 130)
 	{
 		close(pfd[0]);

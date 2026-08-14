@@ -14,7 +14,7 @@
 
 static void	common_error(t_minishell *shell)
 {
-	init_interactive_signals(1);
+	init_interactive_signals();
 	ft_putstr_fd("minishell: exec: fork failed\n", STDERR_FILENO);
 	shell->exit_status = 1;
 }
@@ -27,7 +27,7 @@ static int	wait_exec(t_minishell *shell, pid_t left_pid, pid_t right_pid, int pf
 	close(pfd[1]);
 	waitpid(left_pid, NULL, 0);
 	waitpid(right_pid, &status, 0);
-	init_interactive_signals(1);
+	init_interactive_signals();
 	if (WIFEXITED(status))
 		shell->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))

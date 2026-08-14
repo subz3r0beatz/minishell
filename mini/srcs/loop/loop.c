@@ -45,7 +45,7 @@ void	loop(t_minishell *shell)
 	while (1)
 	{
 		malloc_error = 0;
-		init_interactive_signals(1);
+		init_interactive_signals();
 		if (isatty(STDIN_FILENO))
 		{
 			build_prompt(shell);

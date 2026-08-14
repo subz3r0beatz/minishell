@@ -16,7 +16,7 @@
 extern volatile sig_atomic_t	g_signal_status;
 
 int		rl_signal_check(void);
-void	init_interactive_signals(int handler);
+void	init_interactive_signals(void);
 void	init_ignore_signals(int ignore);
 
 #endif

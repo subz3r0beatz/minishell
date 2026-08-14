@@ -20,14 +20,6 @@ static void	sig_handler_interactive(int sig)
 	g_signal_status = 130;
 }
 
-static void	sig_handler_heredoc(int sig)
-{
-	(void)sig;
-	g_signal_status = 130;
-	write(STDOUT_FILENO, "\n", 1);
-	close(STDIN_FILENO);
-}
-
 int	rl_signal_check(void)
 {
 	if (g_signal_status == 130)
@@ -35,16 +27,13 @@ int	rl_signal_check(void)
 	return (0);
 }
 
-void	init_interactive_signals(int handler)
+void	init_interactive_signals(void)
 {
 	struct sigaction	sa_int;
 	struct sigaction	sa_quit;
 
 	g_signal_status = 0;
-	if (handler == 1)
-		sa_int.sa_handler = sig_handler_interactive;
-	else
-		sa_int.sa_handler = sig_handler_heredoc;
+	sa_int.sa_handler = sig_handler_interactive;
 	sigemptyset(&sa_int.sa_mask);
 	sa_int.sa_flags = 0;
 	sigaction(SIGINT, &sa_int, NULL);
