@@ -5,9 +5,9 @@ Single-file self-contained Tkinter GUI test harness with stack backtrace symbol
 resolution for silent malloc failures, readline valgrind suppressions, isolated multi-pass
 execution (Base Command, CWD Probe, Env Probe, Malloc Faults, Valgrind, Signal Phase,
 Env -i Pass, Non-Interactive Pipe Pass, and Forbidden Functions Audit), Norminette integration,
-HTML test report exporter, direct terminal debug launcher with auto-command execution, dynamic thread adjustment,
-keyboard reordering, external JSON test suite persistence, recompile controls, path configuration persistence,
-automatic Makefile directory traversal, and headless CLI mode support.
+HTML test report exporter, direct Valgrind-wrapped terminal debug launcher with delayed STDIN payload feeding,
+dynamic thread adjustment, keyboard reordering, external JSON test suite persistence, recompile controls,
+path configuration persistence, automatic Makefile directory traversal, and headless CLI mode support.
 """
 
 import os
@@ -1349,26 +1349,109 @@ class MinishellTestGUI:
             return
 
         cmd_raw = test_item['cmd']
+        ms_cmd_str = re.sub(r'/tmp/ms_', f'/tmp/ms_t{test_item["id"]}_ms_', cmd_raw)
+        payload = f"{ms_cmd_str}\n"
+
         try:
             self.root.clipboard_clear()
-            self.root.clipboard_append(cmd_raw)
+            self.root.clipboard_append(payload)
             self.root.update()
         except Exception:
             pass
 
+        valgrind_bin = shutil.which("valgrind")
+        supp_path = self.env_mgr.supp_file
         ms_dir = os.path.dirname(ms_path)
-        cmd_escaped = cmd_raw.replace("'", "'\\''")
-        cmd_display = cmd_raw.replace('"', '\\"')
 
-        run_script = (
-            f'echo "=== DEBUG SESSION ==="; '
-            f'echo "Executing: {cmd_display}"; '
-            f'echo "(Command copied to system clipboard)"; '
-            f'echo "----------------------------------------"; '
-            f'cd "{ms_dir}"; '
-            f'(printf \'%s\\n\' \'{cmd_escaped}\'; cat) | {ms_path}; '
-            f'exec bash'
-        )
+        runner_code = f'''
+import os
+import sys
+import pty
+import subprocess
+import time
+import select
+
+ms_path = {repr(ms_path)}
+supp_path = {repr(supp_path)}
+payload = {repr(payload)}
+root_dir = {repr(ms_dir)}
+
+valgrind_bin = {repr(valgrind_bin)}
+if valgrind_bin:
+    cmd = [
+        valgrind_bin,
+        "--suppressions=" + supp_path,
+        "--leak-check=full",
+        "--show-leak-kinds=all",
+        "--errors-for-leak-kinds=all",
+        "--track-fds=yes",
+        ms_path
+    ]
+else:
+    cmd = [ms_path]
+
+print("=== INTERACTIVE VALGRIND DEBUG SESSION ===")
+print("Waiting for Valgrind and Minishell to initialize...")
+sys.stdout.flush()
+
+master_fd, slave_fd = pty.openpty()
+try:
+    p = subprocess.Popen(
+        cmd,
+        stdin=slave_fd,
+        stdout=slave_fd,
+        stderr=slave_fd,
+        cwd=root_dir,
+        close_fds=True
+    )
+except Exception as e:
+    print(f"Failed to launch process: {{e}}")
+    sys.exit(1)
+
+os.close(slave_fd)
+
+# Wait 2.5 seconds for Valgrind and Minishell initialization to complete
+time.sleep(2.5)
+
+print("Injecting test payload into STDIN...")
+sys.stdout.flush()
+os.write(master_fd, payload.encode('utf-8'))
+
+# Interactive loop
+try:
+    while p.poll() is None:
+        r, _, _ = select.select([sys.stdin, master_fd], [], [], 0.05)
+        if sys.stdin in r:
+            data = os.read(sys.stdin.fileno(), 1024)
+            if not data:
+                break
+            os.write(master_fd, data)
+        if master_fd in r:
+            try:
+                data = os.read(master_fd, 1024)
+                if not data:
+                    break
+                os.write(sys.stdout.fileno(), data)
+                sys.stdout.flush()
+            except OSError:
+                break
+except Exception:
+    pass
+finally:
+    try:
+        os.close(master_fd)
+    except Exception:
+        pass
+    p.wait()
+    print("\\n=== Debug Session Ended ===")
+    input("Press Enter to close terminal...")
+'''
+
+        runner_file = os.path.join(self.env_mgr.temp_dir, f"debug_runner_{test_item['id']}.py")
+        with open(runner_file, "w", encoding="utf-8") as f:
+            f.write(runner_code)
+
+        run_script = f'python3 "{runner_file}"; exec bash'
 
         try:
             if "gnome-terminal" in term:

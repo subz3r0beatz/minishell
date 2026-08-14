@@ -11,15 +11,16 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stdio.h>
 
-static char	*get_next(char *limiter)
+static char	*get_next(char *limiter, char *buffer)
 {
 	char	*line;
 
 	if (isatty(STDIN_FILENO))
 		line = readline("> ");
 	else
-		line = read_line_non_interactive(STDIN_FILENO);
+		line = ft_gnl(STDIN_FILENO, buffer, 128, NULL);
 	if (!line && g_signal_status != 130)
 	{
 		ft_putstr_fd("minishell: warning: here-document delimited by "
@@ -34,10 +35,12 @@ static void	heredoc_read_loop(t_minishell *shell, int pfd[2],
 		char *limiter, int expand)
 {
 	char	*line;
+	char	buffer[128];
 
+	buffer[0] = 0;
 	while (1)
 	{
-		line = get_next(limiter);
+		line = get_next(limiter, buffer);
 		if (!line)
 			break ;
 		if (!ft_strcmp(line, limiter))
@@ -73,7 +76,7 @@ int	handle_heredoc(t_minishell *shell, char *file)
 	char	*clean;
 	int		expand;
 
-	init_heredoc_signals();
+	init_interactive_signals(2);
 	if (pipe(pfd) < 0)
 	{
 		ft_putstr_fd("minishell: pipe failed\n", STDERR_FILENO);
@@ -86,7 +89,7 @@ int	handle_heredoc(t_minishell *shell, char *file)
 	heredoc_read_loop(shell, pfd, clean, expand);
 	free(clean);
 	close(pfd[1]);
-	init_interactive_signals();
+	init_interactive_signals(1);
 	if (g_signal_status == 130)
 	{
 		close(pfd[0]);

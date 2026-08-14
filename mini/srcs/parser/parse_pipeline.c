@@ -24,17 +24,15 @@ t_ast_node	*parse_pipeline(t_minishell *shell, t_token **token)
 	while (*token && (*token)->type == TOKEN_PIPE)
 	{
 		*token = (*token)->next;
-		if (!*token)
-			syntax_error(shell, *token);
-		if (!*token)
+		while (*token && (*token)->type == TOKEN_NEWLINE)
+			*token = (*token)->next;
+		if (!*token && !syntax_error(shell, *token))
 			return (free_ast(left));
 		right = parse_cmd(shell, token);
 		if (!right)
 			return (free_ast(left));
 		parent = new_op_node(NODE_PIPE, left, right);
-		if (!parent)
-			free_ast(left);
-		if (!parent)
+		if (!parent && !free_ast(left))
 			return (free_ast(right));
 		left = parent;
 	}

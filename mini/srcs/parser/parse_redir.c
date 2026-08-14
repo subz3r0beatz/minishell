@@ -24,6 +24,7 @@ static t_redir	*new_redir_node(t_token_type type, char *file)
 		return (NULL);
 	}
 	redir->type = type;
+	redir->fd = -1;
 	redir->file = ft_strdup(file);
 	if (!redir->file)
 	{

@@ -14,6 +14,15 @@
 
 static void	process_input(t_minishell *shell, char *input)
 {
+	size_t	i;
+
+	if (!input)
+		return ;
+	i = 0;
+	while (input[i] && ft_iswhite(input[i]))
+		i++;
+	if (!input[i])
+		return ;
 	add_history(input);
 	shell->tokens = lexer(input, shell->token_type_table);
 	if (!shell->tokens)
@@ -21,93 +30,51 @@ static void	process_input(t_minishell *shell, char *input)
 	shell->ast = parser(shell, shell->tokens);
 	if (!shell->ast)
 		return ;
-	shell->exit_status = exec(shell, shell->ast);
+	if (collect_heredocs(shell, shell->ast) == 0)
+		shell->exit_status = exec(shell, shell->ast);
 	free_ast(shell->ast);
 	shell->ast = NULL;
 }
 
-static int	grow_buf(char **buf, size_t len, size_t *cap)
-{
-	char	*new_buf;
-	size_t	i;
-
-	*cap *= 2;
-	new_buf = malloc(sizeof(char) * (*cap));
-	if (!new_buf)
-	{
-		ft_putstr_fd("minishell: malloc: "
-			"cannot allocate memory\n", STDERR_FILENO);
-		free(*buf);
-		*buf = NULL;
-		return (0);
-	}
-	i = 0;
-	while (i < len)
-	{
-		new_buf[i] = (*buf)[i];
-		i++;
-	}
-	free(*buf);
-	*buf = new_buf;
-	return (1);
-}
-
-char	*read_line_non_interactive(int fd)
-{
-	char	*buf;
-	char	c;
-	size_t	i;
-	size_t	cap;
-	int		b;
-
-	cap = 128;
-	buf = malloc(sizeof(char) * cap);
-	if (!buf)
-	{
-		ft_putstr_fd("minishell: malloc: "
-			"cannot allocate memory\n", STDERR_FILENO);
-		return (NULL);
-	}
-	i = 0;
-	while ((b = read(fd, &c, 1)) > 0 && c != '\n')
-	{
-		if (i + 1 >= cap && !grow_buf(&buf, i, &cap))
-			return (NULL);
-		buf[i++] = c;
-	}
-	if (i == 0 && b <= 0)
-	{
-		free(buf);
-		return (NULL);
-	}
-	buf[i] = '\0';
-	return (buf);
-}
-
 void	loop(t_minishell *shell)
 {
-	int		status;
-	char	*prompt;
+	char	buffer[128];
+	int		malloc_error;
 
+	buffer[0] = 0;
 	while (1)
 	{
-		init_interactive_signals();
+		malloc_error = 0;
+		init_interactive_signals(1);
 		if (isatty(STDIN_FILENO))
 		{
-			status = build_prompt(shell->env, &prompt);
-			shell->input = readline(prompt);
-			if (status != 2)
-				free(prompt);
+			build_prompt(shell);
+			rl_event_hook = rl_signal_check;
+			shell->input = readline("$ ");
+			rl_event_hook = NULL;
+			if (g_signal_status == 130)
+			{
+				shell->exit_status = 130;
+				free(shell->input);
+				shell->input = NULL;
+				continue ;
+			}
 		}
 		else
-			shell->input = read_line_non_interactive(STDIN_FILENO);
+		{
+			malloc_error = 1;
+			shell->input = ft_gnl(STDIN_FILENO, buffer, 128, &malloc_error);
+		}
+		if (!shell->input && malloc_error)
+			ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
 		if (!shell->input && isatty(STDIN_FILENO))
 			ft_putstr_fd("exit\n", STDERR_FILENO);
 		if (!shell->input)
 			break ;
-		shell->input = read_complete_input(shell, shell->input);
-		if (shell->input && *shell->input)
-			process_input(shell, shell->input);
+		shell->input = read_open_quotes(shell, shell->input, buffer);
+		if (!shell->input && !isatty(STDIN_FILENO))
+			break ;
+		process_input(shell, shell->input);
 		free(shell->input);
 		shell->input = NULL;
 	}

@@ -43,11 +43,12 @@ static t_ast_node	*loop_list(t_minishell *shell, t_token **token,
 	t_node_type	op;
 
 	while (*token && ft_strlen((*token)->value) == 1
-		&& ((*token)->type == TOKEN_SEMI || (*token)->type == TOKEN_BACKGR))
+		&& ((*token)->type == TOKEN_SEMI || (*token)->type == TOKEN_BACKGR
+		|| (*token)->type == TOKEN_NEWLINE))
 	{
-		op = NODE_BACKGR;
-		if ((*token)->type == TOKEN_SEMI)
-			op = NODE_SEMI;
+		op = NODE_SEMI;
+		if ((*token)->type == TOKEN_BACKGR)
+			op = NODE_BACKGR;
 		*token = (*token)->next;
 		left = create_list_node(shell, token, left, op);
 		if (!left)
@@ -62,6 +63,10 @@ t_ast_node	*parse_list(t_minishell *shell, t_token **token)
 {
 	t_ast_node	*left;
 
+	while (*token && (*token)->type == TOKEN_NEWLINE)
+		*token = (*token)->next;
+	if (!*token || (*token)->type == TOKEN_RPAREN)
+		return (NULL);
 	left = parse_logic(shell, token);
 	if (!left)
 		return (NULL);

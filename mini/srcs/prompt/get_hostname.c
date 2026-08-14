@@ -12,43 +12,24 @@
 
 #include "minishell.h"
 
-static int	read_hostname(char *buffer)
+char	*get_hostname(t_minishell *shell, int *malloc_error)
 {
-	int	fd;
-	int	bytes_read;
+	size_t	i;
+	ssize_t	bytes_read;
+	char	*hostname;
+	char	buffer[HOST_NAME_MAX];
 
-	fd = open("/etc/hostname", O_RDONLY);
-	if (fd < 0)
-		return (-1);
-	bytes_read = read(fd, buffer, HOST_NAME_MAX);
-	close(fd);
-	return (bytes_read);
-}
-
-char	*get_hostname(t_robin *env, char *buffer, int *no_malloc_error)
-{
-	int				i;
-	int				bytes_read;
-	char			*hostname;
-	t_robin_node	*node;
-
-	node = robin_search(env, "HOSTNAME");
-	if (node && node->value && ((t_env *)node->value)->value)
-		return (ft_strdup(((t_env *)node->value)->value));
-	bytes_read = read_hostname(buffer);
+	if (!get_var_value(shell, "HOSTNAME", &hostname) && hostname)
+		return (ft_strdup(hostname));
+	bytes_read = open_read("/etc/hostname", buffer, HOST_NAME_MAX);
 	if (bytes_read <= 0)
-		*no_malloc_error = 1;
-	if (bytes_read <= 0)
+	{
+		*malloc_error = 0;
 		return (NULL);
-	buffer[bytes_read] = '\0';
+	}
 	i = 0;
-	while (buffer[i] && buffer[i] != '\n' && buffer[i] != '.')
+	while (i < (size_t)bytes_read && buffer[i] != '\n' && buffer[i] != '.')
 		i++;
-	hostname = (char *)malloc(sizeof(char) * (i + 1));
-	if (!hostname)
-		return (NULL);
-	hostname[i] = '\0';
-	while (--i >= 0)
-		hostname[i] = buffer[i];
-	return (hostname);
+	buffer[i] = '\0';
+	return (ft_strdup(buffer));
 }

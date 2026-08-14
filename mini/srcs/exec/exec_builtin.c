@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdio.h>
 
 int	is_builtin(char *cmd)
 {
@@ -19,9 +18,9 @@ int	is_builtin(char *cmd)
 	{
 		if (ft_strcmp(cmd, "echo") == 0)
 			return (1);
-		if (ft_strcmp(cmd, "exit") == 0)
-			return (2);
 		if (ft_strcmp(cmd, "env") == 0)
+			return (2);
+		if (ft_strcmp(cmd, "exit") == 0)
 			return (3);
 		if (ft_strcmp(cmd, "export") == 0)
 			return (4);

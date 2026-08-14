@@ -16,6 +16,7 @@
 typedef enum e_token_type
 {
 	TOKEN_WORD,
+	TOKEN_COMMENT,
 	TOKEN_OR,
 	TOKEN_AND,
 	TOKEN_DLESS,
@@ -27,7 +28,8 @@ typedef enum e_token_type
 	TOKEN_LPAREN,
 	TOKEN_RPAREN,
 	TOKEN_SEMI,
-	TOKEN_TLESS,
+	TOKEN_NEWLINE,
+	TOKEN_TLESS
 }				t_token_type;
 
 typedef struct s_token
@@ -38,6 +40,6 @@ typedef struct s_token
 }				t_token;
 
 t_token	*lexer(char *input, uint8_t table[256][256]);
-void	free_tokens(t_token *head);
+t_token	*free_tokens(t_token *head);
 
 #endif

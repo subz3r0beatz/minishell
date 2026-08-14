@@ -26,17 +26,16 @@ static t_ast_node	*loop_logic(t_minishell *shell, t_token **token,
 		if ((*token)->type == TOKEN_AND)
 			op = NODE_AND;
 		*token = (*token)->next;
-		if (!*token)
+		while (*token && (*token)->type == TOKEN_NEWLINE)
+			*token = (*token)->next;
+		if (!*token && !syntax_error(shell, *token))
 			return (free_ast(left));
 		right = parse_pipeline(shell, token);
 		if (!right)
 			return (free_ast(left));
 		parent = new_op_node(op, left, right);
-		if (!parent)
-		{
-			free_ast(left);
+		if (!parent && !free_ast(left))
 			return (free_ast(right));
-		}
 		left = parent;
 	}
 	return (left);

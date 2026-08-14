@@ -17,7 +17,7 @@ static int	wait_exec(t_minishell *shell, pid_t pid)
 	int	status;
 
 	waitpid(pid, &status, 0);
-	init_interactive_signals();
+	init_interactive_signals(1);
 	if (WIFEXITED(status))
 		shell->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))

@@ -59,8 +59,10 @@ static t_ast_node	*parse_subshell(t_minishell *shell, t_token **token)
 	while (*token && ((*token)->type == TOKEN_LESS
 			|| (*token)->type == TOKEN_GREAT || (*token)->type == TOKEN_DLESS
 			|| (*token)->type == TOKEN_DGREAT || (*token)->type == TOKEN_TLESS))
+	{
 		if (parse_redir(shell, token, &node->redir))
 			return (free_ast(node));
+	}
 	return (node);
 }
 
@@ -86,8 +88,6 @@ static t_ast_node	*loop_tokens(t_minishell *shell, t_token **token,
 		return (free_ast(node));
 	if (*token && (*token)->type == TOKEN_LPAREN)
 	{
-		if (node->args && node->args[0] && !node->args[1])
-			*token = (*token)->next;
 		free_ast(node);
 		return (syntax_error(shell, *token));
 	}

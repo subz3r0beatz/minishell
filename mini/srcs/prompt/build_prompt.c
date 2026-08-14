@@ -12,100 +12,92 @@
 
 #include "minishell.h"
 
-static int	build_username(t_robin *env, char **username, size_t *size)
+static char	*build_username(t_minishell *shell, size_t *size, int *malloc_error)
 {
-	char	buffer[32768];
-	int		no_malloc_error;
+	char	*username;
+	int		error;
 
-	no_malloc_error = 0;
-	*username = get_username(env, buffer, &no_malloc_error);
-	if (!*username && !no_malloc_error)
-		return (1);
-	if (!*username)
-		return (0);
-	*size = *size - 7 + ft_strlen(*username);
-	return (0);
+	error = 1;
+	username = get_username(shell, &error);
+	if (username)
+		*size = *size - 7 + ft_strlen(username);
+	else if (error)
+		*malloc_error = 1;
+	return (username);
 }
 
-static int	build_hostname(t_robin *env, char **hostname, size_t *size)
+static char	*build_hostname(t_minishell *shell, size_t *size, int *malloc_error)
 {
-	char	buffer[HOST_NAME_MAX];
-	int		no_malloc_error;
+	char	*hostname;
+	int		error;
 
-	no_malloc_error = 0;
-	*hostname = get_hostname(env, buffer, &no_malloc_error);
-	if (!*hostname && !no_malloc_error)
-		return (1);
-	if (!*hostname)
-		return (0);
-	*size = *size - 7 + ft_strlen(*hostname);
-	return (0);
+	error = 1;
+	hostname = get_hostname(shell, &error);
+	if (hostname)
+		*size = *size - 7 + ft_strlen(hostname);
+	else if (error)
+		*malloc_error = 1;
+	return (hostname);
 }
 
-static int	build_pwd(t_robin *env, char **pwd, size_t *size)
+static char	*build_pwd(t_minishell *shell, size_t *size, int *malloc_error)
 {
-	char	buffer[PATH_MAX];
-	int		no_malloc_error;
+	char	*pwd;
+	int		error;
 
-	no_malloc_error = 1;
-	*pwd = get_prompt_pwd(env, buffer, &no_malloc_error);
-	if (!pwd && !no_malloc_error)
-		return (1);
-	if (!*pwd)
-		return (0);
-	*size = *size + ft_strlen(*pwd);
-	if (!no_malloc_error)
-		return (1);
-	return (0);
+	error = 1;
+	pwd = get_prompt_pwd(shell, &error);
+	if (pwd)
+		*size += ft_strlen(pwd);
+	else if (error)
+		*malloc_error = 1;
+	return (pwd);
 }
 
-static char	*cpy_prompt(char *username, char *hostname, char *pwd, size_t size)
+static char	*cpy_prompt(char *username, char *hostname, char *pwd, size_t *size)
 {
 	char	*prompt;
 
-	prompt = malloc(sizeof(char) * size);
-	if (!prompt)
-		return (NULL);
-	if (!username)
-		username = "unknown";
-	if (!hostname)
-		hostname = "unknown";
-	if (!pwd)
-		pwd = "";
-	ft_strlcpy(prompt, username, size);
-	ft_strlcat(prompt, "@", size);
-	ft_strlcat(prompt, hostname, size);
-	ft_strlcat(prompt, ":", size);
-	ft_strlcat(prompt, pwd, size);
-	ft_strlcat(prompt, "$\n$ ", size);
-	return (prompt);
-}
-
-int	build_prompt(t_robin *env, char **prompt)
-{
-	int		status;
-	size_t	size;
-	char	*username;
-	char	*hostname;
-	char	*pwd;
-
-	*prompt = NULL;
-	status = 0;
-	size = 21;
-	if (build_username(env, &username, &size)
-		|| build_hostname(env, &hostname, &size) || build_pwd(env, &pwd, &size))
-		status = 1;
-	*prompt = cpy_prompt(username, hostname, pwd, size);
+	prompt = malloc(sizeof(char) * *size);
+	if (prompt)
+	{
+		if (username)
+			ft_strlcpy(prompt, username, *size);
+		else
+			ft_strlcpy(prompt, "unknown", *size);
+		ft_strlcat(prompt, "@", *size);
+		if (hostname)
+			ft_strlcat(prompt, hostname, *size);
+		else
+			ft_strlcat(prompt, "unknown", *size);
+		ft_strlcat(prompt, ":", *size);
+		if (pwd)
+			ft_strlcat(prompt, pwd, *size);
+		ft_strlcat(prompt, "$\n", *size);
+	}
 	free(username);
 	free(hostname);
 	free(pwd);
-	if (!*prompt)
-	{
-		*prompt = "unknown@unknown:$\n$ ";
-		status = 2;
-	}
-	if (status)
-		ft_putstr_fd("minishell: malloc: "
-			"cannot allocate memory\n", STDERR_FILENO);
-	return (status);
+	return (prompt);
+}
+
+void	build_prompt(t_minishell *shell)
+{
+	int		malloc_error;
+	size_t	size;
+	char	*prompt;
+
+	if (!isatty(STDIN_FILENO))
+		return ;
+	size = 19;
+	malloc_error = 0;
+	prompt = cpy_prompt(build_username(shell, &size, &malloc_error),
+										 build_hostname(shell, &size, &malloc_error),
+										 build_pwd(shell, &size, &malloc_error),
+										 &size);
+	if (malloc_error || !prompt)
+		ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
+	if (prompt)
+		write(STDOUT_FILENO, prompt, size - 1);
+	free(prompt);
 }

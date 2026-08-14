@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stdint.h>
 
 static size_t	get_word_len(char *input, uint8_t table[256][256])
 {
@@ -21,13 +22,20 @@ static size_t	get_word_len(char *input, uint8_t table[256][256])
 	quote_state = 0;
 	while (input[len])
 	{
+		if (quote_state != '\'' && input[len] == '\\' && input[len + 1])
+		{
+			len += 2;
+			continue ;
+		}
 		if (quote_state == 0 && (input[len] == '"' || input[len] == '\''))
 			quote_state = input[len];
 		else if (quote_state == input[len])
 			quote_state = 0;
-		if (quote_state == 0 && (ft_iswhite(input[len])
-				|| (t_token_type)table[(unsigned char)input[len]]
-				[(unsigned char)input[len + 1]] != TOKEN_WORD))
+		if (quote_state == 0 && ((ft_iswhite(input[len]) && input[len] != '\n')
+				|| ((t_token_type)table[(unsigned char)input[len]]
+				[(unsigned char)input[len + 1]] != TOKEN_WORD
+				&& (t_token_type)table[(unsigned char)input[len]]
+				[(unsigned char)input[len + 1]] != TOKEN_COMMENT)))
 			break ;
 		len++;
 	}
@@ -47,7 +55,7 @@ static size_t	handle_token_type(char *input, t_token *token,
 		token->type
 			= (t_token_type)table
 		[(unsigned char)input[0]][(unsigned char)input[1]];
-		if (token->type == TOKEN_WORD)
+		if (token->type == TOKEN_WORD || token->type == TOKEN_COMMENT)
 			return (get_word_len(input, table));
 		else if (token->type == TOKEN_OR || token->type == TOKEN_AND
 			|| token->type == TOKEN_DLESS || token->type == TOKEN_DGREAT)
@@ -71,8 +79,7 @@ static t_token	*handle_token(char *input, size_t *i,
 	token = malloc(sizeof(t_token));
 	if (!token)
 	{
-		ft_putstr_fd("minishell: malloc: "
-			"cannot allocate memory\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
 		return (NULL);
 	}
 	len = handle_token_type(input, token, table);
@@ -89,42 +96,44 @@ static t_token	*handle_token(char *input, size_t *i,
 	return (token);
 }
 
-static t_token	*add_token(t_token *head, t_token *token)
+static int	skip_token(char *input, size_t *i, uint8_t table[256][256])
 {
-	t_token	*tmp;
-
-	if (!head)
-		return (token);
-	tmp = head;
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = token;
-	return (head);
+	while (input[*i] && ft_iswhite(input[*i]) && input[*i] != '\n')
+		++*i;
+	if (!input[*i])
+		return (1);
+	if ((t_token_type)table[(unsigned char)input[*i]]
+		[(unsigned char)input[*i + 1]] == TOKEN_COMMENT)
+	{
+		while (input[*i] && input[*i] != '\n')
+			++*i;
+		return (1);
+	}
+	return (0);
 }
 
 t_token	*lexer(char *input, uint8_t table[256][256])
 {
 	t_token			*head;
+	t_token			*tail;
 	t_token			*token;
 	size_t			i;
 
-	if (!input)
-		return (NULL);
 	head = NULL;
+	tail = NULL;
 	i = 0;
 	while (input[i])
 	{
-		while (input[i] && ft_iswhite(input[i]))
-			i++;
-		if (!input[i])
-			break ;
+		if (skip_token(input, &i, table))
+			continue ;
 		token = handle_token(&input[i], &i, table);
 		if (!token)
-		{
-			free_tokens(head);
-			return (NULL);
-		}
-		head = add_token(head, token);
+			return (free_tokens(head));
+		if (!head)
+			head = token;
+		else
+			tail->next = token;
+		tail = token;
 	}
 	return (head);
 }

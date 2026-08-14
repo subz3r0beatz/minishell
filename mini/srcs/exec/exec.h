@@ -27,6 +27,7 @@ int		exec_subshell(t_minishell *shell, t_ast_node *node);
 int		exec_semi(t_minishell *shell, t_ast_node *node);
 int		exec_backgr(t_minishell *shell, t_ast_node *node);
 int		apply_redirections(t_minishell *shell, t_redir *redir);
+int		collect_heredocs(t_minishell *shell, t_ast_node *node);
 int		handle_heredoc(t_minishell *shell, char *file);
 int		is_builtin(char *cmd);
 int		exec_builtin(t_minishell *shell, t_ast_node *node, int builtin);

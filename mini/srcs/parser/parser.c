@@ -21,12 +21,21 @@ t_ast_node	*parser(t_minishell *shell, t_token *tokens)
 		return (NULL);
 	curr = tokens;
 	shell->syn_err = 0;
+	while (curr && curr->type == TOKEN_NEWLINE)
+		curr = curr->next;
+	if (!curr)
+	{
+		free_tokens(tokens);
+		return (NULL);
+	}
 	ast = parse_list(shell, &curr);
 	if (shell->syn_err)
 	{
 		free_tokens(tokens);
 		return (free_ast(ast));
 	}
+	while (curr && curr->type == TOKEN_NEWLINE)
+		curr = curr->next;
 	if (curr != NULL)
 	{
 		syntax_error(shell, curr);

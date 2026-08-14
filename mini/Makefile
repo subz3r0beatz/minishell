@@ -45,7 +45,7 @@ $(OBJDIR)/%.o: %.c
 SUPP_FILE = readline.supp
 
 valgrind: $(TARGET)
-	valgrind --suppressions=$(SUPP_FILE) -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(TARGET)
+	valgrind --suppressions=../$(SUPP_FILE) -q --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(TARGET)
 
 clean:
 	rm -rf $(OBJDIR)

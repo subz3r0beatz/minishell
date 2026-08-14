@@ -30,5 +30,6 @@
 # include <readline/history.h>
 # include <time.h>
 # include <limits.h>
+# include <sys/ioctl.h>
 
 #endif

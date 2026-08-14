@@ -61,6 +61,7 @@ char	*ft_strnstr(const char *big, const char *little, size_t len);
 char	*ft_strdup(const char *s);
 char	*ft_itoa(int n);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
+char	*ft_gnl(int fd, char *buffer, size_t buffer_size, int *malloc_error);
 
 char	**ft_dup_matrix(char **matrix, size_t size);
 char	**ft_split(char const *s, char c);

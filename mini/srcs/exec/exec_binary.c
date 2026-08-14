@@ -1,11 +1,12 @@
 #include "minishell.h"
+#include <string.h>
 
 static int	wait_exec(t_minishell *shell, pid_t pid)
 {
 	int	status;
 
 	waitpid(pid, &status, 0);
-	init_interactive_signals();
+	init_interactive_signals(1);
 	if (WIFEXITED(status))
 		shell->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
@@ -36,8 +37,9 @@ static void	do_execv(t_minishell *shell, t_ast_node *node, char *path)
 	err = errno;
 	free(path);
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	errno = err;
-	perror(node->args[0]);
+	ft_putstr_fd(node->args[0], STDERR_FILENO);
+	ft_putstr_fd(": ", STDERR_FILENO);
+	ft_putendl_fd(strerror(err), STDERR_FILENO);
 	if (err == ENOENT)
 		exit_shell(shell, 127);
 	exit_shell(shell, 126);
@@ -91,7 +93,7 @@ int	exec_binary(t_minishell *shell, t_ast_node *node)
 	pid = fork();
 	if (pid < 0)
 	{
-		init_interactive_signals();
+		init_interactive_signals(1);
 		ft_putstr_fd("minishell: exec: fork failed\n", STDERR_FILENO);
 		shell->exit_status = 1;
 		return (1);

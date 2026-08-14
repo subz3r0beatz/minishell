@@ -65,14 +65,13 @@ int	handle_herestring(char *file)
 	return (pfd[0]);
 }
 
-static int	process_redir(t_minishell *shell, t_redir *redir,
-	int *last_in, int *last_out)
+static int	process_redir(t_redir *redir, int *last_in, int *last_out)
 {
 	int	fd;
 	int	err;
 
 	if (redir->type == TOKEN_DLESS)
-		fd = handle_heredoc(shell, redir->file);
+		fd = redir->fd;
 	else if (redir->type == TOKEN_TLESS)
 		fd = handle_herestring(redir->file);
 	else if (redir->type == TOKEN_LESS)
@@ -99,11 +98,12 @@ int	apply_redirections(t_minishell *shell, t_redir *redir)
 	int	last_in;
 	int	last_out;
 
+	(void)shell;
 	last_in = -1;
 	last_out = -1;
 	while (redir)
 	{
-		if (process_redir(shell, redir, &last_in, &last_out))
+		if (process_redir(redir, &last_in, &last_out))
 		{
 			if (last_in >= 0)
 				close(last_in);

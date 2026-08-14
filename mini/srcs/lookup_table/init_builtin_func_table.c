@@ -16,8 +16,8 @@ void	init_builtin_func_table(int (*builtin_func_table[7])(t_minishell *shell,
 		char **args))
 {
 	builtin_func_table[0] = ft_echo;
-	builtin_func_table[1] = ft_exit;
-	builtin_func_table[2] = ft_env;
+	builtin_func_table[1] = ft_env;
+	builtin_func_table[2] = ft_exit;
 	builtin_func_table[3] = ft_export;
 	builtin_func_table[4] = ft_unset;
 	builtin_func_table[5] = ft_cd;

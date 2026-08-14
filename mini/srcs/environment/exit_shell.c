@@ -16,23 +16,17 @@ void	exit_shell(t_minishell *shell, int exit_status)
 {
 	if (shell->env)
 		robin_free(shell->env);
-	
 	if (shell->exported)
 		ft_free_matrix(shell->exported,
 			ft_memlen(shell->exported, sizeof(char *)));
-
 	if (shell->input)
 		free(shell->input);
-
 	if (shell->ast)
 		free_ast(shell->ast);
-
 	if (shell->pid)
 		free(shell->pid);
 	if (shell->last_pid)
 		free(shell->last_pid);
-
 	rl_clear_history();
-	
 	exit(exit_status);
 }

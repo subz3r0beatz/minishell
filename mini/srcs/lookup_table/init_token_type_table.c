@@ -19,14 +19,11 @@ void	init_token_type_table(uint8_t table[256][256])
 
 	i = -1;
 	while (++i < 256)
-	{
-		j = -1;
-		while (++j < 256)
-			table[i][j] = TOKEN_WORD;
-	}
+		ft_memset(table[i], TOKEN_WORD, 256);
 	j = -1;
 	while (++j < 256)
 	{
+		table['#'][j] = TOKEN_COMMENT;
 		table['|'][j] = TOKEN_PIPE;
 		table['&'][j] = TOKEN_BACKGR;
 		table['<'][j] = TOKEN_LESS;
@@ -34,6 +31,7 @@ void	init_token_type_table(uint8_t table[256][256])
 		table['('][j] = TOKEN_LPAREN;
 		table[')'][j] = TOKEN_RPAREN;
 		table[';'][j] = TOKEN_SEMI;
+		table['\n'][j] = TOKEN_NEWLINE;
 	}
 	table['|']['|'] = TOKEN_OR;
 	table['&']['&'] = TOKEN_AND;

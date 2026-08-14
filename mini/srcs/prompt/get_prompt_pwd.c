@@ -11,30 +11,21 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdlib.h>
 
-static char	*get_raw_cwd(t_robin *env, char *buffer, int *no_malloc_error)
+static char	*get_raw_cwd(t_minishell *shell, int *malloc_error)
 {
-	t_robin_node	*node;
-	char			*pwd;
+	char	*pwd;
+	char	buffer[PATH_MAX];
 
 	pwd = NULL;
-	node = robin_search(env, "PWD");
-	if (node && node->value && ((t_env *)node->value)->value)
-		pwd = ft_strdup(((t_env *)node->value)->value);
+	if (!get_var_value(shell, "PWD", &pwd) && pwd)
+		return (ft_strdup(pwd));
 	else if (getcwd(buffer, PATH_MAX))
-		pwd = ft_strdup(buffer);
+		return (ft_strdup(buffer));
 	else
-	{
 		perror("minishell: pwd: error retrieving current directory: "
 			"getcwd: cannot access parent directories");
-		return (NULL);
-	}
-	if (!pwd)
-	{
-		*no_malloc_error = 0;
-		return (NULL);
-	}
+	*malloc_error = 0;
 	return (pwd);
 }
 
@@ -63,7 +54,7 @@ static char	*clean_slashes(char *s)
 	return (clean);
 }
 
-static char	*handle_prompt_home(char *home, char *pwd, int *no_malloc_error)
+static char	*handle_prompt_home(char *home, char *pwd)
 {
 	char	*tmp_pwd;
 	size_t	home_len;
@@ -71,7 +62,11 @@ static char	*handle_prompt_home(char *home, char *pwd, int *no_malloc_error)
 
 	tmp_pwd = clean_slashes(pwd);
 	if (!tmp_pwd)
-		*no_malloc_error = 0;
+	{
+		free(home);
+		free(pwd);
+		return (NULL);
+	}
 	home_len = ft_strlen(home);
 	offset = (home_len == 1);
 	if (home_len && tmp_pwd && !ft_strncmp(home, tmp_pwd, home_len)
@@ -82,35 +77,28 @@ static char	*handle_prompt_home(char *home, char *pwd, int *no_malloc_error)
 			pwd = ft_strjoin("~", tmp_pwd + home_len - offset);
 		else
 			pwd = ft_strdup("~");
-		if (!pwd)
-			*no_malloc_error = 0;
 	}
 	free(tmp_pwd);
 	free(home);
 	return (pwd);
 }
 
-char	*get_prompt_pwd(t_robin *env, char *buffer, int *no_malloc_error)
+char	*get_prompt_pwd(t_minishell *shell, int *malloc_error)
 {
-	t_robin_node	*node;
 	char			*pwd;
 	char			*home;
 	char			*tmp_home;
 
-	pwd = get_raw_cwd(env, buffer, no_malloc_error);
+	pwd = get_raw_cwd(shell, malloc_error);
 	if (!pwd)
 		return (NULL);
-	node = robin_search(env, "HOME");
-	if (!node || !node->value || !((t_env *)node->value)->value)
-		tmp_home = get_home();
+	if (get_var_value(shell, "HOME", &tmp_home) || !tmp_home || !*tmp_home)
+		tmp_home = search_passwd(5, malloc_error);
 	else
-		tmp_home = ft_strdup(((t_env *)node->value)->value);
+		tmp_home = ft_strdup(tmp_home);
 	home = clean_slashes(tmp_home);
 	free(tmp_home);
 	if (!home)
-	{
-		*no_malloc_error = 0;
 		return (pwd);
-	}
-	return (handle_prompt_home(home, pwd, no_malloc_error));
+	return (handle_prompt_home(home, pwd));
 }

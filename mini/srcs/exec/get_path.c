@@ -2,7 +2,7 @@
 
 static char	*malloc_error(void)
 {
-	ft_putstr_fd("minishell: exec: malloc: "
+	ft_putstr_fd("minishell: malloc: "
 		"cannot allocate memory\n", STDERR_FILENO);
 	return (NULL);
 }
@@ -11,7 +11,7 @@ static char	*command_error(char *cmd, int exists)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
 	ft_putstr_fd(cmd, STDERR_FILENO);
-	if (exists == 1)
+	if (exists)
 		ft_putstr_fd(": command not found\n", STDERR_FILENO);
 	else
 		ft_putstr_fd(": Permission denied\n", STDERR_FILENO);
@@ -30,9 +30,15 @@ static char	*check_path(char **split, char *cmd, int *exists)
 		path = ft_strjoin_3(split[i], "/", cmd);
 		if (!path)
 			return (malloc_error());
-		if (stat(path, &st) == 0 && !S_ISDIR(st.st_mode))
+		if (stat(path, &st) == 0)
 		{
-			*exists = 2;
+			if (S_ISDIR(st.st_mode))
+			{
+				free(path);
+				i++;
+				continue ;
+			}
+			*exists = 1;
 			if (access(path, X_OK) == 0)
 				return (path);
 		}

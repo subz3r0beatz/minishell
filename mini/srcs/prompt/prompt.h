@@ -13,11 +13,13 @@
 #ifndef PROMPT_H
 # define PROMPT_H
 
-typedef struct s_robin	t_robin;
+typedef struct s_minishell	t_minishell;
 
-int		build_prompt(t_robin *env, char **prompt);
-char	*get_username(t_robin *env, char *buffer, int *no_malloc_error);
-char	*get_hostname(t_robin *env, char *buffer, int *no_malloc_error);
-char	*get_prompt_pwd(t_robin *env, char *buffer, int *no_malloc_error);
+void		build_prompt(t_minishell *shell);
+char	*get_username(t_minishell *shell, int *malloc_error);
+char	*get_hostname(t_minishell *shell, int *malloc_error);
+char	*get_prompt_pwd(t_minishell *shell, int *malloc_error);
+ssize_t	open_read(char *path, char *buffer, size_t size);
+char	*search_passwd(size_t section, int *malloc_error);
 
 #endif
