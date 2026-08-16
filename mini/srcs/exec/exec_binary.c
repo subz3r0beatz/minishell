@@ -1,5 +1,4 @@
 #include "minishell.h"
-#include <string.h>
 
 static int	wait_exec(t_minishell *shell, pid_t pid)
 {
@@ -12,10 +11,8 @@ static int	wait_exec(t_minishell *shell, pid_t pid)
 	else if (WIFSIGNALED(status))
 	{
 		shell->exit_status = 128 + WTERMSIG(status);
-		if (shell->exit_status - 128 == SIGINT)
-			ft_putstr_fd("\n", STDERR_FILENO);
-		if (shell->exit_status - 128 == SIGQUIT)
-			ft_putstr_fd("Quit\n", STDERR_FILENO);
+		if (WTERMSIG(status) == SIGINT)
+			g_signal_status = 130;
 	}
 	return (shell->exit_status);
 }
@@ -48,18 +45,17 @@ static void	do_execv(t_minishell *shell, t_ast_node *node, char *path)
 static void	check_builtin(t_minishell *shell, t_ast_node *node)
 {
 	int	builtin;
-	int	status;
 
 	builtin = is_builtin(node->args[0]);
 	if (builtin)
 	{
-		status = shell->builtin_func_table[builtin - 1](shell, node->args);
+		shell->exit_status = shell->builtin_func_table[builtin - 1](shell, node->args);
 		if (node->redir)
 		{
 			close(STDIN_FILENO);
 			close(STDOUT_FILENO);
 		}
-		exit_shell(shell, status);
+		exit_shell(shell, shell->exit_status);
 	}
 }
 
@@ -67,20 +63,20 @@ static void	exec_binary_child(t_minishell *shell, t_ast_node *node)
 {
 	char	*path;
 	int		exists;
+	int		is_dir;
 
 	init_ignore_signals(0);
-	if (apply_redirections(shell, node->redir))
+	if (redirections(node->redir))
 		exit_shell(shell, 1);
 	check_builtin(shell, node);
 	exists = 0;
-	path = get_path(shell, node->args[0], &exists);
+	is_dir = 0;
+	path = get_path(shell, node->args[0], &exists, &is_dir);
 	if (!path)
 	{
-		if (exists == 1)
-			exit_shell(shell, 127);
-		else if (exists == 2)
+		if (is_dir || exists == 2)
 			exit_shell(shell, 126);
-		exit_shell(shell, 1);
+		exit_shell(shell, 127);
 	}
 	do_execv(shell, node, path);
 }
@@ -95,7 +91,6 @@ int	exec_binary(t_minishell *shell, t_ast_node *node)
 	{
 		init_interactive_signals();
 		ft_putstr_fd("minishell: exec: fork failed\n", STDERR_FILENO);
-		shell->exit_status = 1;
 		return (1);
 	}
 	if (pid == 0)

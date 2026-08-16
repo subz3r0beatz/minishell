@@ -26,7 +26,8 @@ typedef enum e_node_type
 	NODE_OR,
 	NODE_SUBSHELL,
 	NODE_SEMI,
-	NODE_BACKGR
+	NODE_BACKGR,
+	NODE_NEWLINE
 }			t_node_type;
 
 typedef struct s_redir

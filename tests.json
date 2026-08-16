@@ -1,5 +1,11 @@
 [
   {
+    "cat": "Pipes",
+    "cmd": "echo 1 | cat | cat | cat | cat",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
     "cat": "Normal Cmds",
     "cmd": "ls",
     "bash_cmp": true,
@@ -2378,12 +2384,6 @@
   {
     "cat": "Redirections",
     "cmd": "echo 1 > /tmp/f1 && echo 2 > /tmp/f2 && cat /tmp/f1 /tmp/f2; rm -f /tmp/f1 /tmp/f2",
-    "bash_cmp": true,
-    "flag_error": false
-  },
-  {
-    "cat": "Pipes",
-    "cmd": "echo 1 | cat | cat | cat | cat",
     "bash_cmp": true,
     "flag_error": false
   },

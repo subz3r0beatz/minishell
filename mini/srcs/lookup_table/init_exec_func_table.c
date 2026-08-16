@@ -22,4 +22,5 @@ void	init_exec_func_table(int (*exec_func_table[7])(t_minishell *shell,
 	exec_func_table[NODE_SUBSHELL] = exec_subshell;
 	exec_func_table[NODE_SEMI] = exec_semi;
 	exec_func_table[NODE_BACKGR] = exec_backgr;
+	exec_func_table[NODE_NEWLINE] = exec_newline;
 }

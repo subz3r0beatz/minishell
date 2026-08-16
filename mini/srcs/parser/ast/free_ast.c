@@ -20,6 +20,8 @@ static void	free_redirs(t_redir *redir)
 	{
 		tmp = redir;
 		redir = redir->next;
+		if (tmp->fd >= 0)
+			close(tmp->fd);
 		free(tmp->file);
 		free(tmp);
 	}

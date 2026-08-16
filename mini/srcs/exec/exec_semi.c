@@ -14,10 +14,10 @@
 
 int	exec_semi(t_minishell *shell, t_ast_node *node)
 {
-	if (!node)
-		return (shell->exit_status);
-	exec(shell, node->left);
-	if (node->right)
-		return (exec(shell, node->right));
-	return (shell->exit_status);
+	int	status;
+
+	status = exec(shell, node->left);
+	if (node->right && g_signal_status != 130)
+		status = exec(shell, node->right);
+	return (status);
 }

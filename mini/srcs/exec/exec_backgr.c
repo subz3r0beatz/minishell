@@ -11,18 +11,16 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stdio.h>
 
 int	exec_backgr(t_minishell *shell, t_ast_node *node)
 {
 	pid_t	pid;
 
-	if (!node)
-		return (shell->exit_status);
 	pid = fork();
 	if (pid < 0)
 	{
-		ft_putstr_fd("minishell: exec: fork failed\n", STDERR_FILENO);
-		shell->exit_status = 1;
+		ft_putstr_fd("minishell: fork failed\n", STDERR_FILENO);
 		return (1);
 	}
 	if (pid == 0)
@@ -34,9 +32,7 @@ int	exec_backgr(t_minishell *shell, t_ast_node *node)
 	free(shell->last_pid);
 	shell->last_pid = ft_itoa(pid);
 	if (!shell->last_pid)
-		ft_putstr_fd("minishell: exec: malloc: "
-			"cannot allocate memory\n", STDERR_FILENO);
-	shell->exit_status = 0;
+		ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
 	if (node->right)
 		return (exec(shell, node->right));
 	return (0);

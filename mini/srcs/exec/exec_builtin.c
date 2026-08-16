@@ -70,7 +70,7 @@ int	init_saved_std(t_minishell *shell, t_redir *redir,
 		{
 			perror("minishell: dup");
 			shell->exit_status = 1;
-			return (1);
+			return (shell->exit_status);
 		}
 	}
 	if (has_out_redir(redir))
@@ -82,7 +82,7 @@ int	init_saved_std(t_minishell *shell, t_redir *redir,
 			if (*in >= 0)
 				close(*in);
 			shell->exit_status = 1;
-			return (1);
+			return (shell->exit_status);
 		}
 	}
 	return (0);
@@ -98,11 +98,11 @@ int	exec_builtin(t_minishell *shell, t_ast_node *node, int builtin)
 		return (shell->builtin_func_table[builtin - 1](shell, node->args));
 	if (init_saved_std(shell, node->redir, &saved_stdin, &saved_stdout))
 		return (1);
-	if (apply_redirections(shell, node->redir))
+	if (redirections(node->redir))
 	{
 		restore_fds(saved_stdin, saved_stdout);
 		shell->exit_status = 1;
-		return (1);
+		return (shell->exit_status);
 	}
 	if (builtin == 2)
 	{

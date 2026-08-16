@@ -49,6 +49,8 @@ static t_ast_node	*loop_list(t_minishell *shell, t_token **token,
 		op = NODE_SEMI;
 		if ((*token)->type == TOKEN_BACKGR)
 			op = NODE_BACKGR;
+		else if ((*token)->type == TOKEN_NEWLINE)
+			op = NODE_NEWLINE;
 		*token = (*token)->next;
 		left = create_list_node(shell, token, left, op);
 		if (!left)

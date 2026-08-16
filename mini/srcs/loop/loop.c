@@ -31,7 +31,13 @@ static void	process_input(t_minishell *shell, char *input)
 	if (!shell->ast)
 		return ;
 	if (collect_heredocs(shell, shell->ast) == 0)
+	{
 		shell->exit_status = exec(shell, shell->ast);
+		if (shell->exit_status == 130)
+			ft_putstr_fd("\n", STDERR_FILENO);
+		else if (shell->exit_status == 131)
+			ft_putstr_fd("Quit\n", STDERR_FILENO);
+	}
 	free_ast(shell->ast);
 	shell->ast = NULL;
 }

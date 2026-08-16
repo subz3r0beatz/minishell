@@ -14,7 +14,5 @@
 
 int	exec(t_minishell *shell, t_ast_node *node)
 {
-	if (!node)
-		return (shell->exit_status);
 	return (shell->exec_func_table[node->type](shell, node));
 }

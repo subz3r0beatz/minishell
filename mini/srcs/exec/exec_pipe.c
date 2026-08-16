@@ -12,11 +12,11 @@
 
 #include "minishell.h"
 
-static void	common_error(t_minishell *shell)
+static int	common_error(void)
 {
 	init_interactive_signals();
 	ft_putstr_fd("minishell: exec: fork failed\n", STDERR_FILENO);
-	shell->exit_status = 1;
+	return (1);
 }
 
 static int	wait_exec(t_minishell *shell, pid_t left_pid, pid_t right_pid, int pfd[2])
@@ -33,10 +33,8 @@ static int	wait_exec(t_minishell *shell, pid_t left_pid, pid_t right_pid, int pf
 	else if (WIFSIGNALED(status))
 	{
 		shell->exit_status = 128 + WTERMSIG(status);
-		if (shell->exit_status - 128 == SIGINT)
-			ft_putstr_fd("\n", STDERR_FILENO);
-		if (shell->exit_status - 128 == SIGQUIT)
-			ft_putstr_fd("Quit\n", STDERR_FILENO);
+		if (WTERMSIG(status) == SIGINT)
+			g_signal_status = 130;
 	}
 	return (shell->exit_status);
 }
@@ -48,14 +46,13 @@ static int	do_left(t_minishell *shell, t_ast_node *node,
 
 	if (left_pid < 0)
 	{
-		common_error(shell);
+		common_error();
 		close(pfd[0]);
 		close(pfd[1]);
 		return (1);
 	}
 	if (left_pid == 0)
 	{
-		init_ignore_signals(0);
 		close(pfd[0]);
 		if (dup2(pfd[1], STDOUT_FILENO) < 0)
 		{
@@ -64,7 +61,6 @@ static int	do_left(t_minishell *shell, t_ast_node *node,
 		}
 		close(pfd[1]);
 		status = exec(shell, node->left);
-		close(STDOUT_FILENO);
 		exit_shell(shell, status);
 	}
 	return (0);
@@ -75,14 +71,8 @@ static int	do_right(t_minishell *shell, t_ast_node *node,
 {
 	int	status;
 
-	if (right_pid < 0)
-	{
-		common_error(shell);
-		return (1);
-	}
 	if (right_pid == 0)
 	{
-		init_ignore_signals(0);
 		close(pfd[1]);
 		if (dup2(pfd[0], STDIN_FILENO) < 0)
 		{
@@ -91,7 +81,6 @@ static int	do_right(t_minishell *shell, t_ast_node *node,
 		}
 		close(pfd[0]);
 		status = exec(shell, node->right);
-		close(STDIN_FILENO);
 		exit_shell(shell, status);
 	}
 	return (0);
@@ -106,7 +95,6 @@ int	exec_pipe(t_minishell *shell, t_ast_node *node)
 	if (pipe(pfd) < 0)
 	{
 		ft_putstr_fd("minishell: exec: pipe failed\n", STDERR_FILENO);
-		shell->exit_status = 1;
 		return (1);
 	}
 	init_ignore_signals(1);
@@ -119,6 +107,7 @@ int	exec_pipe(t_minishell *shell, t_ast_node *node)
 		close(pfd[0]);
 		close(pfd[1]);
 		waitpid(left_pid, NULL, 0);
+		return (common_error());
 	}
 	if (do_right(shell, node, pfd, right_pid))
 		return (1);

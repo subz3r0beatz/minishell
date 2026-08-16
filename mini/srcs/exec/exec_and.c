@@ -16,10 +16,8 @@ int	exec_and(t_minishell *shell, t_ast_node *node)
 {
 	int	status;
 
-	if (!node)
-		return (shell->exit_status);
 	status = exec(shell, node->left);
 	if (status == 0)
-		return (exec(shell, node->right));
+		status = exec(shell, node->right);
 	return (status);
 }

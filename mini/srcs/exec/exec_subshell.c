@@ -23,10 +23,8 @@ static int	wait_exec(t_minishell *shell, pid_t pid)
 	else if (WIFSIGNALED(status))
 	{
 		shell->exit_status = 128 + WTERMSIG(status);
-		if (shell->exit_status - 128 == SIGINT)
-			ft_putstr_fd("\n", STDERR_FILENO);
-		if (shell->exit_status - 128 == SIGQUIT)
-			ft_putstr_fd("Quit\n", STDERR_FILENO);
+		if (WTERMSIG(status) == SIGINT)
+			g_signal_status = 130;
 	}
 	return (shell->exit_status);
 }
@@ -40,13 +38,12 @@ int	exec_subshell(t_minishell *shell, t_ast_node *node)
 	if (pid < 0)
 	{
 		ft_putstr_fd("minishell: exec: fork failed\n", STDERR_FILENO);
-		shell->exit_status = 1;
 		return (1);
 	}
 	if (pid == 0)
 	{
 		init_ignore_signals(0);
-		if (apply_redirections(shell, node->redir))
+		if (redirections(node->redir))
 			exit_shell(shell, 1);
 		exit_shell(shell, exec(shell, node->left));
 	}

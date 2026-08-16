@@ -13,7 +13,8 @@
 #ifndef EXEC_H
 # define EXEC_H
 
-int		restore_fds(int in, int out);
+#include "redirections/redirections.h"
+
 int		init_saved_std(t_minishell *shell, t_redir *redir,
 				int *in, int *out);
 int		exec(t_minishell *shell, t_ast_node *node);
@@ -25,13 +26,11 @@ int		exec_binary(t_minishell *shell, t_ast_node *node);
 int		exec_pipe(t_minishell *shell, t_ast_node *node);
 int		exec_subshell(t_minishell *shell, t_ast_node *node);
 int		exec_semi(t_minishell *shell, t_ast_node *node);
+int		exec_newline(t_minishell *shell, t_ast_node *node);
 int		exec_backgr(t_minishell *shell, t_ast_node *node);
-int		apply_redirections(t_minishell *shell, t_redir *redir);
-int		collect_heredocs(t_minishell *shell, t_ast_node *node);
-int		handle_heredoc(t_minishell *shell, char *file);
 int		is_builtin(char *cmd);
 int		exec_builtin(t_minishell *shell, t_ast_node *node, int builtin);
 char	*clean_quotes(char *word);
-char	*get_path(t_minishell *shell, char *cmd, int *exists);
+char	*get_path(t_minishell *shell, char *cmd, int *exists, int *is_dir);
 
 #endif

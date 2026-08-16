@@ -27,6 +27,8 @@ void	exit_shell(t_minishell *shell, int exit_status)
 		free(shell->pid);
 	if (shell->last_pid)
 		free(shell->last_pid);
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
 	rl_clear_history();
 	exit(exit_status);
 }

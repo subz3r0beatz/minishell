@@ -16,10 +16,8 @@ int	exec_or(t_minishell *shell, t_ast_node *node)
 {
 	int	status;
 
-	if (!node)
-		return (shell->exit_status);
 	status = exec(shell, node->left);
-	if (status != 0)
-		return (exec(shell, node->right));
+	if (status != 0 && g_signal_status != 130)
+		status = exec(shell, node->right);
 	return (status);
 }
