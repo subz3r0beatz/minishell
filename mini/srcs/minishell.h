@@ -59,6 +59,7 @@ typedef struct s_minishell
 	t_ast_node	*ast;
 	int			syn_err;
 	int			double_root;
+	int			is_child;
 	int			exit_status;
 	char		*input;
 	char		*argv0;

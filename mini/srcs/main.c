@@ -25,7 +25,8 @@ static void	init_minishell(t_minishell *shell, char **argv, char **envp)
 	shell->pid = NULL;
 	shell->last_pid = NULL;
 	shell->exit_status = 0;
-	shell->double_root = 0;	
+	shell->double_root = 0;
+	shell->is_child = 0;
 	if (build_env(shell, envp))
 		exit_shell(shell, 1);
 	init_token_type_table(shell->token_type_table);

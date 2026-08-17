@@ -6,7 +6,7 @@ int	handle_herestring(char *file)
 
 	if (pipe(pfd) < 0)
 	{
-		ft_putstr_fd("minishell: exec: pipe failed\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: pipe failed\n", STDERR_FILENO);
 		return (-1);
 	}
 	if (file)

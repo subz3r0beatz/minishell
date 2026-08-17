@@ -12,24 +12,24 @@
 
 #include "minishell.h"
 
-static void	numeric_error(char *arg)
+static void	numeric_error(t_minishell *shell, char *arg)
 {
-	if (isatty(STDERR_FILENO))
+	if (isatty(STDERR_FILENO) && !shell->is_child)
 		ft_putstr_fd("exit\n", STDERR_FILENO);
 	ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
 	ft_putstr_fd(arg, STDERR_FILENO);
 	ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
 }
 
-static int	argument_error(void)
+static int	argument_error(t_minishell *shell)
 {
-	if (isatty(STDERR_FILENO))
+	if (isatty(STDERR_FILENO) && !shell->is_child)
 		ft_putstr_fd("exit\n", STDERR_FILENO);
 	ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
 	return (1);
 }
 
-static int	check_numeric(char *arg)
+static int	check_numeric(t_minishell *shell, char *arg)
 {
 	size_t	i;
 
@@ -38,16 +38,19 @@ static int	check_numeric(char *arg)
 		i++;
 	if (arg[i] == '+' || arg[i] == '-')
 		i++;
-	if (!arg[i])
-		return (1);
-	while (arg[i])
+	if (!arg[i] || !ft_isdigit(arg[i]))
 	{
-		if (!ft_isdigit(arg[i]) && !ft_iswhite(arg[i]))
-		{
-			numeric_error(arg);
-			return (1);
-		}
+		numeric_error(shell, arg);
+		return (1);
+	}
+	while (arg[i] && ft_isdigit(arg[i]))
 		i++;
+	while (arg[i] && ft_iswhite(arg[i]))
+		i++;
+	if (arg[i])
+	{
+		numeric_error(shell, arg);
+		return (1);
 	}
 	return (0);
 }
@@ -92,16 +95,16 @@ int	ft_exit(t_minishell *shell, char **args)
 		i++;
 	error = 0;
 	if (!args[i])
-		status = 0;
-	else if (check_numeric(args[i]))
+		status = shell->exit_status;
+	else if (check_numeric(shell, args[i]))
 		exit_shell(shell, 2);
 	else if (args[i + 1])
-		return (argument_error());
+		return (argument_error(shell));
 	else
 		status = overflow_atoll(args[i], &error) & 255;
 	if (error)
-		numeric_error(args[i]);
-	else if (isatty(STDERR_FILENO))
+		numeric_error(shell, args[i]);
+	else if (isatty(STDERR_FILENO) && !shell->is_child)
 		ft_putstr_fd("exit\n", STDERR_FILENO);
 	exit_shell(shell, status);
 	return (status);

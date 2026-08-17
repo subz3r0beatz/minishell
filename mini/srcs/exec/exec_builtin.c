@@ -104,12 +104,8 @@ int	exec_builtin(t_minishell *shell, t_ast_node *node, int builtin)
 		shell->exit_status = 1;
 		return (shell->exit_status);
 	}
-	if (builtin == 2)
-	{
-		if (restore_fds(saved_stdin, saved_stdout))
-			return (1);
-		return (shell->builtin_func_table[builtin - 1](shell, node->args));
-	}
+	if (builtin == 3 && restore_fds(saved_stdin, saved_stdout))
+		return (1);
 	status = shell->builtin_func_table[builtin - 1](shell, node->args);
 	if (restore_fds(saved_stdin, saved_stdout))
 		return (1);

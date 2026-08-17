@@ -42,6 +42,7 @@ int	exec_subshell(t_minishell *shell, t_ast_node *node)
 	}
 	if (pid == 0)
 	{
+		shell->is_child = 1;
 		init_ignore_signals(0);
 		if (redirections(node->redir))
 			exit_shell(shell, 1);

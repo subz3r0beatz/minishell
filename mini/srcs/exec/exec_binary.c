@@ -50,11 +50,6 @@ static void	check_builtin(t_minishell *shell, t_ast_node *node)
 	if (builtin)
 	{
 		shell->exit_status = shell->builtin_func_table[builtin - 1](shell, node->args);
-		if (node->redir)
-		{
-			close(STDIN_FILENO);
-			close(STDOUT_FILENO);
-		}
 		exit_shell(shell, shell->exit_status);
 	}
 }
@@ -65,6 +60,7 @@ static void	exec_binary_child(t_minishell *shell, t_ast_node *node)
 	int		exists;
 	int		is_dir;
 
+	shell->is_child = 1;
 	init_ignore_signals(0);
 	if (redirections(node->redir))
 		exit_shell(shell, 1);

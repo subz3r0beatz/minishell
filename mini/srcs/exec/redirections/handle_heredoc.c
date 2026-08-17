@@ -58,8 +58,7 @@ static void	heredoc_read_loop(t_minishell *shell, int pfd[2],
 			line = expand_word(shell, line);
 		if (!line)
 		{
-			ft_putstr_fd("minishell: malloc: "
-				"cannot allocate memory\n", STDERR_FILENO);
+			ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
 			break ;
 		}
 		ft_putendl_fd(line, pfd[1]);
@@ -71,8 +70,7 @@ static int	malloc_error(int pfd[2])
 {
 	close(pfd[0]);
 	close(pfd[1]);
-	ft_putstr_fd("minishell: malloc: "
-		"cannot allocate memory\n", STDERR_FILENO);
+	ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
 	return (-1);
 }
 
@@ -88,7 +86,7 @@ int	handle_heredoc(t_minishell *shell, char *file, int *sigint_status)
 		ft_putstr_fd("minishell: pipe failed\n", STDERR_FILENO);
 		return (-1);
 	}
-	expand = (ft_strchr(file, '"') || ft_strchr(file, '\''));
+	expand = !((ft_strchr(file, '"') || ft_strchr(file, '\'')));
 	clean = clean_quotes(file);
 	if (!clean)
 		return (malloc_error(pfd));

@@ -53,6 +53,7 @@ static int	do_left(t_minishell *shell, t_ast_node *node,
 	}
 	if (left_pid == 0)
 	{
+		shell->is_child = 1;
 		close(pfd[0]);
 		if (dup2(pfd[1], STDOUT_FILENO) < 0)
 		{
@@ -73,6 +74,7 @@ static int	do_right(t_minishell *shell, t_ast_node *node,
 
 	if (right_pid == 0)
 	{
+		shell->is_child = 1;
 		close(pfd[1]);
 		if (dup2(pfd[0], STDIN_FILENO) < 0)
 		{

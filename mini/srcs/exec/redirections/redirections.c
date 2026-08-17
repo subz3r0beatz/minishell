@@ -12,6 +12,17 @@
 
 #include "minishell.h"
 
+static int	fd_error_message(t_redir *redir)
+{
+	int	err;
+
+	err = errno;
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	errno = err;
+	perror(redir->file);
+	return (1);
+}
+
 static int	update_fd(int *fd, int new_fd)
 {
 	if (new_fd < 0)
@@ -25,10 +36,12 @@ static int	update_fd(int *fd, int new_fd)
 static int	process_redir(t_redir *redir, int *last_in, int *last_out)
 {
 	int	fd;
-	int	err;
 
 	if (redir->type == TOKEN_DLESS)
+	{
 		fd = redir->fd;
+		redir->fd = -1;
+	}
 	else if (redir->type == TOKEN_TLESS)
 		fd = handle_herestring(redir->file);
 	else if (redir->type == TOKEN_LESS)
@@ -38,13 +51,7 @@ static int	process_redir(t_redir *redir, int *last_in, int *last_out)
 	else if (redir->type == TOKEN_DGREAT)
 		fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (redir->type != TOKEN_DLESS && redir->type != TOKEN_TLESS && fd < 0)
-	{
-		err = errno;
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		errno = err;
-		perror(redir->file);
-		return (1);
-	}
+		return (fd_error_message(redir));
 	if (redir->type == TOKEN_GREAT || redir->type == TOKEN_DGREAT)
 		return (update_fd(last_out, fd));
 	return (update_fd(last_in, fd));
@@ -69,5 +76,5 @@ int	redirections(t_redir *redir)
 		}
 		redir = redir->next;
 	}
-	return (0);
+	return (restore_fds(last_in, last_out));
 }
