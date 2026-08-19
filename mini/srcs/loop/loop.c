@@ -1,45 +1,112 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_loop.c                                        :+:      :+:    :+:   */
+/*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/04 23:05:28 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/05 03:25:47 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/19 04:20:53 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	process_input(t_minishell *shell, char *input)
+static void	trim_trailing_newlines(char *str)
+{
+	int	i;
+
+	if (!str)
+		return ;
+	i = ft_strlen(str) - 1;
+	while (i >= 0 && str[i] == '\n')
+	{
+		str[i] = '\0';
+		i--;
+	}
+}
+
+static void	exec_input(t_minishell *shell)
+{
+	shell->tokens = lexer(shell->input, shell->token_type_table);
+	if (shell->tokens)
+	{
+		shell->ast = parser(shell, shell->tokens);
+		if (shell->ast)
+		{
+			free_tokens(shell->tokens);
+			shell->tokens = NULL;
+			shell->exit_status = exec(shell, shell->ast);
+			if (shell->exit_status == 130)
+				ft_putstr_fd("\n", STDERR_FILENO);
+			else if (shell->exit_status == 131)
+				ft_putstr_fd("Quit\n", STDERR_FILENO);
+			free_ast(shell->ast);
+			shell->ast = NULL;
+		}
+		else
+			free_tokens(shell->tokens);
+		shell->tokens = NULL;
+	}
+	if (isatty(STDIN_FILENO) && shell->history && shell->history[0])
+	{
+		trim_trailing_newlines(shell->history);
+		add_history(shell->history);
+	}
+}
+
+static void	process_input(t_minishell *shell)
 {
 	size_t	i;
+	char	*tmp;
 
-	if (!input)
-		return ;
 	i = 0;
-	while (input[i] && ft_iswhite(input[i]))
+	while (shell->input && shell->input[i] && ft_iswhite(shell->input[i]))
 		i++;
-	if (!input[i])
+	if (!shell->input || !shell->input[i])
 		return ;
-	add_history(input);
-	shell->tokens = lexer(input, shell->token_type_table);
-	if (!shell->tokens)
+	tmp = ft_strtrim(shell->input, "\n");
+	if (!tmp)
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
+	if (!tmp)
 		return ;
-	shell->ast = parser(shell, shell->tokens);
-	if (!shell->ast)
+	free(shell->input);
+	shell->input = tmp;
+	free(shell->history);
+	if (isatty(STDIN_FILENO))
+		shell->history = ft_strdup(shell->input);
+	if (isatty(STDIN_FILENO) && !shell->history)
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
+	if (isatty(STDIN_FILENO) && !shell->history)
 		return ;
-	if (collect_heredocs(shell, shell->ast) == 0)
+	exec_input(shell);
+}
+
+static int	handle_input(t_minishell *shell, int malloc_error)
+{
+	char	*saved_input;
+
+	if (!shell->input && malloc_error)
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
+	if (!shell->input && isatty(STDIN_FILENO) && !malloc_error)
+		ft_putstr_fd("exit\n", STDERR_FILENO);
+	if (!shell->input)
+		return (1);
+	saved_input = shell->input;
+	shell->input_line = shell->input;
+	while (shell->input_line && *shell->input_line)
 	{
-		shell->exit_status = exec(shell, shell->ast);
-		if (shell->exit_status == 130)
-			ft_putstr_fd("\n", STDERR_FILENO);
-		else if (shell->exit_status == 131)
-			ft_putstr_fd("Quit\n", STDERR_FILENO);
+		shell->input = extract_line(&shell->input_line, 1, &malloc_error);
+		if (!shell->input)
+			break ;
+		process_input(shell);
+		free(shell->input);
 	}
-	free_ast(shell->ast);
-	shell->ast = NULL;
+	shell->input = saved_input;
+	return (0);
 }
 
 void	loop(t_minishell *shell)
@@ -50,6 +117,7 @@ void	loop(t_minishell *shell)
 	buffer[0] = 0;
 	while (1)
 	{
+		free(shell->input);
 		malloc_error = 0;
 		init_interactive_signals();
 		if (isatty(STDIN_FILENO))
@@ -59,29 +127,13 @@ void	loop(t_minishell *shell)
 			shell->input = readline("$ ");
 			rl_event_hook = NULL;
 			if (g_signal_status == 130)
-			{
 				shell->exit_status = 130;
-				free(shell->input);
-				shell->input = NULL;
+			if (g_signal_status == 130)
 				continue ;
-			}
 		}
 		else
-		{
-			malloc_error = 1;
 			shell->input = ft_gnl(STDIN_FILENO, buffer, 128, &malloc_error);
-		}
-		if (!shell->input && malloc_error)
-			ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
-		if (!shell->input && isatty(STDIN_FILENO))
-			ft_putstr_fd("exit\n", STDERR_FILENO);
-		if (!shell->input)
+		if (handle_input(shell, malloc_error))
 			break ;
-		shell->input = read_open_quotes(shell, shell->input, buffer);
-		if (!shell->input && !isatty(STDIN_FILENO))
-			break ;
-		process_input(shell, shell->input);
-		free(shell->input);
-		shell->input = NULL;
 	}
 }

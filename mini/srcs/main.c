@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 17:46:29 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/04 23:05:25 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/17 20:38:50 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ static void	init_minishell(t_minishell *shell, char **argv, char **envp)
 	shell->exported = NULL;
 	shell->exported_count = 0;
 	shell->input = NULL;
+	shell->input_line = NULL;
+	shell->history = NULL;
 	shell->tokens = NULL;
 	shell->ast = NULL;
 	shell->syn_err = 0;

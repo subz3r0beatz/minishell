@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 19:50:54 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/05 05:02:28 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/19 05:35:18 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,17 @@ static void	sig_handler_interactive(int sig)
 int	rl_signal_check(void)
 {
 	if (g_signal_status == 130)
-		rl_done = 1;
+	{
+		if (rl_line_buffer && (ft_strchr(rl_line_buffer, '\n')
+				|| ft_strchr(rl_line_buffer, '\r')))
+		{
+			write(STDOUT_FILENO, "\n", 1);
+			rl_on_new_line();
+			rl_replace_line("", 0);
+		}
+		else
+			rl_done = 1;
+	}
 	return (0);
 }
 

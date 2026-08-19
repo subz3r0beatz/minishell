@@ -6,71 +6,25 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 02:45:59 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/05 05:02:24 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/19 04:22:00 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*get_next(char *limiter, char *buffer)
-{
-	char	*line;
-
-	rl_event_hook = rl_signal_check;
-	if (isatty(STDIN_FILENO))
-		line = readline("> ");
-	else
-		line = ft_gnl(STDIN_FILENO, buffer, 128, NULL);
-	rl_event_hook = NULL;
-	if (g_signal_status == 130)
-	{
-		free(line);
-		return (NULL);
-	}
-	if (!line)
-	{
-		ft_putstr_fd("minishell: warning: here-document delimited by "
-			"end-of-file (wanted `", STDERR_FILENO);
-		ft_putstr_fd(limiter, STDERR_FILENO);
-		ft_putstr_fd("')\n", STDERR_FILENO);
-	}
-	return (line);
-}
-
-static void	heredoc_read_loop(t_minishell *shell, int pfd[2],
-		char *limiter, int expand)
-{
-	char	*line;
-	char	buffer[128];
-
-	buffer[0] = 0;
-	while (1)
-	{
-		line = get_next(limiter, buffer);
-		if (!line)
-			break ;
-		if (!ft_strcmp(line, limiter))
-		{
-			free(line);
-			break ;
-		}
-		if (expand)
-			line = expand_word(shell, line);
-		if (!line)
-		{
-			ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
-			break ;
-		}
-		ft_putendl_fd(line, pfd[1]);
-		free(line);
-	}
-}
-
-static int	malloc_error(int pfd[2])
+static int	clean_error(int pfd[2])
 {
 	close(pfd[0]);
 	close(pfd[1]);
 	ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
+	return (-1);
+}
+
+static int	heredoc_loop_error(char *clean, int pfd[2])
+{
+	free(clean);
+	close(pfd[0]);
+	close(pfd[1]);
 	return (-1);
 }
 
@@ -80,7 +34,6 @@ int	handle_heredoc(t_minishell *shell, char *file, int *sigint_status)
 	char	*clean;
 	int		expand;
 
-	init_interactive_signals();
 	if (pipe(pfd) < 0)
 	{
 		ft_putstr_fd("minishell: pipe failed\n", STDERR_FILENO);
@@ -89,8 +42,9 @@ int	handle_heredoc(t_minishell *shell, char *file, int *sigint_status)
 	expand = !((ft_strchr(file, '"') || ft_strchr(file, '\'')));
 	clean = clean_quotes(file);
 	if (!clean)
-		return (malloc_error(pfd));
-	heredoc_read_loop(shell, pfd, clean, expand);
+		return (clean_error(pfd));
+	if (heredoc_read_loop(shell, pfd, clean, expand))
+		return (heredoc_loop_error(clean, pfd));
 	free(clean);
 	close(pfd[1]);
 	if (g_signal_status == 130)
@@ -99,6 +53,6 @@ int	handle_heredoc(t_minishell *shell, char *file, int *sigint_status)
 		*sigint_status = 1;
 		return (-1);
 	}
-	init_interactive_signals();
+	g_signal_status = 0;
 	return (pfd[0]);
 }

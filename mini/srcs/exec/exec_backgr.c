@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/31 15:13:06 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/02 13:33:19 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/19 03:50:08 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,19 @@ int	exec_backgr(t_minishell *shell, t_ast_node *node)
 		ft_putstr_fd("minishell: fork failed\n", STDERR_FILENO);
 		return (1);
 	}
+	init_ignore_signals(1);
 	if (pid == 0)
 	{
-		shell->is_child = 1;
 		init_ignore_signals(0);
+		shell->is_child = 1;
 		exit_shell(shell, exec(shell, node->left));
 	}
 	waitpid(pid, NULL, WNOHANG);
 	free(shell->last_pid);
 	shell->last_pid = ft_itoa(pid);
 	if (!shell->last_pid)
-		ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 	if (node->right)
 		return (exec(shell, node->right));
 	return (0);

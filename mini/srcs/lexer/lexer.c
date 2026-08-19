@@ -6,41 +6,11 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/22 09:22:01 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/05 02:39:22 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/18 19:55:55 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdint.h>
-
-static size_t	get_word_len(char *input, uint8_t table[256][256])
-{
-	size_t	len;
-	char	quote_state;
-
-	len = 0;
-	quote_state = 0;
-	while (input[len])
-	{
-		if (quote_state != '\'' && input[len] == '\\' && input[len + 1])
-		{
-			len += 2;
-			continue ;
-		}
-		if (quote_state == 0 && (input[len] == '"' || input[len] == '\''))
-			quote_state = input[len];
-		else if (quote_state == input[len])
-			quote_state = 0;
-		if (quote_state == 0 && ((ft_iswhite(input[len]) && input[len] != '\n')
-				|| ((t_token_type)table[(unsigned char)input[len]]
-				[(unsigned char)input[len + 1]] != TOKEN_WORD
-				&& (t_token_type)table[(unsigned char)input[len]]
-				[(unsigned char)input[len + 1]] != TOKEN_COMMENT)))
-			break ;
-		len++;
-	}
-	return (len);
-}
 
 static size_t	handle_token_type(char *input, t_token *token,
 	uint8_t table[256][256])
@@ -56,7 +26,7 @@ static size_t	handle_token_type(char *input, t_token *token,
 			= (t_token_type)table
 		[(unsigned char)input[0]][(unsigned char)input[1]];
 		if (token->type == TOKEN_WORD || token->type == TOKEN_COMMENT)
-			return (get_word_len(input, table));
+			return (get_word_token_len(input, table));
 		else if (token->type == TOKEN_OR || token->type == TOKEN_AND
 			|| token->type == TOKEN_DLESS || token->type == TOKEN_DGREAT)
 			return (2);
@@ -79,7 +49,8 @@ static t_token	*handle_token(char *input, size_t *i,
 	token = malloc(sizeof(t_token));
 	if (!token)
 	{
-		ft_putstr_fd("minishell: malloc: cannot allocate memory\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
 		return (NULL);
 	}
 	len = handle_token_type(input, token, table);

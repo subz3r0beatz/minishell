@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 19:31:13 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/04 17:35:06 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/18 00:07:49 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ static char	*add_slashes(t_minishell *shell, char **split, int is_double)
 	ft_free_matrix(split, ft_memlen(split, sizeof(char *)));
 	if (!tmp)
 		return (NULL);
+	shell->double_root = (tmp[0] == '/' && tmp[1] == '/' && tmp[2] != '/');
 	if (!is_double && !shell->double_root)
 		return (tmp);
 	ret = ft_strjoin("/", tmp);

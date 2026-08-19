@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_binary.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/19 03:50:24 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/08/19 03:50:32 by fldumas-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	wait_exec(t_minishell *shell, pid_t pid)
@@ -49,7 +61,8 @@ static void	check_builtin(t_minishell *shell, t_ast_node *node)
 	builtin = is_builtin(node->args[0]);
 	if (builtin)
 	{
-		shell->exit_status = shell->builtin_func_table[builtin - 1](shell, node->args);
+		shell->exit_status = shell->builtin_func_table[builtin - 1]
+			(shell, node->args);
 		exit_shell(shell, shell->exit_status);
 	}
 }

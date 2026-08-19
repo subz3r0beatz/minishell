@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/26 14:55:28 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/04 21:50:20 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/19 03:33:15 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static t_ast_node	*loop_list(t_minishell *shell, t_token **token,
 
 	while (*token && ft_strlen((*token)->value) == 1
 		&& ((*token)->type == TOKEN_SEMI || (*token)->type == TOKEN_BACKGR
-		|| (*token)->type == TOKEN_NEWLINE))
+			|| (*token)->type == TOKEN_NEWLINE))
 	{
 		op = NODE_SEMI;
 		if ((*token)->type == TOKEN_BACKGR)
@@ -52,6 +52,8 @@ static t_ast_node	*loop_list(t_minishell *shell, t_token **token,
 		else if ((*token)->type == TOKEN_NEWLINE)
 			op = NODE_NEWLINE;
 		*token = (*token)->next;
+		while (*token && (*token)->type == TOKEN_NEWLINE)
+			*token = (*token)->next;
 		left = create_list_node(shell, token, left, op);
 		if (!left)
 			return (NULL);

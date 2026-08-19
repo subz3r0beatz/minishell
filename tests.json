@@ -1,5 +1,11 @@
 [
   {
+    "cat": "Redirections",
+    "cmd": "cat << EOF\nline 1\nline 2\nEOF",
+    "bash_cmp": true,
+    "flag_error": false
+  },
+  {
     "cat": "Pipes",
     "cmd": "echo 1 | cat | cat | cat | cat",
     "bash_cmp": true,
@@ -926,12 +932,6 @@
   {
     "cat": "Redirections",
     "cmd": "echo hello > /tmp/ms_test_out.txt && cat < /tmp/ms_test_out.txt; rm -f /tmp/ms_test_out.txt",
-    "bash_cmp": true,
-    "flag_error": false
-  },
-  {
-    "cat": "Redirections",
-    "cmd": "cat << EOF\nline 1\nline 2\nEOF",
     "bash_cmp": true,
     "flag_error": false
   },

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 21:35:52 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/05 03:25:56 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/17 20:26:12 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ typedef struct s_minishell
 	int			is_child;
 	int			exit_status;
 	char		*input;
+	char		*input_line;
+	char		*history;
 	char		*argv0;
 	char		*pid;
 	char		*last_pid;

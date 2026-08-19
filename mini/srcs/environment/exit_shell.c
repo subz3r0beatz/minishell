@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/21 19:49:42 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/04 18:12:27 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/18 01:43:23 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@ void	exit_shell(t_minishell *shell, int exit_status)
 			ft_memlen(shell->exported, sizeof(char *)));
 	if (shell->input)
 		free(shell->input);
+	if (shell->history)
+		free(shell->history);
+	if (shell->tokens)
+		free(shell->tokens);
 	if (shell->ast)
 		free_ast(shell->ast);
 	if (shell->pid)

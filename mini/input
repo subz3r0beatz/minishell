@@ -1,0 +1,8 @@
+cat input && ls -la | echo 0 | echo >> hello world 
+export -i && unset /home/fldumas-/Documents/1minish/mini | cd && 
+
+
+
+cat << EOF >> input
+hello
+world

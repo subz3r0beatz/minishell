@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/31 16:50:30 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/05 02:38:48 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/19 04:02:24 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ static int	common_error(void)
 	return (1);
 }
 
-static int	wait_exec(t_minishell *shell, pid_t left_pid, pid_t right_pid, int pfd[2])
+static int	wait_exec(t_minishell *shell, pid_t left_pid, pid_t right_pid,
+	int pfd[2])
 {
 	int	status;
 
@@ -53,6 +54,7 @@ static int	do_left(t_minishell *shell, t_ast_node *node,
 	}
 	if (left_pid == 0)
 	{
+		init_ignore_signals(0);
 		shell->is_child = 1;
 		close(pfd[0]);
 		if (dup2(pfd[1], STDOUT_FILENO) < 0)
@@ -74,6 +76,7 @@ static int	do_right(t_minishell *shell, t_ast_node *node,
 
 	if (right_pid == 0)
 	{
+		init_ignore_signals(0);
 		shell->is_child = 1;
 		close(pfd[1]);
 		if (dup2(pfd[0], STDIN_FILENO) < 0)

@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 16:15:57 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/05 02:24:33 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/18 20:48:07 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,20 @@ static t_redir	*new_redir_node(t_token_type type, char *file)
 	return (redir);
 }
 
+static void	append_redir_node(t_redir **redir_head, t_redir *new_node)
+{
+	t_redir	*tmp;
+
+	tmp = *redir_head;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new_node;
+}
+
 int	parse_redir(t_minishell *shell, t_token **token, t_redir **redir_head)
 {
 	t_token_type	type;
 	t_redir			*new_node;
-	t_redir			*tmp;
 
 	type = (*token)->type;
 	*token = (*token)->next;
@@ -50,18 +59,16 @@ int	parse_redir(t_minishell *shell, t_token **token, t_redir **redir_head)
 		syntax_error(shell, *token);
 		return (1);
 	}
+	if (check_unclosed_quotes((*token)->value, NULL))
+		if (parse_unclosed_quotes(shell, *token))
+			return (1);
 	new_node = new_redir_node(type, (*token)->value);
 	if (!new_node)
 		return (1);
 	if (!*redir_head)
 		*redir_head = new_node;
 	else
-	{
-		tmp = *redir_head;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new_node;
-	}
+		append_redir_node(redir_head, new_node);
 	*token = (*token)->next;
 	return (0);
 }

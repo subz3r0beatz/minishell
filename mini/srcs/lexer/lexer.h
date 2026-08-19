@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/22 09:16:07 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/05 02:19:50 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/18 19:06:20 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ typedef struct s_token
 	struct s_token	*next;
 }				t_token;
 
-t_token	*lexer(char *input, uint8_t table[256][256]);
 t_token	*free_tokens(t_token *head);
+t_token	*lexer(char *input, uint8_t table[256][256]);
+size_t	get_word_token_len(char *input, uint8_t table[256][256]);
 
 #endif

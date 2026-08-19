@@ -6,7 +6,7 @@
 /*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/23 17:47:49 by fldumas-          #+#    #+#             */
-/*   Updated: 2026/08/05 02:29:06 by fldumas-         ###   ########.fr       */
+/*   Updated: 2026/08/18 20:29:36 by fldumas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,13 @@ typedef struct s_ast_node
 
 int			parse_redir(t_minishell *shell, t_token **token,
 				t_redir **redir_head);
+int			check_unclosed_quotes(const char *input, char *quote_state);
+int			parse_unclosed_quotes(t_minishell *shell, t_token *token);
 t_ast_node	*parse_cmd(t_minishell *shell, t_token **token);
 t_ast_node	*parse_pipeline(t_minishell *shell, t_token **token);
 t_ast_node	*parse_logic(t_minishell *shell, t_token **token);
 t_ast_node	*parse_list(t_minishell *shell, t_token **token);
 t_ast_node	*syntax_error(t_minishell *shell, t_token *token);
-
 t_ast_node	*parser(t_minishell *shell, t_token *tokens);
 
 #endif

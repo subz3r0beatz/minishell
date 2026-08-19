@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_gnl.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fldumas- <fldumas-@student.42angouleme.fr  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/17 18:16:11 by fldumas-          #+#    #+#             */
+/*   Updated: 2026/08/17 18:17:04 by fldumas-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 
 static int	append_buffer(char	**line, char *buffer)
@@ -33,6 +45,8 @@ char	*ft_gnl(int fd, char *buffer, size_t buffer_size, int *malloc_error)
 	char	*line;
 	ssize_t	bytes;
 
+	if (malloc_error)
+		*malloc_error = 1;
 	line = NULL;
 	bytes = -1;
 	if (fd >= 0 && buffer && buffer_size >= 2)
