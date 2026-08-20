@@ -12,8 +12,37 @@
 
 #include "minishell.h"
 
-static char	*sigint_sigquit(char *limiter, char *line, int *malloc_error)
+static int	handle_history(t_minishell *shell, char *line, int *malloc_error)
 {
+	char	*tmp;
+
+	*malloc_error = 0;
+	if (isatty(STDIN_FILENO))
+	{
+		tmp = ft_strjoin_3(shell->history, "\n", line);
+		if (!tmp)
+		{
+			*malloc_error = 1;
+			ft_putstr_fd("minishell: malloc: "
+				"cannot allocate memory\n", STDERR_FILENO);
+			free(line);
+			return (1);
+		}
+		free(shell->history);
+		shell->history = tmp;
+	}
+	return (0);
+}
+
+static char	*sigint_sigquit(t_minishell *shell,
+	char *limiter, char *line, int *malloc_error)
+{
+	if (!line && *malloc_error)
+	{
+		ft_putstr_fd("minishell: malloc: "
+			"cannot allocate memory\n", STDERR_FILENO);
+		return (NULL);
+	}
 	if (g_signal_status == 130)
 	{
 		*malloc_error = 0;
@@ -27,6 +56,8 @@ static char	*sigint_sigquit(char *limiter, char *line, int *malloc_error)
 		ft_putstr_fd(limiter, STDERR_FILENO);
 		ft_putstr_fd("')\n", STDERR_FILENO);
 	}
+	else if (handle_history(shell, line, malloc_error))
+		return (NULL);
 	return (line);
 }
 
@@ -43,42 +74,11 @@ static char	*get_next(t_minishell *shell, char *limiter, char *buffer,
 	else
 		line = ft_gnl(STDIN_FILENO, buffer, 128, malloc_error);
 	rl_event_hook = NULL;
-	if (!line && *malloc_error)
-	{
-		ft_putstr_fd("minishell: malloc: "
-			"cannot allocate memory\n", STDERR_FILENO);
-		return (NULL);
-	}
-	return (sigint_sigquit(limiter, line, malloc_error));
-}
-
-static int	malloc_error_message(void)
-{
-	ft_putstr_fd("minishell: malloc: "
-		"cannot allocate memory\n", STDERR_FILENO);
-	return (1);
-}
-
-static int	handle_history(t_minishell *shell, char *line)
-{
-	char	*tmp;
-
-	if (isatty(STDIN_FILENO))
-	{
-		tmp = ft_strjoin_3(shell->history, "\n", line);
-		if (!tmp)
-		{
-			free(line);
-			return (malloc_error_message());
-		}
-		free(shell->history);
-		shell->history = tmp;
-	}
-	return (0);
+	return (sigint_sigquit(shell, limiter, line, malloc_error));
 }
 
 int	heredoc_read_loop(t_minishell *shell, int pfd[2],
-		char *limiter, int expand)
+	char *limiter, int expand)
 {
 	int		malloc_error;
 	char	*line;
@@ -91,8 +91,6 @@ int	heredoc_read_loop(t_minishell *shell, int pfd[2],
 		line = get_next(shell, limiter, buffer, &malloc_error);
 		if (!line)
 			return (malloc_error);
-		if (handle_history(shell, line))
-			return (1);
 		if (!ft_strcmp(line, limiter))
 		{
 			free(line);
@@ -101,7 +99,11 @@ int	heredoc_read_loop(t_minishell *shell, int pfd[2],
 		if (expand)
 			line = expand_word(shell, line);
 		if (!line)
-			return (malloc_error_message());
+		{
+			ft_putstr_fd("minishell: malloc: "
+				"cannot allocate memory\n", STDERR_FILENO);
+			return (1);
+		}
 		ft_putendl_fd(line, pfd[1]);
 		free(line);
 	}

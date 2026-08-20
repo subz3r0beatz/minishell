@@ -58,8 +58,6 @@ static char	*get_next(t_minishell *shell, char *buffer, char quote)
 		return (next);
 	if (isatty(STDIN_FILENO))
 		tmp = ft_strjoin_3(shell->history, "\n", next);
-	else
-		tmp = ft_strjoin(shell->history, next);
 	if (!tmp)
 		return (sigint_sigquit(shell, next, 0, NULL));
 	free(shell->history);

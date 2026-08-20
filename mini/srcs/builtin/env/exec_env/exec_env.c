@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stdlib.h>
 
 static int	malloc_error(char *cmd)
 {
@@ -105,6 +106,7 @@ int	exec_env(t_minishell *shell, char **matrices[2],
 		free_shell(shell, 0);
 		run_child(matrices, flags, max_uints);
 	}
+	init_ignore_signals(1);
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
